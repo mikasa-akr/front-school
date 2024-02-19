@@ -1,25 +1,26 @@
-import logo from './logo.svg';
-import './App.css';
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
+import MainCrud from './pages/CRUD/MainCrud';
+import Login from './pages/authentification/Login';
+import Dashboard from './pages/authentification/dashboard';
+import MainAuthentification from './pages/authentification/MainAuthentification.js';
+import Acceuil from './pages/Acceuil.js';
+
+
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
+    return (
+      <Router>
+        <Routes>
+            <Route path="/crud/*" element={<MainCrud />} />
+            <Route path="/register/*" element={<MainAuthentification />} />
+            <Route exact path="/login"  element={<Login/>} />
+            <Route exact path="/dashboard"  element={<Dashboard/>} />
+            <Route exact path="/"  element={<Acceuil/>} />
 
-export default App;
+
+        </Routes> 
+      </Router>
+    );
+  }
+  export default App;
