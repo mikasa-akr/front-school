@@ -6,7 +6,7 @@ import Layout from "../../../components/Layout";
   
 function ShowForfait() {
     const [id, setId] = useState(useParams().id)
-    const [forfait, setForfait] = useState({title:'', price:'',NbrHourSession:'',NbrHourSeance:''})
+    const [forfait, setForfait] = useState({title:'', price:'',NbrHourSession:'',NbrHourSeance:'',subscription:''})
  
     useEffect(() => {
         axios.get(`/crud/forfait/${id}`)
@@ -20,9 +20,9 @@ function ShowForfait() {
   
     return (
         <Layout>
-           <div className="container">
-            <h2 className="text-center mt-5 mb-3">Show Forfait</h2>
-                <div className="card">
+           <div className="container" style={{ marginTop: '10%' }}>
+            <h2 className="text-center mt-5 mb-3" style={{color:'#ffffff'}} >Show Forfait</h2>
+                <div className="card" style={{ borderRadius: '20px' }}>
                     <div className="card-header">
                         <Link 
                             className="btn btn-outline-dark"
@@ -39,9 +39,7 @@ function ShowForfait() {
                         <b className="text-muted">Number of hours per lesson:</b>
                         <p>{forfait.NbrHourSeance}</p>
                         <b className="text-muted">Subscription</b>
-                        <p>{forfait.subscription_type}</p>
-                        <b className="text-muted">Course:</b>
-                        <p>{forfait.course_name}</p>
+                        <p>{forfait.subscription}</p>
                     </div>
                 </div>
             </div>

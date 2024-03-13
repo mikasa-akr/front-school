@@ -8,14 +8,15 @@ function NavBar() {
   const handleLogout = () => {
     // Implement your logout logic here
     localStorage.removeItem('token');
+    localStorage.removeItem('id');
     // Redirect to the login page
     navigate('/login');
   };
 
   return (
-    <nav className="navbar navbar-expand-lg navbar-light bg-light">
+    <nav className="navbar navbar-expand-lg navbar-light" style={{ backgroundColor: 'transparent' }}>
       <div className="container-fluid"> {/* Wrap navbar content in container-fluid */}
-        <Link className="navbar-brand" to="/">School ™</Link>
+        <Link className="navbar-brand" to="/" style={{color:'#ffffff'}}>School ™</Link>
         <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
           <span className="navbar-toggler-icon"></span>
         </button>

@@ -11,16 +11,7 @@ function AddForfait() {
     const [NbrHourSeance, setNbrHourSeance] = useState('');
     const [NbrHourSession, setNbrHourSession] = useState('');
     const [isSaving, setIsSaving] = useState(false)
-    const [subscriptions, setSubscription] = useState([]);
-    const [courses, setCourses] = useState([]);
-    const [selectedSubscId, setSelectedSubscId] = useState('');
-    const [selectedCourseId, setSelectedCourseId] = useState('');
-
-
-    useEffect(() => {
-        fetchCourses();
-        fetchSubscriptions();
-    }, []);
+    const [subscription, setSubscription] = useState([]);
 
     const handleNbrHourSessionChange = (event) => {
         const selectedValue = event.target.value;
@@ -50,24 +41,6 @@ function AddForfait() {
             setNbrHourSeance('');
         }
     };
-
-    const fetchCourses = async () => {
-        try {
-            const response = await axios.get('/course'); // Adjust the URL accordingly
-            setCourses(response.data);
-        } catch (error) {
-            console.error('Error fetching courses:', error);
-        }
-    };
-    const fetchSubscriptions = async () => {
-        try {
-            const response = await axios.get('/subscription'); // Adjust the URL accordingly
-            setSubscription(response.data);
-        } catch (error) {
-            console.error('Error fetching subscriptions:', error);
-        }
-    };
-
       
     const handleSave = () => {
         setIsSaving(true);
@@ -78,8 +51,7 @@ function AddForfait() {
             price: price,
             NbrHourSession: NbrHourSession,
             NbrHourSeance: NbrHourSeance,
-            subscription_id: selectedSubscId,
-            course_id: selectedCourseId
+            subscription: subscription,
           })
           .then(function (response) {
             Swal.fire({
@@ -93,8 +65,7 @@ function AddForfait() {
             setPrice('');
             setNbrHourSession('');
             setNbrHourSeance('');
-            setSelectedCourseId(''); 
-            setSelectedSubscId(''); 
+            setSubscription('');
           })
           .catch(function (error) {
             Swal.fire({
@@ -108,9 +79,9 @@ function AddForfait() {
       };
     return (
         <Layout>
-            <div className="container">
-                <h2 className="text-center mt-2 mb-3">Edit Forfait</h2>
-                <div className="card">
+            <div className="container" style={{ marginTop: '10%' }}>
+                <h2 className="text-center mt-2 mb-3" style={{color:'#ffffff'}} >Edit Forfait</h2>
+                <div className="card" style={{ borderRadius: '20px' }}>
                     <div className="card-header">
                         <Link 
                             className="btn btn-outline-dark"
@@ -166,7 +137,6 @@ function AddForfait() {
                                     name="NbrHourSeance"
                                 >
                                 <option value=''></option>
-                                    {/* Add options for number of hours per lesson */}
                                     {NbrHourSession === '4' && (
                                         <>
                                             <option value="30">30 minutes</option>
@@ -200,42 +170,23 @@ function AddForfait() {
                                 </select>
                             </div>
                             <div className="mb-3">
-                                    <label htmlFor="courseSelect">Select Course:</label>
+                                    <label htmlFor="subscription">Select Subscription:</label>
                                     <select
                                         className="form-control"
-                                        id="courseSelect"
-                                        value={selectedCourseId}
-                                        onChange={(event)=>{setSelectedCourseId(event.target.value)}}
+                                        id="subscription"
+                                        value={subscription}
+                                        onChange={(event)=>{setSubscription(event.target.value)}}
                                     >
-                                     <option value=''></option>
-                                        {courses.map(course => (
-                                            <option key={course.id} value={course.id}>
-                                                {course.type}
-                                            </option>
-                                        ))}
-                                    </select>
-                            </div>
-                            <div className="mb-3">
-                                    <label htmlFor="susbscriptionSelect">Select Subscription:</label>
-                                    <select
-                                        className="form-control"
-                                        id="susbscriptionSelect"
-                                        value={selectedSubscId}
-                                        onChange={(event)=>{setSelectedSubscId(event.target.value)}}
-                                    >
-                                        <option value=''></option>
-                                        {subscriptions.map(subscription => (
-                                            <option key={subscription.id} value={subscription.id}>
-                                                {subscription.type}
-                                            </option>
-                                        ))}
+                                          <option value='private'>Private</option>
+                                          <option value='public'>Public</option>
                                     </select>
                             </div>
                             <button 
                                 disabled={isSaving}
                                 onClick={handleSave} 
                                 type="button"
-                                className="btn btn-outline-success mt-3">
+                                className="btn btn-outline" style={{borderRadius:'25px',background :"#11cdef",color:'#ffffff',marginLeft:'30px'}}
+                                >
                                 Add Forfait
                             </button>
                         </form>

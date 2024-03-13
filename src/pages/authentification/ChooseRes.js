@@ -37,25 +37,25 @@ function ChooseRes() {
             <div style={{ display: 'flex', justifyContent: 'center' }}>
                 <div
                     onClick={() => handleOptionSelect('student')}
-                    style={{ cursor: 'pointer', marginRight: '20px', border: selectedOption === 'student' ? '2px solid #108a00' : '2px solid #ada9a9', padding: '15px', borderRadius: '20px' }}
+                    style={{ cursor: 'pointer', marginRight: '20px', border: selectedOption === 'student' ? '2px solid #11cdef' : '2px solid #ada9a9', padding: '15px', borderRadius: '20px' }}
                 >
                     <img src={student} style={{ width: '40px' }} alt="Student" />
                     <p>I'm a student, <tr></tr>looking for courses</p>
                 </div>
                 <div
                     onClick={() => handleOptionSelect('teacher')}
-                    style={{ cursor: 'pointer', border: selectedOption === 'teacher' ? '2px solid #108a00' : '2px solid #ada9a9', padding: '22px', borderRadius: '20px' }}
+                    style={{ cursor: 'pointer', border: selectedOption === 'teacher' ? '2px solid #11cdef' : '2px solid #ada9a9', padding: '22px', borderRadius: '20px' }}
                 >
                     <img src={teacher} style={{ width: '40px' }} alt="Teacher" />
                     <p>I'm a teacher,<tr></tr> looking for work</p>
                 </div>
             </div>
-            <Link to={isButtonDisabled ? '#' : (selectedOption === 'student' ? '/register/student' : '/register/teacher')}>
-                <button style={{ marginTop: '20px', borderRadius: '25px', backgroundColor: "#108a00", color: "#ffffff", padding: '10px 20px', border: 'none', cursor: isButtonDisabled ? 'not-allowed' : 'pointer', boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)' }} disabled={isButtonDisabled}>Sign Up as {selectedOption === 'student' ? 'Student' : 'Teacher'}</button>
+            <Link to={isButtonDisabled ? '#' : (selectedOption === 'student' ? '/register/forfait' : '/register/teacher')}>
+                <button style={{ marginTop: '20px', borderRadius: '25px', backgroundColor: "#11cdef", color: "#ffffff", padding: '10px 20px', border: 'none', cursor: isButtonDisabled ? 'not-allowed' : 'pointer', boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)' }} disabled={isButtonDisabled}>Sign Up as {selectedOption === 'student' ? 'Student' : 'Teacher'}</button>
             </Link>
 
             <p className="text-center" style={{marginTop:'10px'}} >
-            Already have an account? <Link to="/login" style={{color:"#108a00"}}>Log in</Link>
+            Already have an account? <Link to="/login" style={{color:"#11cdef"}}>Log in</Link>
             </p>
         </div>
         </>

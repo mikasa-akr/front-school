@@ -65,8 +65,9 @@ function ListeForfait() {
 
     return (
         <Layout>
-            <div className="container">
-                <h2 className="text-center mt-5 mb-3">Liste Forfaits</h2>
+            <div className="container" style={{ marginTop: '10%' }}>
+                <h2 className="text-center mt-5 mb-3" style={{color:'#ffffff'}} >Liste Forfaits</h2>
+               <div className='card' style={{ borderRadius: '20px' }}> 
                 <div className="card-header">
                         <Link 
                         className="btn btn-outline-dark"
@@ -83,7 +84,6 @@ function ListeForfait() {
                                     <th>Number of hours per session</th>
                                     <th>Number of hours per lesson</th>
                                     <th>Subscription</th>
-                                    <th>Course</th>
                                     <th width="240px">Action</th>
                                 </tr>
                             </thead>
@@ -96,8 +96,7 @@ function ListeForfait() {
                                             <td>{forfait.price}</td>
                                             <td>{forfait.NbrHourSession}</td>
                                             <td>{forfait.NbrHourSeance}</td>
-                                            <td>{forfait.subscription_type}</td>
-                                            <td>{forfait.course_name}</td>
+                                            <td>{forfait.subscription}</td>
                                             <td>
                                                 
                                                 <Link
@@ -117,6 +116,7 @@ function ListeForfait() {
                                 })}
                             </tbody>
                         </table>
+                    </div>
                     </div>
                 </div>
         </Layout>

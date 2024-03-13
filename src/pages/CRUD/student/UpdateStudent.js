@@ -12,9 +12,34 @@ function UpdateStudent() {
     const [gender, setGender] = useState('');
     const [number, setNumber] = useState('');
     const [age, setAge] = useState('');
+    const [isSaving, setIsSaving] = useState(false);
+    const [courses, setCourses] = useState([]);
+    const [selectedCourseId, setSelectedCourseId] = useState('');
+    const [forfaits, setForfait] = useState([]);
+    const [forfaitId, setSelectedForfaitId] = useState('');
 
-    const [isSaving, setIsSaving] = useState(false)
-      
+    useEffect(() => {
+        fetchCourses();
+        fetchForfait();
+    }, []);
+
+    const fetchCourses = async () => {
+        try {
+            const response = await axios.get('/course'); // Adjust the URL accordingly
+            setCourses(response.data);
+        } catch (error) {
+            console.error('Error fetching courses:', error);
+        }
+    };
+    const fetchForfait = async () => {
+        try {
+            const response = await axios.get('/crud/forfait'); // Adjust the URL accordingly
+            setForfait(response.data);
+        } catch (error) {
+            console.error('Error fetching courses:', error);
+        }
+    };
+
     useEffect(() => {
         axios.put(`/crud/student/${id}/edit`)
         .then(function (response) {
@@ -25,6 +50,8 @@ function UpdateStudent() {
             setGender(student.gender);
             setNumber(student.number);
             setAge(student.age);
+            setSelectedCourseId(student.course.id);
+            setSelectedForfaitId(student.forfait.id);
 
         })
         .catch(function (error) {
@@ -47,7 +74,9 @@ function UpdateStudent() {
             email:email,
             gender:gender,
             number:number,
-            age:age
+            age:age,
+            course_id: selectedCourseId,
+            forfait_id: forfaitId,
 
         })
         .then(function (response) {
@@ -73,9 +102,9 @@ function UpdateStudent() {
   
     return (
         <Layout>
-            <div className="container">
-                <h2 className="text-center mt-5 mb-3">Edit Student</h2>
-                <div className="card">
+            <div className="container" style={{ marginTop: '10%' }}>
+                <h2 className="text-center mt-5 mb-3" style={{color:'#ffffff'}} >Edit Student</h2>
+                <div className="card" style={{ borderRadius: '20px' }}>
                     <div className="card-header">
                         <Link 
                             className="btn btn-outline-dark"
@@ -149,11 +178,42 @@ function UpdateStudent() {
                                     id="age"
                                     name="age"/>
                             </div>
-                            <button
+                            <div className="mb-3">
+                                    <label htmlFor="courseSelect">Select Course:</label>
+                                    <select
+                                        className="form-control"
+                                        id="courseSelect"
+                                        value={selectedCourseId}
+                                        onChange={(event)=>{setSelectedCourseId(event.target.value)}}
+                                    >
+                                        <option value="">Select a course</option>
+                                        {courses.map(course => (
+                                            <option key={course.id} value={course.id}>
+                                                {course.type}
+                                            </option>
+                                        ))}
+                                    </select>
+                            </div>
+                            <div className="mb-3">
+                                    <label htmlFor="forfaitId">Select Forfait:</label>
+                                    <select
+                                        className="form-control"
+                                        id="forfaitId"
+                                        value={forfaitId}
+                                        onChange={(event)=>{setSelectedForfaitId(event.target.value)}}
+                                    >
+                                        {forfaits.map(forfait => (
+                                            <option key={forfait.id} value={forfait.id}>
+                                                {forfait.title}
+                                            </option>
+                                        ))}
+                                    </select>
+                            </div>
+                            <button 
                                 disabled={isSaving}
                                 onClick={handleSave} 
                                 type="button"
-                                className="btn btn-outline" style={{borderRadius:'25px',background :"#108a00",color:'#ffffff',marginTop:'15px',marginLeft:'30px'}}
+                                className="btn btn-outline" style={{borderRadius:'25px',background :"#11cdef",color:'#ffffff',marginLeft:'30px'}}
                                 >
                                 Update student
                             </button>

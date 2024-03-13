@@ -76,10 +76,10 @@ function RegisterTeacher() {
       <div className="col-12">
         <nav className="navbar navbar-expand-lg navbar-light">
           <div className="container-fluid">
-            <a className="navbar-brand" href="/" style={{color:"#108a00"}} >school</a>
+            <a className="navbar-brand" href="/" style={{color:"#4fd1c5"}} >school</a>
             <div className="d-flex ms-auto align-items-center">
                 <p className="me-3 mb-0">Are you a Student?</p>
-                <a className="navbar-brand" style={{color:"#108a00", fontSize: "16px"}} href='/register/Student'>Apply as Student</a>
+                <a className="navbar-brand" style={{color:"#4fd1c5", fontSize: "16px"}} href='/register/forfait'>Apply as Student</a>
             </div>
           </div>
         </nav>
@@ -192,13 +192,13 @@ function RegisterTeacher() {
                             disabled={isSaving}
                             onClick={handleSave}
                             type="button"
-                            className="btn btn-primary btn-block"
-                            style={{width:"120px",backgroundColor:"#108a00",color :"#ffffff",borderRadius:'40px',marginLeft:'35%'}}
+                            className="btn"
+                            style={{width:"120px",backgroundColor:"#4fd1c5",color :"#ffffff",borderRadius:'40px',marginLeft:'35%'}}
                         >
                             {isSaving ? 'Saving...' : 'Sign Up'}
                         </button>
                         <p className="text-center">
-                            Already have an account? <Link to="/login" style={{color:"#108a00"}}>Login here</Link>
+                            Already have an account? <Link to="/login" style={{color:"#4fd1c5"}}>Login here</Link>
                         </p>
               </div>
           </form>

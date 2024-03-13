@@ -8,7 +8,7 @@ function Acceuil() {
     return (
 <nav className="navbar navbar-expand-lg navbar-light bg-light">
   <div className="container-fluid">
-    <Link className="navbar-brand" to="/">School</Link>
+    <Link className="navbar-brand" to="/">EduHub</Link>
 
     <div className="collapse navbar-collapse justify-content-end" id="navbarNavDropdown"> {/* Add justify-content-end class */}
       <ul className="navbar-nav">
@@ -17,7 +17,7 @@ function Acceuil() {
         </li>
         <li className="nav-item">
           <Link className="nav-link me-5" to="/register/"
-                        style={{width:'100px',borderRadius:'50px',backgroundColor:"#108a00",color :"#ffffff",textAlign:'center'}}
+                        style={{width:'100px',borderRadius:'50px',backgroundColor:"#11cdef",color :"#ffffff",textAlign:'center'}}
                         >Sign Up</Link>
         </li>
       </ul>

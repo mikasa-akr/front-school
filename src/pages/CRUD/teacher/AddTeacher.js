@@ -72,9 +72,9 @@ function AddTeacher() {
 
   return (
     <Layout>
-      <div className="container">
-        <h2 className="text-center mt-2 mb-3">Create New Teacher</h2>
-        <div className="card">
+      <div className="container" style={{ marginTop: '10%' }}>
+        <h2 className="text-center mt-2 mb-3" style={{color:'#ffffff'}} >Create New Teacher</h2>
+        <div className="card" style={{ borderRadius: '20px' }}>
           <div className="card-header">
             <Link
               className="btn btn-outline-dark"
@@ -186,7 +186,7 @@ function AddTeacher() {
                 disabled={isSaving}
                 onClick={handleSave}
                 type="button"
-                className="btn btn-outline" style={{borderRadius:'25px',background :"#108a00",color:'#ffffff',marginLeft:'30px'}}
+                className="btn btn-outline" style={{borderRadius:'25px',background :"#11cdef",color:'#ffffff',marginLeft:'30px'}}
                 >
                 Save Teacher
               </button>

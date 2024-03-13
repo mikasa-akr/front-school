@@ -19,9 +19,9 @@ function ShowStudent() {
     }, [])
     return (
         <Layout>
-           <div className="container">
-            <h2 className="text-center mt-5 mb-3">Show Student</h2>
-                <div className="card">
+           <div className="container" style={{ marginTop: '10%' }}>
+            <h2 className="text-center mt-5 mb-3" style={{color:'#ffffff'}} >Show Student</h2>
+                <div className="card" style={{ borderRadius: '20px' }}>
                     <div className="card-header">
                         <Link 
                             className="btn btn-outline-dark"
