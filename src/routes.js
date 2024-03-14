@@ -10,7 +10,6 @@ import {
   StatsIcon,
   PersonIcon,
 } from "./components/Icons/Icons";
-import Login from "./pages/authentification/Login";
 var dashRoutes = [
   {
     path: "/dashboard",

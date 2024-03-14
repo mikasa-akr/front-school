@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode'; // Import jwtDecode for decoding JWT token
 import { Link } from 'react-router-dom';
+import logo from '../../assets/img/signnn.png';
 
 function Login() {
     const navigate = useNavigate();
@@ -49,70 +50,77 @@ function Login() {
     };
 
     return (
-        <div className="container">
-            <div className="row justify-content-center">
-                <div className="col-md-6" style={{}}>
-                    <div
-                        style={{
-                            width: '70%',
-                            marginLeft: '18%',
-                            border: '1px solid #d9d9d9',
-                            marginTop: '25%',
-                            borderRadius: '25px',
-                            padding: '50px',
-                            backgroundColor: isHovered ? '#eef0f3' : 'white',
-                            transition: 'background-color 0.3s',
-                        }}
-                        onMouseEnter={() => setIsHovered(true)}
-                        onMouseLeave={() => setIsHovered(false)}
-                    >
-                        <h2 className="text-center">Log in</h2>
-                        <form onSubmit={loginAction}>
-                            {validationError && (
-                                <p className="text-center">
-                                    <small className="text-danger">{validationError}</small>
-                                </p>
-                            )}
-                            <div className="mb-3">
-                                <input
-                                    type="email"
-                                    className="form-control input-shadow"  // Apply the custom CSS class here
-                                    id="email"
-                                    name="email"
-                                    value={email}
-                                    placeholder="Email"
-                                    style={{ borderRadius: '10px' }}
-                                    onChange={(e) => setEmail(e.target.value)}
-                                />
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+            <div style={{ width: '50%' }}>
+                <div className="container">
+                    <div className="row justify-content-center">
+                        <div className="col-md-6" style={{}}>
+                            <div
+                                style={{
+                                    width: '100%',
+                                    marginLeft: '18%',
+                                    borderRadius: '25px',
+                                    padding: '50px',
+                                    transition: 'background-color 0.3s',
+                                }}
+                                onMouseEnter={() => setIsHovered(true)}
+                                onMouseLeave={() => setIsHovered(false)}
+                            >
+                                <h1 className="text-center" style={{ color: "#4fd1c5" }}>Log in</h1>
+                                <p style={{ color: "#a0aec0" }} class="chakra-text css-vapw0r">Enter your email and password to sign in</p>
+                                <form onSubmit={loginAction}>
+                                    {validationError && (
+                                        <p className="text-center">
+                                            <small className="text-danger">{validationError}</small>
+                                        </p>
+                                    )}
+                                    <div className="mb-3">
+                                        <label>Email </label>
+                                        <input
+                                            type="email"
+                                            className="form-control input-shadow"
+                                            id="email"
+                                            name="email"
+                                            value={email}
+                                            placeholder="Email"
+                                            style={{ borderRadius: '10px' }}
+                                            onChange={(e) => setEmail(e.target.value)}
+                                        />
+                                    </div>
+                                    <div className="mb-3">
+                                        <label>Password </label>
+                                        <input
+                                            type="password"
+                                            className="form-control"
+                                            id="password"
+                                            name="password"
+                                            value={password}
+                                            placeholder="Password"
+                                            style={{ borderRadius: '10px' }}
+                                            onChange={(e) => setPassword(e.target.value)}
+                                        />
+                                    </div>
+                                    <div className="d-grid gap-2">
+                                        <button
+                                            disabled={isSubmitting}
+                                            type="submit"
+                                            style={{ borderRadius: '9px', backgroundColor: "#4fd1c5", color: "#ffffff" }}
+                                            className="btn btn-block"
+                                        >
+                                            {isSubmitting ? 'Logging in...' : 'Login'}
+                                        </button>
+                                        <p className="text-center">
+                                            Don't have an account? </p>
+                                        <Link to="/register" className="btn btn-outline" style={{ borderRadius: '9px', border: "2px solid #4fd1c5", color: "#4fd1c5" }}>Sign Up</Link>
+                                    </div>
+                                </form>
                             </div>
-                            <div className="mb-3">
-                                <input
-                                    type="password"
-                                    className="form-control"
-                                    id="password"
-                                    name="password"
-                                    value={password}
-                                    placeholder="Password"
-                                    style={{ borderRadius: '10px' }}
-                                    onChange={(e) => setPassword(e.target.value)}
-                                />
-                            </div>
-                            <div className="d-grid gap-2">
-                                <button
-                                    disabled={isSubmitting}
-                                    type="submit"
-                                    style={{ borderRadius: '25px', backgroundColor: "#4fd1c5", color: "#ffffff" }}
-                                    className="btn btn-block"
-                                >
-                                    {isSubmitting ? 'Logging in...' : 'Login'}
-                                </button>
-                                <p className="text-center">
-                                    Don't have an account? </p>
-                                <Link to="/register" className="btn btn-outline" style={{ borderRadius: '25px', border: "2px solid #4fd1c5", color: "#4fd1c5" }}>Sign Up</Link>
-                            </div>
-                        </form>
+                        </div>
                     </div>
                 </div>
+            </div>
+            <div>
+                <img src={logo} alt="Logo" style={{ marginLeft: '10%', background: '#f7fafc' }} />
             </div>
         </div>
     );

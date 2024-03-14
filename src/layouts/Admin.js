@@ -16,7 +16,7 @@ function Dashboard(props) {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const getRoute = () => {
-    return window.location.pathname !== '/admin/*';
+    return window.location.pathname !== '/admin/full-screen-maps';
   };
 
   const getActiveRoute = (routes) => {
@@ -115,6 +115,7 @@ function Dashboard(props) {
           onClose={onClose}
         />
       </MainPanel>
+      hellooo
     </ChakraProvider>
   );
 }

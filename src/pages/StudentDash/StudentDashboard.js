@@ -3,7 +3,6 @@ import React, { useState, useEffect } from 'react';
 import { Routes, Route, useNavigate } from 'react-router-dom';
 import Layout from '../../components/Layout';
 import NavBar from '../../components/NavBar';
-import SideBar from '../../components/SideBar';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import CalendarDom from './CalendarDom';
 import SideBarS from '../../components/SideBarS';
