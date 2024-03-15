@@ -54,7 +54,7 @@ function Login() {
             <div style={{ width: '50%' }}>
                 <div className="container">
                     <div className="row justify-content-center">
-                        <div className="col-md-6" style={{}}>
+                        <div className="col-md-6">
                             <div
                                 style={{
                                     width: '100%',

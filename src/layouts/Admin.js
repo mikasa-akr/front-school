@@ -10,6 +10,9 @@ import FixedPlugin from '../components/FixedPlugin/FixedPlugin';
 import Configurator from '../components/Configurator/Configurator';
 import theme from '../theme/theme';
 import routes from '../routes';
+import Tables from '../views/Admin/Dashboard/Tables';
+import Teachers from '../views/Admin/Dashboard/TablesTeacher/components/Teachers';
+import Groups from '../views/Admin/Dashboard/TablesGroup/components/Groups.js';
 
 function Dashboard(props) {
   const { ...rest } = props;
@@ -25,15 +28,18 @@ function Dashboard(props) {
       if (routes[i].collapse) {
         let collapseActiveRoute = getActiveRoute(routes[i].views);
         if (collapseActiveRoute !== activeRoute) {
+
           return collapseActiveRoute;
         }
       } else if (routes[i].category) {
         let categoryActiveRoute = getActiveRoute(routes[i].views);
         if (categoryActiveRoute !== activeRoute) {
+
           return categoryActiveRoute;
         }
       } else {
         if (window.location.href.indexOf(routes[i].layout + routes[i].path) !== -1) {
+
           return routes[i].name;
         }
       }
@@ -47,6 +53,7 @@ function Dashboard(props) {
       if (routes[i].category) {
         let categoryActiveNavbar = getActiveNavbar(routes[i].views);
         if (categoryActiveNavbar !== activeNavbar) {
+          
           return categoryActiveNavbar;
         }
       } else {
@@ -63,9 +70,11 @@ function Dashboard(props) {
   const getRoutes = (routes) => {
     return routes.map((prop, key) => {
       if (prop.collapse) {
+
         return getRoutes(prop.views);
       }
       if (prop.category === 'account') {
+
         return getRoutes(prop.views);
       }
       if (prop.layout === '/admin') {
@@ -79,6 +88,7 @@ function Dashboard(props) {
   };
 
   return (
+    <>
     <ChakraProvider theme={theme} resetCss={false}>
       <Sidebar
         routes={routes}
@@ -101,8 +111,8 @@ function Dashboard(props) {
             <PanelContainer>
               <Routes>
                 {getRoutes(routes)}
-                <Route path="/admin" element={<Navigate to="/admin/dashboard" />} />
-              </Routes>
+                <Route path="/tables/*" element={<Tables />} />
+                </Routes>              
             </PanelContainer>
           </PanelContent>
         ) : null}
@@ -115,8 +125,9 @@ function Dashboard(props) {
           onClose={onClose}
         />
       </MainPanel>
-      hellooo
     </ChakraProvider>
+
+    </>
   );
 }
 

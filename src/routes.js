@@ -1,8 +1,8 @@
 import Dashboard from "./views/Admin/Dashboard/Dashboard";
-import Tables from "./views/Admin/Dashboard/Tables";
-import TablesTeacher from "./views/Admin/Dashboard/TablesTeacher";
-import TablesGroup from "./views/Admin/Dashboard/TablesGroup";
-import TablesSession from "./views/Admin/Dashboard/TablesSession";
+import Tables from './views/Admin/Dashboard/Tables';
+import Teachers from './views/Admin/Dashboard/TablesTeacher/components/Teachers';
+import Groups from './views/Admin/Dashboard/TablesGroup/components/Groups.js';
+import Session from "./views/Admin/Dashboard/TablesSession/components/Sessions.js";
 import Profile from "./views/Admin/Dashboard/Profile";
 
 import {
@@ -29,21 +29,21 @@ var dashRoutes = [
     path: "/table/teacher/*",
     name: "Table Teacher",
     icon: <StatsIcon color="inherit" />,
-    component: TablesTeacher,
+    component: Teachers,
     layout: "/admin",
   },
   {
     path: "/table/group/*",
     name: "Table Group",
     icon: <StatsIcon color="inherit" />,
-    component: TablesGroup,
+    component: Groups,
     layout: "/admin",
   },
   {
     path: "/table/session/*",
     name: "Table Session",
     icon: <StatsIcon color="inherit" />,
-    component: TablesSession,
+    component: Session,
     layout: "/admin",
   },
   {
@@ -61,5 +61,7 @@ var dashRoutes = [
       },
     ],
   },
+  
+  
 ];
 export default dashRoutes;

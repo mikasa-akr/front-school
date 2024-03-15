@@ -212,14 +212,14 @@ function SidebarResponsive(props) {
         ref={mainPanel}
         alignItems="center"
       >
-        <HamburgerIcon
-          color={hamburgerColor}
-          w="18px"
-          h="18px"
-          ref={btnRef}
-          colorScheme="teal"
-          onClick={onOpen}
-        />
+<HamburgerIcon
+  color={hamburgerColor}
+  w="18px"
+  h="18px"
+  ref={btnRef}
+  onClick={onOpen}
+/>
+
         <Drawer
           isOpen={isOpen}
           onClose={onClose}
@@ -251,6 +251,7 @@ function SidebarResponsive(props) {
             </DrawerBody>
           </DrawerContent>
         </Drawer>
+        
       </Flex>
     );
   }
