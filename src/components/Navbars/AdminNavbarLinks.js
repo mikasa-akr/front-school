@@ -1,44 +1,50 @@
-// Chakra Icons
-import { BellIcon} from "@chakra-ui/icons";
-// Chakra Imports
+import React from "react";
 import {
   Button,
   Flex,
   IconButton,
-  Input,
-  InputGroup,
-  InputLeftElement,
   Menu,
   MenuButton,
   MenuItem,
   MenuList,
-  Text,
   useColorModeValue,
 } from "@chakra-ui/react";
-// Assets
-
-import { ProfileIcon, SettingsIcon } from "../Icons/Icons";
-// Custom Components
-import { ItemContent } from "../Menu/ItemContent";
+import { BellIcon, SettingsIcon, CloseIcon } from "@chakra-ui/icons";
+import { ProfileIcon } from "../Icons/Icons";
 import SidebarResponsive from "../Sidebar/SidebarResponsive";
 import PropTypes from "prop-types";
-import React from "react";
-import { NavLink } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import routes from "../../routes.js";
+import axios from "axios";
 
 export default function HeaderLinks(props) {
-  const { variant, children, fixed, secondary, onOpen, ...rest } = props;
+  const { secondary, onOpen } = props;
 
-  // Chakra Color Mode
-  let mainTeal = useColorModeValue("teal.300", "teal.300");
-  let inputBg = useColorModeValue("white", "gray.800");
-  let mainText = useColorModeValue("gray.700", "gray.200");
-  let navbarIcon = useColorModeValue("gray.500", "gray.200");
-  if (secondary) {
-    navbarIcon = "white";
-    mainText = "white";
-  }
-  const settingsRef = React.useRef();
+  const navbarIcon = useColorModeValue("gray.500", "gray.200");
+  const navigate = useNavigate();
+  const id = localStorage.getItem('id');
+
+  const handleLogout = () => {
+    axios.put(`/update_status/${id}`, { status: 'offline' })
+    .then(response => {
+        // Check if the response is successful
+        if (response.status === 200) {
+          localStorage.removeItem("token");
+          localStorage.removeItem("id");
+        
+            // Navigate to login page
+            navigate("/login");
+        } else {
+            throw new Error('Failed to update status');
+        }
+    })
+    .catch(error => {
+        console.error("Error updating status:", error);
+        // Handle error (e.g., display an error message to the user)
+    });
+};
+
+
   return (
     <Flex
       pe={{ sm: "0px", md: "16px" }}
@@ -46,52 +52,32 @@ export default function HeaderLinks(props) {
       alignItems="center"
       flexDirection="row"
     >
-        <Button
-          ms="0px"
-          px="0px"
-          me={{ sm: "2px", md: "16px" }}
-          color={navbarIcon}
-          variant="transparent-with-icon"
-          rightIcon={
-            document.documentElement.dir ? (
-              ""
-            ) : (
-              <ProfileIcon color={navbarIcon} w="22px" h="22px" me="0px" />
-            )
-          }
-          leftIcon={
-            document.documentElement.dir ? (
-              <ProfileIcon color={navbarIcon} w="22px" h="22px" me="0px" />
-            ) : (
-              ""
-            )
-          }
-        >
-        </Button>
+      <Menu>
+        <MenuButton as={IconButton} icon={<ProfileIcon />} variant="ghost"/>
+        <MenuList p="16px 8px">
+          <MenuItem onClick={handleLogout} icon={<CloseIcon />}>
+            Logout
+          </MenuItem>
+        </MenuList>
+      </Menu>
       <SidebarResponsive
         logoText={props.logoText}
         secondary={props.secondary}
         routes={routes}
-        {...rest}
+        {...props}
       />
-      <SettingsIcon
+      <IconButton
+        icon={<SettingsIcon />}
         cursor="pointer"
         ms={{ base: "16px", xl: "0px" }}
         me="16px"
-        ref={settingsRef}
-        onClick={props.onOpen}
+        onClick={onOpen}
         color={navbarIcon}
-        w="18px"
-        h="18px"
+        variant="ghost"
+        aria-label="Settings"
       />
       <Menu>
-        <MenuButton>
-          <BellIcon color={navbarIcon} w="18px" h="18px" />
-        </MenuButton>
-        <MenuList p="16px 8px">
-          <Flex flexDirection="column">
-          </Flex>
-        </MenuList>
+        <MenuButton as={IconButton} icon={<BellIcon />} variant="ghost" />
       </Menu>
     </Flex>
   );

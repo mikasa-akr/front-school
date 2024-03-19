@@ -30,11 +30,11 @@ function Login() {
                 console.log(roles);
                 // Redirect based on user roles
                 if (roles.includes('ROLE_ADMIN')) {
-                    navigate('/admin');
+                    navigate('/admin/dashboard');
                 } else if (roles.includes('ROLE_TEACHER')) {
-                    navigate('/teacher/');
+                    navigate('/teacher/dashboard');
                 } else if (roles.includes('ROLE_STUDENT')) {
-                    navigate('/student/');
+                    navigate('/student/dashboard');
                 } else {
                     navigate('/');
                 }

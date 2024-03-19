@@ -1,9 +1,10 @@
-import Dashboard from "./views/Admin/Dashboard/Dashboard";
-import Tables from './views/Admin/Dashboard/Tables';
-import Teachers from './views/Admin/Dashboard/TablesTeacher/components/Teachers';
-import Groups from './views/Admin/Dashboard/TablesGroup/components/Groups.js';
-import Session from "./views/Admin/Dashboard/TablesSession/components/Sessions.js";
-import Profile from "./views/Admin/Dashboard/Profile";
+import Dashboard from "./views/Admin/Dashboard";
+import Tables from './views/Admin/Tables';
+import Teachers from './views/Admin/TablesTeacher';
+import Groups from './views/Admin/TablesGroup';
+import Session from "./views/Admin/TablesSession";
+import Profile from "./views/Admin/Profile";
+import Reclamation from './views/Admin/TablesReclamation';
 
 import {
   HomeIcon,
@@ -44,6 +45,13 @@ var dashRoutes = [
     name: "Table Session",
     icon: <StatsIcon color="inherit" />,
     component: Session,
+    layout: "/admin",
+  },
+  {
+    path: "/table/reclamation/*",
+    name: "Table Reclamation",
+    icon: <StatsIcon color="inherit" />,
+    component: Reclamation,
     layout: "/admin",
   },
   {

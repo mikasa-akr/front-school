@@ -1,28 +1,25 @@
 import React from 'react';
 import { ChakraProvider, Portal, useDisclosure } from '@chakra-ui/react';
 import { Routes, Route, Navigate } from 'react-router-dom';
-import Sidebar from '../components/Sidebar';
-import AdminNavbar from '../components/Navbars/AdminNavbar';
-import MainPanel from '../components/Layout/MainPanel';
-import PanelContainer from '../components/Layout/PanelContainer';
-import PanelContent from '../components/Layout/PanelContent';
-import FixedPlugin from '../components/FixedPlugin/FixedPlugin';
-import Configurator from '../components/Configurator/Configurator';
-import theme from '../theme/theme';
-import routes from '../routes';
-import Tables from '../views/Admin/Tables';
-import Teachers from '../views/Admin/TablesTeacher';
-import Groups from '../views/Admin/TablesGroup';
-import TablesSession from '../views/Admin/TablesSession';
-import Profile from '../views/Admin/Profile';
-import Reclamation from '../views/Admin/TablesReclamation';
+import Sidebar from '../components/Sidebar/index.js';
+import AdminNavbar from '../components/Navbars/AdminNavbar.js';
+import MainPanel from '../components/Layout/MainPanel.js';
+import PanelContainer from '../components/Layout/PanelContainer.js';
+import PanelContent from '../components/Layout/PanelContent.js';
+import FixedPlugin from '../components/FixedPlugin/FixedPlugin.js';
+import Configurator from '../components/Configurator/Configurator.js';
+import theme from '../theme/theme.js';
+import routes from '../routesS.js';
+import Groups from '../views/Student/Groups/index.js';
+import Calendar from '../views/Student/Calendar/index.js';
+import Profile from '../views/Student/Profile/index.js';
 
-function Admin(props) {
+function Student(props) {
   const { ...rest } = props;
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const getRoute = () => {
-    return window.location.pathname !== '/admin/full-screen-maps';
+    return window.location.pathname !== '/student/full-screen-maps';
   };
 
   const getActiveRoute = (routes) => {
@@ -80,7 +77,7 @@ function Admin(props) {
 
         return getRoutes(prop.views);
       }
-      if (prop.layout === '/admin') {
+      if (prop.layout === '/student') {
         return (
           <Route key={key} path={prop.layout + prop.path} element={<prop.component />} />
         );
@@ -114,12 +111,10 @@ function Admin(props) {
             <PanelContainer>
               <Routes>
                 {getRoutes(routes)}
-                <Route path="/tables/*" element={<Tables />} />
-                <Route path="/table/teacher/*" element={<Teachers />} />
-                <Route path="/table/session/*" element={<TablesSession />} />
-                <Route path="/table/group/*" element={<Groups />} />
+                <Route path="/groups" element={<Groups />} />
+                <Route path="/calendar" element={<Calendar />} />
                 <Route path="/profile" element={<Profile />} />
-                <Route path="/table/reclamation/*" element={<Reclamation />} />
+
                 </Routes>              
             </PanelContainer>
           </PanelContent>
@@ -139,4 +134,4 @@ function Admin(props) {
   );
 }
 
-export default Admin;
+export default Student;
