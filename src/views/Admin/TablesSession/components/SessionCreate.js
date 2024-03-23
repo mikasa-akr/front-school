@@ -22,7 +22,6 @@ function SessionCreate() {
   const [status, setStatus] = useState('');
   const [date_seance, setDateSeance] = useState('');
   const [time_start, setTimeStart] = useState('');
-  const [time_end, setTimeEnd] = useState('');
   const [visibility, setVisibility] = useState('');
   const [teachers, setTeachers] = useState([]);
   const [teacherId, setTeacherId] = useState('');
@@ -81,7 +80,6 @@ function SessionCreate() {
         status: status,
         date_seance: date_seance,
         time_start: time_start,
-        time_end: time_end,
         course_id: courseId,
         teacher_id: teacherId,
         groupe_id: groupId,
@@ -98,7 +96,6 @@ function SessionCreate() {
         setStatus('');
         setDateSeance('');
         setTimeStart('');
-        setTimeEnd('');
         setVisibility('');
         setTeacherId('');
         setCourseId('');
@@ -164,16 +161,6 @@ function SessionCreate() {
               />
             </FormControl>
             <FormControl mb="3">
-              <FormLabel htmlFor="timeEnd">Time End:</FormLabel>
-              <Input
-                type="time"
-                id="timeEnd"
-                name="timeEnd"
-                value={time_end}
-                onChange={(event) => setTimeEnd(event.target.value)}
-              />
-            </FormControl>
-            <FormControl mb="3">
               <FormLabel htmlFor="teacherId">Teacher:</FormLabel>
               <Select
                 id="teacherId"
@@ -197,7 +184,6 @@ function SessionCreate() {
                 value={courseId}
                 onChange={(event) => setCourseId(event.target.value)}
               >
-                <option value="">Select Course</option>
                 {courses.map((course) => (
                   <option key={course.id} value={course.id}>
                     {course.type}

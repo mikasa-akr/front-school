@@ -3,18 +3,23 @@ import axios from "axios";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
-import { Box, Button, Modal, Select, ModalOverlay, ModalContent, ModalHeader, ModalBody, ModalFooter } from "@chakra-ui/react";
+import { Box, Button, Modal, Select, ModalOverlay, ModalContent,useColorModeValue, ModalHeader, ModalBody, ModalFooter, FormControl, FormLabel, Input } from "@chakra-ui/react";
+import Card from "../../../../components/Card/Card";
 
 function CalendarDom() {
   const [events, setEvents] = useState([]);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [reason, setReason] = useState('');
+  const [date, setDate] = useState('');
+  const [time, setTime] = useState('');
+  const [status, setStatus] = useState('');
   const [registrationStatus, setRegistrationStatus] = useState(null);
   const [registrationMessage, setRegistrationMessage] = useState('');
   const [showMessage, setShowMessage] = useState(false);
   const [timeDifference, setTimeDifference] = useState(0);
   const id = localStorage.getItem('id'); // Assuming the token is stored in localStorage
+  const bgColor = useColorModeValue("white", "gray.700");
 
   useEffect(() => {
     async function fetchEvents() {
@@ -61,17 +66,17 @@ function CalendarDom() {
   }, [id]); // Add id as a dependency to fetch new data when id changes
 
   const handleEventClick = (eventClickInfo) => {
-    if (eventClickInfo.event.extendedProps.status === 'canceled session') {
+    if (eventClickInfo.event.extendedProps.status === 'rattrrapage scheduling') {
       return;
     }
     setSelectedEvent(eventClickInfo.event);
-
-    // Calculate time difference between current time and session time
+    const status = eventClickInfo.event.extendedProps.status === 'canceled session';
+    console.log('status', status);
     const currentTime = new Date();
     const sessionTime = eventClickInfo.event.start;
     const diffInMilliseconds = sessionTime - currentTime;
     const diffInHours = Math.abs(diffInMilliseconds / (1000 * 60 * 60));
-
+    setStatus(status);
     setTimeDifference(diffInHours);
     setIsModalOpen(true);
   };
@@ -95,7 +100,7 @@ function CalendarDom() {
         time_end: selectedEvent.end ? selectedEvent.end.toLocaleTimeString() : '' // Convert time_end to string if selectedEvent.end is not null
       };
   
-      const sessionId = selectedEvent.id; // Extract the session ID from the selected event
+      const sessionId = selectedEvent.id;
   
       const response = await axios.post(`/reclamation/annulation/teacher/${sessionId}`, formattedData); // Use the session ID in the request URL
       
@@ -119,16 +124,39 @@ function CalendarDom() {
     }
   };
   
-  
+  const handleCreateRattrapage = async () => {
+    try {
+      // Perform validation checks for date and time input fields here
+      
+      const response = await axios.post(`/rattrapage/create/${selectedEvent.id}`, {
+        date: date,
+        time: time,
+      });
+      
+        setRegistrationStatus('success');
+        setRegistrationMessage('Rattrapage registered successfully');
+
+      setShowMessage(true); 
+      console.log(response.data);
+    } catch (error) {
+      console.error("Error creating rattrapage:", error);
+      setRegistrationStatus('error');
+      setRegistrationMessage('An error occurred while registration rattrapage');
+      setShowMessage(true);
+    }
+  };
+
   const handleCloseModal = () => {
     setIsModalOpen(false);
     setSelectedEvent(null);
     setReason('');
-    setShowMessage(false); // Hide the message when the modal is
+    setDate('');
+    setTime('');
+    setShowMessage(false);
   };
 
   return (
-    <Box marginTop="10%">
+    <Card marginTop="10%" bg={bgColor} borderRadius={'20px'}>
       <FullCalendar
         plugins={[dayGridPlugin, timeGridPlugin]}
         initialView="dayGridMonth"
@@ -136,10 +164,11 @@ function CalendarDom() {
         eventClick={handleEventClick}
         eventContent={(eventInfo) => (
           <Box 
-            style={{
-              backgroundColor: eventInfo.event.extendedProps.status === 'canceled session' ? 'red' : '',
-              cursor: eventInfo.event.extendedProps.status === 'canceled session' ? 'default' : 'pointer'
-            }}
+          style={{
+            backgroundColor: eventInfo.event.extendedProps.status === 'canceled session' ? 'red' : 
+            eventInfo.event.extendedProps.status === 'rattrrapage scheduling' ? 'green' : '',
+            cursor: eventInfo.event.extendedProps.status === 'rattrrapage scheduling' ? 'default' : 'pointer'
+          }}
           >
             <b>{eventInfo.event.title}</b> (Course: {eventInfo.event.extendedProps.course})
             <br />
@@ -151,34 +180,52 @@ function CalendarDom() {
       <Modal isOpen={isModalOpen} onClose={handleCloseModal}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Annulation</ModalHeader>
+          <ModalHeader>{status === true ? 'Create Rattrapage' : 'Annulation'}</ModalHeader>
           <ModalBody>
-{timeDifference >= 24 ? (
-                <Button colorScheme="blue" onClick={handleAnnulation} mr={3}>Confirm</Button>
+            {status === true ? (
+              <>
+                <FormControl>
+                  <FormLabel>Date</FormLabel>
+                  <Input type="date" value={date} onChange={(e) => setDate(e.target.value)} />
+                </FormControl>
+                <FormControl mt={4}>
+                  <FormLabel>Time</FormLabel>
+                  <Input type="time" value={time} onChange={(e) => setTime(e.target.value)} />
+                </FormControl>
+                <Button colorScheme="blue" onClick={handleCreateRattrapage} mt={4} mr={3}>Confirm</Button>
+              </>
+            ) : (
+              <>
+                {timeDifference >= 24 ? (
+                  <Button colorScheme="blue" onClick={handleAnnulation} mr={3}>Confirm</Button>
                 ) : (
-  <>
-    <Select
-      id="reason"
-      value={reason}
-      onChange={(event) => setReason(event.target.value)}
-      placeholder="Select Reason"
-      size="md"
-    >
-      <option value="sick">Sick</option>
-      <option value="urgency">Urgency</option>
-    </Select>
-    <Button colorScheme="blue" onClick={handleAnnulation} mr={3}>Confirm</Button>
-  </>
-)}
-            <Button onClick={handleCloseModal}>Cancel</Button>
+                  <>
+                    <Select
+                      id="reason"
+                      value={reason}
+                      onChange={(event) => setReason(event.target.value)}
+                      placeholder="Select Reason"
+                      size="md"
+                      mt={4}
+                    >
+                      <option value="sick">Sick</option>
+                      <option value="urgency">Urgency</option>
+                    </Select>
+                    <Button colorScheme="blue" onClick={handleAnnulation} mt={4} mr={3}>Confirm</Button>
+                  </>
+                )}
+              </>
+            )}
+            <Button onClick={handleCloseModal} mt={4}>Cancel</Button>
             {showMessage && (
               <span>{registrationStatus === 'success' ? registrationMessage : registrationStatus === 'error' ? registrationMessage : ''}</span>
             )}
           </ModalBody>
         </ModalContent>
       </Modal>
-    </Box>
+    </Card>
   );
 }
 
 export default CalendarDom;
+

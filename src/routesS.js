@@ -1,11 +1,13 @@
-import Dashboard from "./views/Student/Dashboard /index.js";
-import Calendar from './views/Student/Calendar/index.js';
-import Groups from './views/Student/Groups/index.js';
-import Profile from "./views/Student/Profile/index.js";
+import Dashboard from "./views/Student/Dashboard";
+import Calendar from './views/Student/Calendar';
+import Groups from './views/Student/Groups';
+import Profile from "./views/Student/Profile";
 import {
   HomeIcon,
   StatsIcon,
   PersonIcon,
+  TeamIcon,
+  CalendarIcon
 } from "./components/Icons/Icons.js";
 var dashRoutes = [
   {
@@ -18,14 +20,14 @@ var dashRoutes = [
   {
     path: "/groups",
     name: "Groups",
-    icon: <StatsIcon color="inherit" />,
+    icon: <TeamIcon color="inherit" />,
     component: Groups,
     layout: "/student",
   },
   {
     path: "/calendar",
     name: "Calendar",
-    icon: <StatsIcon color="inherit" />,
+    icon: <CalendarIcon color="inherit" />,
     component: Calendar,
     layout: "/student",
   },

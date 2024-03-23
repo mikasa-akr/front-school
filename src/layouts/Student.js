@@ -13,6 +13,7 @@ import routes from '../routesS.js';
 import Groups from '../views/Student/Groups/index.js';
 import Calendar from '../views/Student/Calendar/index.js';
 import Profile from '../views/Student/Profile/index.js';
+import Dashboard from '../views/Student/Dashboard/index.js';
 
 function Student(props) {
   const { ...rest } = props;
@@ -112,6 +113,7 @@ function Student(props) {
               <Routes>
                 {getRoutes(routes)}
                 <Route path="/groups" element={<Groups />} />
+                <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/calendar" element={<Calendar />} />
                 <Route path="/profile" element={<Profile />} />
 

@@ -18,14 +18,17 @@ import {
   ModalHeader,
   ModalOverlay,
   Text,
+  useColorModeValue,
   useDisclosure,
 } from '@chakra-ui/react';
+import Card from '../../../../components/Card/Card';
 
 function ListeGroupe() {
   const [groups, setGroups] = useState([]);
   const [selectedGroups, setSelectedGroups] = useState([]);
   const ID = localStorage.getItem('id'); // Assuming the token is stored in localStorage
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const bgColor = useColorModeValue("white", "gray.700");
 
   useEffect(() => {
     axios.get(`/crud/teacher/listeGroupe/${ID}`)
@@ -70,7 +73,7 @@ function ListeGroupe() {
   };
 
   return (
-    <Container mt="10%">
+    <Card mt="10%" bg={bgColor} borderRadius={'20px'}>
       <Flex justify="space-between" mb="4">
         <Heading>Select Group</Heading>
       </Flex>
@@ -78,29 +81,29 @@ function ListeGroupe() {
       <Flex>
         <Box w="100%">
         <List spacing={3}>
-  {groups.map((group) => (
-    <ListItem key={group.id}>
-      <Flex justify="space-between" alignItems="center" width="100%">
-        <Flex flexDirection="column">
-          <Text>Number: {group.number}</Text>
-          <Text>Type: {group.type}</Text>
-        </Flex>
-        <Button
-          variant="outline"
-          borderColor="teal.500"
-          color="teal.500"
-          onClick={() => handleAssociateTeacherWithGroup(group.id)}
-        >
-          Select
-        </Button>
-      </Flex>
-    </ListItem>
-  ))}
-</List>
+          {groups.map((group) => (
+            <ListItem key={group.id}>
+              <Flex justify="space-between" alignItems="center" width="100%">
+                <Flex flexDirection="column">
+                  <Text>Number: {group.number}</Text>
+                  <Text>Type: {group.type}</Text>
+                </Flex>
+                <Button
+                  variant="outline"
+                  borderColor="teal.500"
+                  color="teal.500"
+                  onClick={() => handleAssociateTeacherWithGroup(group.id)}
+                >
+                  Select
+                </Button>
+              </Flex>
+            </ListItem>
+          ))}
+        </List>
           <Button colorScheme="teal" onClick={onOpen}>View Selected Groups</Button>
         </Box>
       </Flex>
-      <Modal isOpen={isOpen} onClose={onClose} size="lg">
+      <Modal isOpen={isOpen} onClose={onClose} size="lg" >
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>Selected Groups</ModalHeader>
@@ -120,7 +123,7 @@ function ListeGroupe() {
           </ModalFooter>
         </ModalContent>
       </Modal>
-    </Container>
+    </Card>
   );
 }
 

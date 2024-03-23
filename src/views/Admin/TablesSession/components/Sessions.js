@@ -29,7 +29,7 @@ function Sessions({ captions, logo }) {
   const [isLoaded, setIsLoaded] = useState(false);
   const [selectedSession, setSelectedSession] = useState(null); // State to store the selected student
   const [isOpen, setIsOpen] = useState(false); // State to control the modal in StudentView
-  const bgColor = useColorModeValue("#F8F9FA", "gray.800");
+  const bgColor = useColorModeValue("white", "gray.700");
 
   // Function to toggle the modal state and set the selected student
   const toggleModal = (session) => {
@@ -92,7 +92,7 @@ function Sessions({ captions, logo }) {
     <>
     <Grid>
     <Flex direction="column" pt={{ base: "120px", md: "75px" }}>
-    <Card bg={bgColor} overflowX={{ sm: "scroll", xl: "hidden" }}>
+    <Card bg={bgColor} overflowX={{ sm: "scroll", xl: "hidden" }} borderRadius={'20px'}>
   <CardHeader p="6px 0px 22px 0px">
     <Text fontSize="xl" fontWeight="bold">
       Sessions Table

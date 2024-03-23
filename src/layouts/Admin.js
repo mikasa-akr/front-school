@@ -16,6 +16,7 @@ import Groups from '../views/Admin/TablesGroup';
 import TablesSession from '../views/Admin/TablesSession';
 import Profile from '../views/Admin/Profile';
 import Reclamation from '../views/Admin/TablesReclamation';
+import Rattrapages from '../views/Admin/TablesRattrapage';
 
 function Admin(props) {
   const { ...rest } = props;
@@ -120,6 +121,7 @@ function Admin(props) {
                 <Route path="/table/group/*" element={<Groups />} />
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/table/reclamation/*" element={<Reclamation />} />
+                <Route path='/table/rattrapage/*' element={<Rattrapages/>} />
                 </Routes>              
             </PanelContainer>
           </PanelContent>

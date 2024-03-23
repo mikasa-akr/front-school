@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import axios from 'axios';
-import { Button, Container, FormControl, FormLabel, Input, Select, VStack, Heading, Text, Grid, Box } from "@chakra-ui/react";
+import { Button, Container, FormControl,useColorModeValue, FormLabel, Input, Select, VStack, Heading, Text, Grid, Box } from "@chakra-ui/react";
 import Card from '../../../../components/Card/Card';
 
 function StudentCreate() {

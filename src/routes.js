@@ -5,7 +5,7 @@ import Groups from './views/Admin/TablesGroup';
 import Session from "./views/Admin/TablesSession";
 import Profile from "./views/Admin/Profile";
 import Reclamation from './views/Admin/TablesReclamation';
-
+import Rattrapages from "./views/Admin/TablesRattrapage";
 import {
   HomeIcon,
   StatsIcon,
@@ -52,6 +52,13 @@ var dashRoutes = [
     name: "Table Reclamation",
     icon: <StatsIcon color="inherit" />,
     component: Reclamation,
+    layout: "/admin",
+  },
+  {
+    path: "/table/rattrapage/*",
+    name: "Table Rattrapage",
+    icon: <StatsIcon color="inherit" />,
+    component: Rattrapages,
     layout: "/admin",
   },
   {

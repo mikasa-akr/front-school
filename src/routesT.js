@@ -1,14 +1,15 @@
-import Dashboard from "./views/Teacher/Dashboard ";
+import Dashboard from "./views/Teacher/Dashboard";
 import Calendar from './views/Teacher/Calendar';
 import Groups from './views/Teacher/Groups';
 import Students from "./views/Teacher/Students";
 import Profile from "./views/Teacher/Profile ";
-import Annulation from "./views/Teacher/Annulation";
 import {
   HomeIcon,
   StatsIcon,
   PersonIcon,
+  TeamIcon,
 } from "./components/Icons/Icons.js";
+import { CalendarIcon } from '@chakra-ui/icons'; // Importing the schedule icon from react-icons
 var dashRoutes = [
   {
     path: "/dashboard",
@@ -20,28 +21,21 @@ var dashRoutes = [
   {
     path: "/calendar",
     name: "Calendar",
-    icon: <StatsIcon color="inherit" />,
+    icon: <CalendarIcon boxSize={3.5} color="inherit" />,
     component: Calendar,
-    layout: "/teacher",
-  },
-  {
-    path: "/annulation",
-    name: "Annulation",
-    icon: <StatsIcon color="inherit" />,
-    component: Annulation,
     layout: "/teacher",
   },
   {
     path: "/groups",
     name: "Groups",
-    icon: <StatsIcon color="inherit" />,
+    icon: <TeamIcon color="inherit" />,
     component: Groups,
     layout: "/teacher",
   },
   {
     path: "/students",
     name: "Students",
-    icon: <StatsIcon color="inherit" />,
+    icon: <TeamIcon color="inherit" />,
     component: Students,
     layout: "/teacher",
   },

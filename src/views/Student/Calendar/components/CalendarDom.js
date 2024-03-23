@@ -3,7 +3,8 @@ import axios from "axios";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
-import { Box, Button,Select, Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody, ModalFooter } from "@chakra-ui/react";
+import { Box, Button,Select, Modal, ModalOverlay,useColorModeValue, ModalContent, ModalHeader, ModalBody, ModalFooter } from "@chakra-ui/react";
+import Card from "../../../../components/Card/Card";
 
 function CalendarDom() {
   const [events, setEvents] = useState([]);
@@ -14,6 +15,7 @@ function CalendarDom() {
   const [registrationMessage, setRegistrationMessage] = useState('');
   const [showMessage, setShowMessage] = useState(false);
   const [timeDifference, setTimeDifference] = useState(0);
+  const bgColor = useColorModeValue("white", "gray.700");
 
   const id = localStorage.getItem('id'); // Assuming the token is stored in localStorage
 
@@ -62,7 +64,7 @@ function CalendarDom() {
 
   }, [id]); // Add id as a dependency to fetch new data when id changes
   const handleEventClick = (eventClickInfo) => {
-    if (eventClickInfo.event.extendedProps.status === 'canceled session') {
+    if (eventClickInfo.event.extendedProps.status === 'canceled session' || eventClickInfo.event.extendedProps.status === 'rattrrapage scheduling' ) {
       return;
     }
     setSelectedEvent(eventClickInfo.event);
@@ -127,7 +129,7 @@ function CalendarDom() {
   };
 
   return (
-    <Box marginTop="10%">
+    <Card marginTop="10%" bg={bgColor} borderRadius={'20px'}>
       <FullCalendar
         plugins={[dayGridPlugin, timeGridPlugin]}
         initialView="dayGridMonth"
@@ -135,10 +137,12 @@ function CalendarDom() {
         eventClick={handleEventClick}
         eventContent={(eventInfo) => (
           <Box 
-            style={{
-              backgroundColor: eventInfo.event.extendedProps.status === 'canceled session' ? 'red' : '',
-              cursor: eventInfo.event.extendedProps.status === 'canceled session' ? 'default' : 'pointer'
-            }}
+          style={{
+            backgroundColor: eventInfo.event.extendedProps.status === 'canceled session' ? 'red' : 
+            eventInfo.event.extendedProps.status === 'rattrrapage scheduling' ? 'green' : '',
+            cursor: eventInfo.event.extendedProps.status === 'rattrrapage scheduling' ? 'default' :
+            eventInfo.event.extendedProps.status === 'canceled session' ? 'default' : 'pointer',
+          }}
           >
             <b>{eventInfo.event.title}</b> (Course: {eventInfo.event.extendedProps.course})
             <br />
@@ -176,7 +180,7 @@ function CalendarDom() {
           </ModalBody>
         </ModalContent>
       </Modal>
-    </Box>
+    </Card>
   );
 }
 

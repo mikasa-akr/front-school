@@ -14,7 +14,6 @@ import Groups from '../views/Teacher/Groups/index.js';
 import Calendar from '../views/Teacher/Calendar/index.js';
 import Students from '../views/Teacher/Students/index.js';
 import Profile from '../views/Teacher/Profile /index.js';
-import Annulation from '../views/Teacher/Annulation/index.js';
 
 function Teacher(props) {
   const { ...rest } = props;
@@ -116,7 +115,6 @@ function Teacher(props) {
                 <Route path="/groups" element={<Groups />} />
                 <Route path="/calendar" element={<Calendar />} />
                 <Route path="/students" element={<Students />} />
-                <Route path="/annulation" element={<Annulation />} />
                 <Route path="/profile" element={<Profile />} />
 
                 </Routes>              

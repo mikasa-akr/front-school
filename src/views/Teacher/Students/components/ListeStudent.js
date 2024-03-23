@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Swal from 'sweetalert2';
-import { Box, ListItem, Text, UnorderedList } from '@chakra-ui/react';
+import { Box, ListItem, Text, UnorderedList,useColorModeValue } from '@chakra-ui/react';
+import Card from '../../../../components/Card/Card';
 
 function ListeStudent() {
     const [selectedGroups, setSelectedGroups] = useState([]);
     const ID = localStorage.getItem('id');
+    const bgColor = useColorModeValue("white", "gray.700");
 
     useEffect(() => {
         axios.get(`/crud/teacher/Students/${ID}`)
@@ -18,7 +20,7 @@ function ListeStudent() {
     }, [ID]);
 
     return (
-        <Box marginTop="10%" className="container">
+        <Card marginTop="10%" className="container" bg={bgColor} borderRadius={'20px'}>
             <Box className="row" marginBottom="2">
                 <Box className="col-md-6">
                     <Text fontSize="40px" marginBottom="4">List of Students</Text>
@@ -33,7 +35,7 @@ function ListeStudent() {
                     </UnorderedList>
                 </Box>
             </Box>
-        </Box>
+        </Card>
     );
 }
 

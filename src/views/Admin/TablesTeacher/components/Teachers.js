@@ -33,6 +33,7 @@ function Teachers({ captions, logo }) {
   const textColor = useColorModeValue("gray.700", "white");
   const bgStatus = useColorModeValue("gray.400", "#1a202c");
   const colorStatus = useColorModeValue("white", "gray.400");
+  const bgColor = useColorModeValue("white", "gray.700");
 
   // Function to toggle the modal state and set the selected student
   const toggleModal = (teacher) => {
@@ -94,7 +95,7 @@ function Teachers({ captions, logo }) {
     <>
     <Grid>
     <Flex direction="column" pt={{ base: "120px", md: "75px" }}>
-      <Card overflowX={{ sm: "scroll", xl: "hidden" }}>
+      <Card overflowX={{ sm: "scroll", xl: "hidden" }} bg={bgColor} borderRadius={'20px'}>
         <CardHeader p="6px 0px 22px 0px">
           <Text fontSize="xl" fontWeight="bold">
             Teachers Table

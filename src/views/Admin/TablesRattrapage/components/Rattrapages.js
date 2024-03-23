@@ -1,4 +1,4 @@
-// reclamations.js
+// rattrapages.js
 import { Link as RouterLink } from 'react-router-dom'; // Import Link from react-router-dom
 import React, { useEffect, useState } from "react";
 import {
@@ -22,28 +22,28 @@ import CardBody from "../../../../components/Card/CardBody.js";
 import CardHeader from "../../../../components/Card/CardHeader.js";
 import { FaPencilAlt, FaTrashAlt, FaEye, FaPlus } from "react-icons/fa";
 import Swal from "sweetalert2";
-import ReclamationView from './ReclamationView.js';
+import RattrapageView from './RattrapageView.js';
 
-function Reclamations({ captions, logo }) {
-  const [ListeReclamation, setListeReclamation] = useState([]);
+function Rattrapages({ captions, logo }) {
+  const [ListeRattrapage, setListeRattrapage] = useState([]);
   const [isLoaded, setIsLoaded] = useState(false);
-  const [selectedReclamation, setSelectedReclamation] = useState(null); // State to store the selected student
+  const [selectedRattrapage, setSelectedRattrapage] = useState(null); // State to store the selected student
   const [isOpen, setIsOpen] = useState(false); // State to control the modal in StudentView
   const bgColor = useColorModeValue("white", "gray.700");
 
   // Function to toggle the modal state and set the selected student
-  const toggleModal = (reclamation) => {
-    setSelectedReclamation(reclamation);
+  const toggleModal = (rattrapage) => {
+    setSelectedRattrapage(rattrapage);
     setIsOpen(!isOpen);
   };
   useEffect(() => {
-      fetchListeReclamation();
+      fetchListeRattrapage();
   }, []);
 
-  const fetchListeReclamation = () => {
-      axios.get('/reclamation/')
+  const fetchListeRattrapage = () => {
+      axios.get('/rattrapage/')
           .then(function (response) {
-              setListeReclamation(response.data);
+              setListeRattrapage(response.data);
               setIsLoaded(true);
           })
           .catch(function (error) {
@@ -62,15 +62,15 @@ function Reclamations({ captions, logo }) {
           confirmButtonText: 'Yes, delete it!'
       }).then((result) => {
           if (result.isConfirmed) {
-              axios.delete(`/reclamation/${id}`)
+              axios.delete(`/rattrapage/${id}`)
                   .then(function (response) {
                       Swal.fire({
                           icon: 'success',
-                          title: 'reclamation deleted successfully!',
+                          title: 'Rattrapage deleted successfully!',
                           showConfirmButton: false,
                           timer: 1500
                       });
-                      fetchListeReclamation();
+                      fetchListeRattrapage();
                   })
                   .catch(function (error) {
                       Swal.fire({
@@ -94,61 +94,49 @@ function Reclamations({ captions, logo }) {
     <Card bg={bgColor} overflowX={{ sm: "scroll", xl: "hidden" }} borderRadius={'20px'}>
   <CardHeader p="6px 0px 22px 0px">
     <Text fontSize="xl" fontWeight="bold">
-      Reclamations Table
+      Rattrapages Table
     </Text>
   </CardHeader>
   <CardBody>
     <Table variant="simple">
       <Thead>
         <Tr my=".8rem" pl="0px" color="gray.400">
-          <Th color="gray.400">Type</Th>
-          <Th color="gray.400">Reason</Th>
-          <Th color="gray.400">Time</Th>
           <Th color="gray.400">Status</Th>
-          <Th color="gray.400">Student</Th>
-          <Th color="gray.400">Teacher</Th>
+          <Th color="gray.400">Date</Th>
+          <Th color="gray.400">Time</Th>
+          <Th color="gray.400">Session</Th>
         </Tr>
       </Thead>
       <Tbody>
-        {ListeReclamation.map((reclamation, key) => (
+        {ListeRattrapage.map((rattrapage, key) => (
           <Tr key={key}>
             <Td>
                   <Text fontSize="md" fontWeight="bold">
-                    {reclamation.type}
+                    {rattrapage.status}
                   </Text>
             </Td>
             <Td>
               <Text fontSize="md" fontWeight="bold">
-                {reclamation.reason}
+                {rattrapage.date}
               </Text>
             </Td>
             <Td>
               <Text fontSize="md" fontWeight="bold">
-                {reclamation.time}
+                {rattrapage.time}
               </Text>
             </Td>
             <Td>
               <Text fontSize="md" fontWeight="bold">
-                {reclamation.status}
-              </Text>
-            </Td>
-            <Td>
-            <Text fontSize="md" fontWeight="bold">
-              {reclamation.student_id}
-            </Text>
-            </Td>
-            <Td>
-              <Text fontSize="md" fontWeight="bold" pb=".5rem">
-                {reclamation.teacher_id}
+                {rattrapage.session}
               </Text>
             </Td>
             <Td>
               <Flex direction={{ sm: "column", md: "row" }} align="flex-start">
-                <Button onClick={() => toggleModal(reclamation)} colorScheme="blue" mr={2}>
+                <Button onClick={() => toggleModal(rattrapage)} colorScheme="blue" mr={2}>
                   <Icon as={FaEye} mr={1} />
                   View
                 </Button>
-                <Button onClick={() => handleDelete(reclamation.id)} colorScheme="red" mr={2}>
+                <Button onClick={() => handleDelete(rattrapage.id)} colorScheme="red" mr={2}>
                   <Icon as={FaTrashAlt} mr={1} />
                   Delete
                 </Button>
@@ -161,11 +149,11 @@ function Reclamations({ captions, logo }) {
   </CardBody>
 </Card>
 
-      <ReclamationView isOpen={isOpen} toggleModal={toggleModal} reclamation={selectedReclamation} />
+      <RattrapageView isOpen={isOpen} toggleModal={toggleModal} rattrapage={selectedRattrapage} />
       </Flex>
       </Grid>
     </>
   );
 }
 
-export default Reclamations;
+export default Rattrapages;
