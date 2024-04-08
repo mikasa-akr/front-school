@@ -7,13 +7,13 @@ import MainPanel from '../components/Layout/MainPanel.js';
 import PanelContainer from '../components/Layout/PanelContainer.js';
 import PanelContent from '../components/Layout/PanelContent.js';
 import FixedPlugin from '../components/FixedPlugin/FixedPlugin.js';
-import Configurator from '../components/Configurator/Configurator.js';
 import theme from '../theme/theme.js';
 import routes from '../routesS.js';
 import Groups from '../views/Student/Groups/index.js';
 import Calendar from '../views/Student/Calendar/index.js';
 import Profile from '../views/Student/Profile/index.js';
 import Dashboard from '../views/Student/Dashboard/index.js';
+import Facture from '../views/Student/Facture/index.js';
 
 function Student(props) {
   const { ...rest } = props;
@@ -116,22 +116,16 @@ function Student(props) {
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/calendar" element={<Calendar />} />
                 <Route path="/profile" element={<Profile />} />
+                <Route path="/facture" element={<Facture />} />
 
                 </Routes>              
             </PanelContainer>
           </PanelContent>
         ) : null}
         <Portal>
-          <FixedPlugin secondary={getActiveNavbar(routes)} onOpen={onOpen} />
         </Portal>
-        <Configurator
-          secondary={getActiveNavbar(routes)}
-          isOpen={isOpen}
-          onClose={onClose}
-        />
       </MainPanel>
     </ChakraProvider>
-
     </>
   );
 }

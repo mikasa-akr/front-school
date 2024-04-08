@@ -35,7 +35,6 @@ function Students({ captions, logo }) {
   const colorStatus = useColorModeValue("white", "gray.400");
   const bgColor = useColorModeValue("white", "gray.700");
 
-  // Function to toggle the modal state and set the selected student
   const toggleModal = (student) => {
     setSelectedStudent(student);
     setIsOpen(!isOpen);

@@ -40,12 +40,6 @@ function GroupView({ isOpen, toggleModal, group }) {
                     </Text>
                   </Text>
                   <Text color="gray.400" fontSize="sm" fontWeight="semibold">
-                    Number:{" "}
-                    <Text as="span" color="gray.500">
-                      {group.number}
-                    </Text>
-                  </Text>
-                  <Text color="gray.400" fontSize="sm" fontWeight="semibold">
                     Student:{" "}
                     <Text as="span" color="gray.500">
                     {group.student_id && group.student_id.length > 0 ? group.student_id.map(student => `${student.firstName} ${student.lastName}`).join(', ') : 'None'}

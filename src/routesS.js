@@ -2,6 +2,8 @@ import Dashboard from "./views/Student/Dashboard";
 import Calendar from './views/Student/Calendar';
 import Groups from './views/Student/Groups';
 import Profile from "./views/Student/Profile";
+import Facture from "./views/Student/Facture";
+
 import {
   HomeIcon,
   StatsIcon,
@@ -29,6 +31,13 @@ var dashRoutes = [
     name: "Calendar",
     icon: <CalendarIcon color="inherit" />,
     component: Calendar,
+    layout: "/student",
+  },
+  {
+    path: "/facture",
+    name: "Facture",
+    icon: <TeamIcon color="inherit" />,
+    component: Facture,
     layout: "/student",
   },
   {

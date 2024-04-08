@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode'; // Import jwtDecode for decoding JWT token
 import { Link } from 'react-router-dom';
+import { Modal, ModalOverlay,useColorModeValue,Box,Flex,Text,ModalCloseButton, ModalContent, ModalHeader, ModalBody, ModalFooter, Button } from "@chakra-ui/react";
 import logo from '../../assets/img/signnn.png';
 
 function Login() {
@@ -13,17 +14,25 @@ function Login() {
     const [validationError, setValidationError] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isHovered, setIsHovered] = useState(false);
-
+    const [showPaymentModal, setShowPaymentModal] = useState(false); // State to control modal visibility
+    const textColor = useColorModeValue("gray.700", "white");
+    const bgColor = useColorModeValue("#F8F9FA", "gray.800");
+    const nameColor = useColorModeValue("gray.500", "white");
+  
     const loginAction = (e) => {
         e.preventDefault();
         setIsSubmitting(true);
         axios
-            .post('/login_check', { email, password, id })
+            .post('/login_check', { email, password })
             .then((response) => {
                 const token = response.data.token;
                 localStorage.setItem('token', token);
                 const dataID = response.data.data.id;
                 localStorage.setItem('id', dataID);
+                const datafirst = response.data.data.first_name;
+                localStorage.setItem('first_name', datafirst);
+                const datalast = response.data.data.last_name;
+                localStorage.setItem('last_name', datalast);
 
                 // Decode the token and extract user roles
                 const roles = jwtDecode(token).roles.filter(role => role !== 'ROLE_USER');
@@ -34,7 +43,18 @@ function Login() {
                 } else if (roles.includes('ROLE_TEACHER')) {
                     navigate('/teacher/dashboard');
                 } else if (roles.includes('ROLE_STUDENT')) {
-                    navigate('/student/dashboard');
+                    // Assuming you have a payment status in the response data
+                    const paymentStatus = response.data.data.status;
+
+                    if (paymentStatus === 'payed') {
+                        navigate('/student/dashboard');
+                    } else if (paymentStatus === 'not payed') {
+                        setShowPaymentModal(true); // Show the payment modal
+                    } else {
+                        // Handle other payment statuses or scenarios
+                        // For example, if payment status is undefined
+                        navigate('/student/payment');
+                    }
                 } else {
                     navigate('/');
                 }
@@ -50,6 +70,7 @@ function Login() {
     };
 
     return (
+        <>
         <div style={{ display: 'flex', alignItems: 'center' }}>
             <div style={{ width: '50%' }}>
                 <div className="container">
@@ -122,7 +143,38 @@ function Login() {
             <div>
                 <img src={logo} alt="Logo" style={{ marginLeft: '10%', background: '#f7fafc' }} />
             </div>
-        </div>
+            </div>
+
+    <Modal isOpen={showPaymentModal} onClose={() => setShowPaymentModal(false)}>
+      <ModalOverlay />
+      <ModalContent>
+        <ModalHeader>Student Information</ModalHeader>
+        <ModalCloseButton />
+        <ModalBody>
+            <Box p="24px" bg={bgColor} my="22px" borderRadius="12px">
+              <Flex justify="space-between" w="100%">
+                <Flex direction="column" maxWidth="70%">
+
+                  <Text color="gray.400" fontSize="sm" fontWeight="semibold">
+                  Your payment is currently unpaid. Please pay before accessing student dashboard.
+                  </Text>
+                </Flex>
+                <Flex
+                  direction={{ sm: "column", md: "row" }}
+                  align="flex-start"
+                  p={{ md: "24px" }}
+                />
+              </Flex>
+            </Box>
+        </ModalBody>
+        <ModalFooter>
+          <Button colorScheme="blue" mr={3} onClick={() => setShowPaymentModal(false)}>
+            Close
+          </Button>
+        </ModalFooter>
+      </ModalContent>
+    </Modal>
+    </>
     );
 }
 

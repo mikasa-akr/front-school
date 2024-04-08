@@ -8,7 +8,6 @@ import Card from '../../../../components/Card/Card';
 function GroupUpdate() {
     const [id, setId] = useState(useParams().id)
     const [type, setType] = useState('');
-    const [number, setNumber] = useState('');
     const [teachers, setTeachers] = useState([]);
     const [teacherId, setTeacherId] = useState('');
     const [students, setStudents] = useState([]);
@@ -45,7 +44,6 @@ function GroupUpdate() {
         .then(function (response) {
             let group = response.data
             setType(group.type);
-            setNumber(group.number);
             setStudentId(group.student_id.id);
             setTeacherId(group.teacher_id.id);
         })
@@ -65,7 +63,6 @@ function GroupUpdate() {
         setIsSaving(true);
         axios.put(`/group/${id}/edit`, {
             type: type,
-            number: number,
             student_id: studentId,
             teacher_id: teacherId,
 
@@ -97,7 +94,6 @@ function GroupUpdate() {
               <Heading as="h4" size="md" color="#ffffff">
                 Update Group
               </Heading>
-              <Grid templateColumns="1fr" gap="6">
                 <FormControl>
                   <FormLabel htmlFor="type">Type:</FormLabel>
                   <Select
@@ -110,17 +106,6 @@ function GroupUpdate() {
                     <option value="private">Private</option>
                     <option value="public">Public</option>
                   </Select>
-                </FormControl>
-                <FormControl>
-                  <FormLabel htmlFor="number">Number:</FormLabel>
-                  <Input
-                    id="number"
-                    type="text"
-                    value={number}
-                    onChange={(event) => setNumber(event.target.value)}
-                    placeholder="Enter number"
-                    size="md"
-                  />
                 </FormControl>
                 <FormControl>
                   <FormLabel htmlFor="teacher">Select Teacher:</FormLabel>
@@ -154,7 +139,6 @@ function GroupUpdate() {
                     ))}
                   </Select>
                 </FormControl>
-              </Grid>
               <Button
                 onClick={handleSave}
                 colorScheme="teal"

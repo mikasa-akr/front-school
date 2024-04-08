@@ -17,7 +17,7 @@ import {
 import { FaPencilAlt, FaTrashAlt } from "react-icons/fa";
 import axios from 'axios';
 
-function RattrapageView({ isOpen, toggleModal, group }) {
+function RattrapageView({ isOpen, toggleModal, rattrapage }) {
   const textColor = useColorModeValue("gray.700", "white");
   const bgColor = useColorModeValue("#F8F9FA", "gray.800");
   const nameColor = useColorModeValue("gray.500", "white");
@@ -26,35 +26,35 @@ function RattrapageView({ isOpen, toggleModal, group }) {
     <Modal isOpen={isOpen} onClose={toggleModal}>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Group Information</ModalHeader>
+        <ModalHeader>Rattrapage Information</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
-          {group && (
+          {rattrapage && (
             <Box p="24px" bg={bgColor} my="22px" borderRadius="12px">
               <Flex justify="space-between" w="100%">
                 <Flex direction="column" maxWidth="70%">
                   <Text color="gray.400" fontSize="sm" fontWeight="semibold">
-                    Type:{" "}
+                    Status:{" "}
                     <Text as="span" color="gray.500">
-                      {group.type}
+                      {rattrapage.status}
                     </Text>
                   </Text>
                   <Text color="gray.400" fontSize="sm" fontWeight="semibold">
-                    Number:{" "}
+                    Date:{" "}
                     <Text as="span" color="gray.500">
-                      {group.number}
+                      {rattrapage.date}
                     </Text>
                   </Text>
                   <Text color="gray.400" fontSize="sm" fontWeight="semibold">
-                    Student:{" "}
+                    Time:{" "}
                     <Text as="span" color="gray.500">
-                    {group.student_id && group.student_id.length > 0 ? group.student_id.map(student => `${student.firstName} ${student.lastName}`).join(', ') : 'None'}
+                      {rattrapage.time}
                     </Text>
                   </Text>
                   <Text color="gray.400" fontSize="sm" fontWeight="semibold">
-                    Teacher:{" "}
+                    Session:{" "}
                     <Text as="span" color="gray.500">
-                    {group.teacher_id && group.teacher_id.length > 0 ? group.teacher_id.map(teacher => `${teacher.firstName} ${teacher.lastName}`).join(', ') : 'None'}
+                      {rattrapage.session}
                     </Text>
                   </Text>
                 </Flex>

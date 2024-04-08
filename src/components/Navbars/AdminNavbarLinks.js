@@ -31,6 +31,8 @@ export default function HeaderLinks(props) {
         if (response.status === 200) {
           localStorage.removeItem("token");
           localStorage.removeItem("id");
+          localStorage.removeItem("first_name");
+          localStorage.removeItem("last_name");
         
             // Navigate to login page
             navigate("/login");
@@ -65,16 +67,6 @@ export default function HeaderLinks(props) {
         secondary={props.secondary}
         routes={routes}
         {...props}
-      />
-      <IconButton
-        icon={<SettingsIcon />}
-        cursor="pointer"
-        ms={{ base: "16px", xl: "0px" }}
-        me="16px"
-        onClick={onOpen}
-        color={navbarIcon}
-        variant="ghost"
-        aria-label="Settings"
       />
       <Menu>
         <MenuButton as={IconButton} icon={<BellIcon />} variant="ghost" />

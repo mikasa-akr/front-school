@@ -102,7 +102,6 @@ function Groups({ captions, logo }) {
       <Thead>
         <Tr my=".8rem" pl="0px" color="gray.400">
           <Th color="gray.400">Type</Th>
-          <Th color="gray.400">Number</Th>
           <Th color="gray.400">Student</Th>
           <Th color="gray.400">Teacher</Th>
         </Tr>
@@ -124,11 +123,6 @@ function Groups({ captions, logo }) {
                   </Text>
                 </Flex>
               </Flex>
-            </Td>
-            <Td>
-              <Text fontSize="md" fontWeight="bold">
-                {group.number}
-              </Text>
             </Td>
             <Td>
             <Text fontSize="md" fontWeight="bold">

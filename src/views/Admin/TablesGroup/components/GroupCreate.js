@@ -17,7 +17,6 @@ import {
 
 function GroupCreate() {
   const [type, setType] = useState('');
-  const [number, setNumber] = useState('');
   const [teachers, setTeachers] = useState([]);
   const [teacherId, setTeacherId] = useState('');
   const [students, setStudents] = useState([]);
@@ -47,16 +46,31 @@ function GroupCreate() {
     }
     fetchStudents();
   }, []);
-
+  const handleChange = (event) => {
+    const selectedOptions = Array.from(event.target.selectedOptions, option => option.value);
+    setStudentId(selectedOptions);
+  };
+  const filteredStudents = students.filter(student => {
+    if (type === 'private' && teacherId) {
+      const selectedTeacher = teachers.find(teacher => teacher.id === parseInt(teacherId));
+      // Adjust the condition based on your data structure
+      return student.subscription === 'private' && student.course_types.includes(selectedTeacher.course_name);
+    } else if (type === 'public' && teacherId) {
+      const selectedTeacher = teachers.find(teacher => teacher.id === parseInt(teacherId));
+      // Adjust the condition based on your data structure
+      return student.subscription === 'public' && student.course_types.includes(selectedTeacher.course_name);
+    }
+    return false;
+  });
+    
   const handleSave = () => {
     setIsSaving(true);
-
+  
     axios
       .post('/group/signUp/group', {
         type: type,
-        number: number,
-        teacher_id: teacherId,
-        student_id: studentId,
+        teacherId: teacherId,
+        studentId: studentId.join(' '),  // Join the studentId array into a string
       })
       .then(function (response) {
         Swal.fire({
@@ -67,7 +81,6 @@ function GroupCreate() {
         });
         setIsSaving(false);
         setType('');
-        setNumber('');
         setTeacherId('');
         setStudentId('');
       })
@@ -103,17 +116,6 @@ function GroupCreate() {
             </Select>
           </FormControl>
           <FormControl>
-            <FormLabel htmlFor="number">Number:</FormLabel>
-            <Input
-              id="number"
-              type="text"
-              value={number}
-              onChange={(event) => setNumber(event.target.value)}
-              placeholder="Enter number"
-              size="md"
-            />
-          </FormControl>
-          <FormControl>
             <FormLabel htmlFor="teacher">Select Teacher:</FormLabel>
             <Select
               id="teacher"
@@ -131,22 +133,22 @@ function GroupCreate() {
             </Select>
           </FormControl>
           <FormControl>
-            <FormLabel htmlFor="student">Select Student:</FormLabel>
-            <Select
-              id="student"
-              value={studentId}
-              onChange={(event) => setStudentId(event.target.value)}
-              placeholder="Select student"
-              size="md"
-            >
-              <option value="">Select Student</option>
-              {students.map((student) => (
-                <option key={student.id} value={student.id}>
-                  {student.firstName}
-                </option>
-              ))}
-            </Select>
-          </FormControl>
+  <FormLabel htmlFor="student">Select Student:</FormLabel>
+  <Select
+    id="student"
+    value={studentId}
+    onChange={handleChange}
+    placeholder="Select student"
+    size="md"
+    multiple
+  >
+    {filteredStudents.map((student) => (
+      <option key={student.id} value={student.id}>
+        {student.firstName} {student.lastName}
+      </option>
+    ))}
+  </Select>
+</FormControl>
           <Button
             onClick={handleSave}
             colorScheme="teal"
@@ -157,8 +159,8 @@ function GroupCreate() {
             Save Group
           </Button>
           <Text color="gray.500" textAlign="center">
-                        <Link to="/admin/table/group/*">View All Groups</Link>
-                    </Text>
+            <Link to="/admin/table/group/*">View All Groups</Link>
+          </Text>
         </VStack>
       </Container>
     </Flex>

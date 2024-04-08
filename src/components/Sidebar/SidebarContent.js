@@ -183,8 +183,7 @@ const SidebarContent = ({ logoText, routes }) => {
         alignItems="center"
         fontSize="11px"
       >
-        <CreativeTimLogo w="32px" h="32px" me="10px" />
-        <Text fontSize="sm" mt="3px">
+        <Text fontSize="25px" mt="3px" color={'teal.200'}>
           {logoText}
         </Text>
       </Link>

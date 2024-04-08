@@ -66,7 +66,7 @@ function CalendarDom() {
   }, [id]); // Add id as a dependency to fetch new data when id changes
 
   const handleEventClick = (eventClickInfo) => {
-    if (eventClickInfo.event.extendedProps.status === 'rattrrapage scheduling') {
+    if (eventClickInfo.event.extendedProps.status === 'canceled session' || eventClickInfo.event.extendedProps.status === 'rattrrapage scheduling' || eventClickInfo.event.extendedProps.status === 'done' ) {
       return;
     }
     setSelectedEvent(eventClickInfo.event);
@@ -166,9 +166,9 @@ function CalendarDom() {
           <Box 
           style={{
             backgroundColor: eventInfo.event.extendedProps.status === 'canceled session' ? 'red' : 
-            eventInfo.event.extendedProps.status === 'rattrrapage scheduling' ? 'green' : '',
-            cursor: eventInfo.event.extendedProps.status === 'rattrrapage scheduling' ? 'default' : 'pointer'
-          }}
+            eventInfo.event.extendedProps.status === 'rattrrapage scheduling' ? 'green' : 
+            eventInfo.event.extendedProps.status === 'done' ? 'blue' : '',
+ }}
           >
             <b>{eventInfo.event.title}</b> (Course: {eventInfo.event.extendedProps.course})
             <br />

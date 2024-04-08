@@ -19,69 +19,31 @@ import {
 import Card from '../../../../components/Card/Card';
 
 function SessionCreate() {
-  const [status, setStatus] = useState('');
-  const [date_seance, setDateSeance] = useState('');
   const [time_start, setTimeStart] = useState('');
   const [visibility, setVisibility] = useState('');
-  const [teachers, setTeachers] = useState([]);
-  const [teacherId, setTeacherId] = useState('');
-  const [courses, setCourses] = useState([]);
-  const [courseId, setCourseId] = useState('');
   const [groups, setGroups] = useState([]);
   const [groupId, setGroupId] = useState('');
   const [isSaving, setIsSaving] = useState(false);
   const bgColor = useColorModeValue("#F8F9FA", "gray.800");
 
   useEffect(() => {
-    async function fetchTeachers() {
-      try {
-        const response = await axios.get('/crud/teacher/');
-        setTeachers(response.data);
-      } catch (error) {
-        console.error('Error fetching teachers:', error);
-      }
-    }
-    fetchTeachers();
-  }, []);
-
-  useEffect(() => {
-    const fetchCourses = async () => {
-      try {
-        if (teacherId) {
-          const response = await axios.get(`/crud/teacher/Courses/${teacherId}`);
-          setCourses(response.data);
-        }
-      } catch (error) {
-        console.error('Error fetching courses:', error);
-      }
-    };
-    fetchCourses();
-  }, [teacherId]);
-
-  useEffect(() => {
     async function fetchGroups() {
       try {
-        if (teacherId) {
-          const response = await axios.get(`/crud/teacher/Groupes/${teacherId}`);
+          const response = await axios.get(`/group/`);
           setGroups(response.data);
-        }
       } catch (error) {
         console.error('Error fetching groups:', error);
       }
     }
     fetchGroups();
-  }, [teacherId]);
+  });
 
   const handleSave = () => {
     setIsSaving(true);
 
     axios
       .post('/session/signUp/session', {
-        status: status,
-        date_seance: date_seance,
         time_start: time_start,
-        course_id: courseId,
-        teacher_id: teacherId,
         groupe_id: groupId,
         visibility: visibility
       })
@@ -93,14 +55,9 @@ function SessionCreate() {
           timer: 1500,
         });
         setIsSaving(false);
-        setStatus('');
-        setDateSeance('');
         setTimeStart('');
         setVisibility('');
-        setTeacherId('');
-        setCourseId('');
         setGroupId('');
-        setCourses([]);
         setGroups([]);
       })
       .catch(function (error) {
@@ -119,7 +76,6 @@ function SessionCreate() {
       <Container mt="8%">
         <VStack spacing="5" align="center">
           <Heading as="h2" textAlign="center">Create Session</Heading>
-          <Grid templateColumns="1fr 1fr" gap="6">
             <FormControl mb="3">
               <FormLabel htmlFor="visibility">Visibility:</FormLabel>
               <Input
@@ -128,26 +84,6 @@ function SessionCreate() {
                 name="visibility"
                 value={visibility}
                 onChange={(event) => setVisibility(event.target.value)}
-              />
-            </FormControl>
-            <FormControl mb="3">
-              <FormLabel htmlFor="status">Status:</FormLabel>
-              <Input
-                type="text"
-                id="status"
-                name="status"
-                value={status}
-                onChange={(event) => setStatus(event.target.value)}
-              />
-            </FormControl>
-            <FormControl mb="3">
-              <FormLabel htmlFor="dateSeance">Date Seance:</FormLabel>
-              <Input
-                type="date"
-                id="dateSeance"
-                name="dateSeance"
-                value={date_seance}
-                onChange={(event) => setDateSeance(event.target.value)}
               />
             </FormControl>
             <FormControl mb="3">
@@ -161,37 +97,6 @@ function SessionCreate() {
               />
             </FormControl>
             <FormControl mb="3">
-              <FormLabel htmlFor="teacherId">Teacher:</FormLabel>
-              <Select
-                id="teacherId"
-                name="teacherId"
-                value={teacherId}
-                onChange={(event) => setTeacherId(event.target.value)}
-              >
-                <option value="">Select Teacher</option>
-                {teachers.map((teacher) => (
-                  <option key={teacher.id} value={teacher.id}>
-                    {teacher.lastName}
-                  </option>
-                ))}
-              </Select>
-            </FormControl>
-            <FormControl mb="3">
-              <FormLabel htmlFor="courseId">Course:</FormLabel>
-              <Select
-                id="courseId"
-                name="courseId"
-                value={courseId}
-                onChange={(event) => setCourseId(event.target.value)}
-              >
-                {courses.map((course) => (
-                  <option key={course.id} value={course.id}>
-                    {course.type}
-                  </option>
-                ))}
-              </Select>
-            </FormControl>
-            <FormControl mb="3">
               <FormLabel htmlFor="groupId">Group:</FormLabel>
               <Select
                 id="groupId"
@@ -199,7 +104,6 @@ function SessionCreate() {
                 value={groupId}
                 onChange={(event) => setGroupId(event.target.value)}
               >
-                <option value="">Select Group</option>
                 {groups.map((group) => (
                   <option key={group.id} value={group.id}>
                     Group {group.id}
@@ -207,7 +111,6 @@ function SessionCreate() {
                 ))}
               </Select>
             </FormControl>
-          </Grid>
           <Button
                         onClick={handleSave}
                         colorScheme="teal"
@@ -217,9 +120,6 @@ function SessionCreate() {
                     >
                         Save Session
                     </Button>
-                    <Text color="gray.500" textAlign="center">
-                        <Link to="/admin/table/session/*">View All Sessions</Link>
-                    </Text>
         </VStack>
       </Container>
     </Card>

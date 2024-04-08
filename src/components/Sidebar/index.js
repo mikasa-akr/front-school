@@ -1,32 +1,33 @@
-/*eslint-disable*/
-// chakra imports
 import {
-  Box, useColorModeValue
+  Box,
+  Switch,
+  Text,
+  useColorMode,
+  Flex,
+  useColorModeValue,
 } from "@chakra-ui/react";
-import React from "react";
+import React, { useState } from "react";
 import SidebarContent from "./SidebarContent";
 
-// FUNCTIONS
-
 function Sidebar(props) {
-  // to check for active links and opened collapses
   const mainPanel = React.useRef();
   let variantChange = "0.2s linear";
+  const { colorMode, toggleColorMode } = useColorMode();
+  const [switched, setSwitched] = useState(props.isChecked);
+  const bgColor = useColorModeValue("gray.10", "gray.700");
 
   const { logoText, routes, sidebarVariant } = props;
 
-  //  BRAND
-  //  Chakra Color Mode
   let sidebarBg = "none";
   let sidebarRadius = "0px";
   let sidebarMargins = "0px";
+  let BG = useColorModeValue("white", "gray.700");
   if (sidebarVariant === "opaque") {
-    sidebarBg = useColorModeValue("white", "gray.700");
+    sidebarBg = BG;
     sidebarRadius = "16px";
     sidebarMargins = "16px 0px 16px 16px";
   }
 
-  // SIDEBAR
   return (
     <Box ref={mainPanel}>
       <Box display={{ sm: "none", xl: "block" }} position="fixed">
@@ -41,24 +42,33 @@ function Sidebar(props) {
           my={{
             sm: "16px",
           }}
-          h="calc(100vh - 32px)"
+          h="calc(100vh - 32px)" // Adjust height if needed
           ps="20px"
           pe="20px"
           m={sidebarMargins}
           borderRadius={sidebarRadius}
+          // Add overflow: auto to allow scrolling
+          overflowY="auto"
         >
-          <SidebarContent routes={routes}
-        logoText={"EDU SCHOOL"}
-        display="none"
-        sidebarVariant={sidebarVariant}
-        />
+          <SidebarContent routes={routes} logoText={"EDU SCHOOL"} display="none" sidebarVariant={sidebarVariant} />
+          <Flex
+                justifyContent="space-between"
+                alignItems="center"
+                mt="50%"
+              >
+                <Text fontSize="larger" fontWeight="600" mb="4px">
+                  Dark/Light
+                </Text>
+                <Switch
+                  colorScheme="teal"
+                  isChecked={colorMode === "dark"}
+                  onChange={toggleColorMode}
+                />
+              </Flex>
         </Box>
       </Box>
     </Box>
   );
 }
-
-
-
 
 export default Sidebar;

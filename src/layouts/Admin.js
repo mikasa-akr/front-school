@@ -7,16 +7,19 @@ import MainPanel from '../components/Layout/MainPanel';
 import PanelContainer from '../components/Layout/PanelContainer';
 import PanelContent from '../components/Layout/PanelContent';
 import FixedPlugin from '../components/FixedPlugin/FixedPlugin';
-import Configurator from '../components/Configurator/Configurator';
 import theme from '../theme/theme';
 import routes from '../routes';
 import Tables from '../views/Admin/Tables';
 import Teachers from '../views/Admin/TablesTeacher';
 import Groups from '../views/Admin/TablesGroup';
-import TablesSession from '../views/Admin/TablesSession';
+import TablesSession from '../views/Admin/Calendar';
 import Profile from '../views/Admin/Profile';
 import Reclamation from '../views/Admin/TablesReclamation';
 import Rattrapages from '../views/Admin/TablesRattrapage';
+import Forfait from '../views/Admin/TablesForfait';
+import Expenses from '../views/Admin/TablesExpenses';
+import Facture from '../views/Admin/Factures';
+import Dashboard from '../views/Admin/Dashboard';
 
 function Admin(props) {
   const { ...rest } = props;
@@ -122,18 +125,16 @@ function Admin(props) {
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/table/reclamation/*" element={<Reclamation />} />
                 <Route path='/table/rattrapage/*' element={<Rattrapages/>} />
+                <Route path='/table/forfait/*' element={<Forfait/>} />
+                <Route path='/table/expenses/*' element={<Expenses/>} />
+                <Route path='/facture/*' element={<Facture/>} />
+                <Route path='/dashboard' element={<Dashboard/>} />
                 </Routes>              
             </PanelContainer>
           </PanelContent>
         ) : null}
         <Portal>
-          <FixedPlugin secondary={getActiveNavbar(routes)} onOpen={onOpen} />
         </Portal>
-        <Configurator
-          secondary={getActiveNavbar(routes)}
-          isOpen={isOpen}
-          onClose={onClose}
-        />
       </MainPanel>
     </ChakraProvider>
 

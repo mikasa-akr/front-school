@@ -21,7 +21,7 @@ const VoteRattrapage = () => {
     const [showCardBody, setShowCardBody] = useState(true); // State to control the visibility of CardBody
     const id = localStorage.getItem('id'); // Assuming the token is stored in localStorage
     const [sessionId, setSessionId] = useState(null);
-    const textColor = useColorModeValue("gray.700", "white");
+    const textColor = useColorModeValue("gray.400", "gray.400"); // Define textColor for better readability
     const bgColor = useColorModeValue("gray.10", "gray.700");
     const submitColor = useColorModeValue("teal.300", "teal.300");
 
@@ -38,7 +38,6 @@ const VoteRattrapage = () => {
                 if (sessions.length > 0) {
                     const firstSession = sessions[0];
                     const sessionIdFromResponse = firstSession.sessionId;
-                    console.log('sessionId from response', sessionIdFromResponse);
                     setSessionId(sessionIdFromResponse); // Set the sessionId state
                 } else {
                     console.error('No sessions found in the response');
@@ -64,15 +63,6 @@ const VoteRattrapage = () => {
     
             setShowCardBody(diffHours <= 3);
     
-            if (diffHours > 3) {
-                axios.post(`/rattrapage/count/${sessionId}`)
-                    .then(response => {
-                        console.log(response.data); 
-                    })
-                    .catch(error => {
-                        console.error('Error calling countVotes:', error);
-                    });
-            }
         }
     }, [info, rattrapageDateTime, sessionId]);  
 
@@ -94,7 +84,7 @@ const VoteRattrapage = () => {
     return (
         <Card bg={bgColor} borderRadius={'20px'}>
             <CardHeader>   
-                <Text fontSize='xl' color={textColor} fontWeight='bold'>
+                <Text fontSize='2xl' color={textColor} fontWeight='bold'>
                 <CalendarIcon  mr={2} color={submitColor} />
                     Rattrapage schedule
                 </Text>
@@ -114,7 +104,8 @@ const VoteRattrapage = () => {
                             ))}
                             <Text>Do you agree with this rattrapage?</Text>
                         </Box>
-                    ) : null}
+                    ) : 
+                   <h1>No Rattrapage gived</h1> }
                     <form onSubmit={handleSubmit}>
                         <Flex direction="row" alignItems="center">
                             <RadioGroup value={vote} onChange={handleVoteChange}>

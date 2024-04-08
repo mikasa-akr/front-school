@@ -2,15 +2,22 @@ import Dashboard from "./views/Admin/Dashboard";
 import Tables from './views/Admin/Tables';
 import Teachers from './views/Admin/TablesTeacher';
 import Groups from './views/Admin/TablesGroup';
-import Session from "./views/Admin/TablesSession";
+import Session from "./views/Admin/Calendar";
 import Profile from "./views/Admin/Profile";
 import Reclamation from './views/Admin/TablesReclamation';
 import Rattrapages from "./views/Admin/TablesRattrapage";
+import Forfaits from "./views/Admin/TablesForfait";
+import Expenses from "./views/Admin/TablesExpenses";
+
 import {
   HomeIcon,
   StatsIcon,
   PersonIcon,
 } from "./components/Icons/Icons";
+import { CalendarIcon } from '@chakra-ui/icons';
+import Facture from "./views/Admin/Factures";
+import FactureTeacher from "./views/Admin/Factures/components/TeacherFacture";
+
 var dashRoutes = [
   {
     path: "/dashboard",
@@ -42,8 +49,8 @@ var dashRoutes = [
   },
   {
     path: "/table/session/*",
-    name: "Table Session",
-    icon: <StatsIcon color="inherit" />,
+    name: "Calendar",
+    icon: <CalendarIcon boxSize={3.5} color="inherit" />,
     component: Session,
     layout: "/admin",
   },
@@ -59,6 +66,27 @@ var dashRoutes = [
     name: "Table Rattrapage",
     icon: <StatsIcon color="inherit" />,
     component: Rattrapages,
+    layout: "/admin",
+  },
+  {
+    path: "/table/forfait/*",
+    name: "Table Forfait",
+    icon: <StatsIcon color="inherit" />,
+    component: Forfaits,
+    layout: "/admin",
+  },
+  {
+    path: "/table/expenses/*",
+    name: "Table Expenses",
+    icon: <StatsIcon color="inherit" />,
+    component: Expenses,
+    layout: "/admin",
+  },
+  {
+    path: "/facture/*",
+    name: "Facture",
+    icon: <StatsIcon color="inherit" />,
+    component: Facture,
     layout: "/admin",
   },
   {

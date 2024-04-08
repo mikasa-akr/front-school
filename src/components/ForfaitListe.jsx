@@ -72,9 +72,9 @@ function ForfaitList() {
                       <hr />
                       <div style={{ textAlign: 'center', fontSize: '20px' }}>{forfait.title} includes:</div>
                       <br />
-                      - Number of Hour per Session: {forfait.NbrHourSession}h/month <br />
-                      - Number of Hour per lesson: {forfait.NbrHourSeance}h/week <br />
-                      - Subscription: {forfait.subscription}
+                      - Number of Hour per Session: {forfait.NbrHourSession}h <br />
+                      - Number of Hour per lesson: {forfait.NbrHourSeance}h <br />
+                      - Type: {forfait.subscription}
                     </p>
                     <div style={{ display: 'flex', justifyContent: 'center' }}>
                       <Link to={`/register/student?forfait_id=${forfait.id}`}>

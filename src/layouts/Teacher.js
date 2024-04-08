@@ -7,13 +7,14 @@ import MainPanel from '../components/Layout/MainPanel.js';
 import PanelContainer from '../components/Layout/PanelContainer.js';
 import PanelContent from '../components/Layout/PanelContent.js';
 import FixedPlugin from '../components/FixedPlugin/FixedPlugin.js';
-import Configurator from '../components/Configurator/Configurator.js';
 import theme from '../theme/theme.js';
 import routes from '../routesT.js';
 import Groups from '../views/Teacher/Groups/index.js';
 import Calendar from '../views/Teacher/Calendar/index.js';
 import Students from '../views/Teacher/Students/index.js';
 import Profile from '../views/Teacher/Profile /index.js';
+import Dashboard from '../views/Teacher/Dashboard/index.js';
+import Facture from '../views/Teacher/Facture/index.js';
 
 function Teacher(props) {
   const { ...rest } = props;
@@ -116,19 +117,14 @@ function Teacher(props) {
                 <Route path="/calendar" element={<Calendar />} />
                 <Route path="/students" element={<Students />} />
                 <Route path="/profile" element={<Profile />} />
-
+                <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/facture" element={<Facture />} />
                 </Routes>              
             </PanelContainer>
           </PanelContent>
         ) : null}
         <Portal>
-          <FixedPlugin secondary={getActiveNavbar(routes)} onOpen={onOpen} />
         </Portal>
-        <Configurator
-          secondary={getActiveNavbar(routes)}
-          isOpen={isOpen}
-          onClose={onClose}
-        />
       </MainPanel>
     </ChakraProvider>
 
