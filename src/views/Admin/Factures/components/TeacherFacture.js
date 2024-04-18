@@ -30,8 +30,8 @@ function TeacherFacture
   const [selectedStudent, setSelectedStudent] = useState(null); // State to store the selected student
   const [isOpen, setIsOpen] = useState(false); // State to control the modal in StudentView
   const textColor = useColorModeValue("gray.700", "white");
-  const bgStatus = useColorModeValue("gray.400", "#1a202c");
-  const colorStatus = useColorModeValue("white", "gray.400");
+  const bgStatus = useColorModeValue("red.400", "red.400");
+  const colorStatus = useColorModeValue("white", "white");
   const bgColor = useColorModeValue("white", "gray.700");
 
   const toggleModal = (student) => {
@@ -128,9 +128,15 @@ function TeacherFacture
                     </Text>
                   </Td>          
                   <Td>
-                    <Text fontSize="md" fontWeight="bold" pb=".5rem">
+                  <Badge
+                      bg={fature.status === "payed" ? "green.400" : bgStatus}
+                      color={fature.status === "payed" ? "white" : colorStatus}
+                      fontSize="16px"
+                      p="3px 10px"
+                      borderRadius="8px"
+                    >
                       {fature.status}
-                    </Text>
+                    </Badge> 
                   </Td>
                   <Td>
                     <Flex direction={{ sm: "column", md: "row" }} align="flex-start">

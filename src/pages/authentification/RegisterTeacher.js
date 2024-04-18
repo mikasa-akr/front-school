@@ -77,7 +77,7 @@ function RegisterTeacher() {
                 <div className="col-12">
                     <nav className="navbar navbar-expand-lg navbar-light">
                         <div className="container-fluid">
-                            <a className="navbar-brand" href="/" style={{ color: "#4fd1c5" }}>school</a>
+                            <a className="navbar-brand" href="/" style={{ color: "#4fd1c5" }}>Edu School</a>
                             <div className="d-flex ms-auto align-items-center">
                                 <p className="me-3 mb-0">Are you a Student?</p>
                                 <a className="navbar-brand" style={{ color: "#4fd1c5", fontSize: "16px" }} href='/register/forfait'>Apply as Student</a>

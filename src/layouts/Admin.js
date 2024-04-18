@@ -13,7 +13,6 @@ import Tables from '../views/Admin/Tables';
 import Teachers from '../views/Admin/TablesTeacher';
 import Groups from '../views/Admin/TablesGroup';
 import TablesSession from '../views/Admin/Calendar';
-import Profile from '../views/Admin/Profile';
 import Reclamation from '../views/Admin/TablesReclamation';
 import Rattrapages from '../views/Admin/TablesRattrapage';
 import Forfait from '../views/Admin/TablesForfait';
@@ -122,7 +121,6 @@ function Admin(props) {
                 <Route path="/table/teacher/*" element={<Teachers />} />
                 <Route path="/table/session/*" element={<TablesSession />} />
                 <Route path="/table/group/*" element={<Groups />} />
-                <Route path="/profile" element={<Profile />} />
                 <Route path="/table/reclamation/*" element={<Reclamation />} />
                 <Route path='/table/rattrapage/*' element={<Rattrapages/>} />
                 <Route path='/table/forfait/*' element={<Forfait/>} />

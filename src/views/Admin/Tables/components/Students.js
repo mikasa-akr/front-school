@@ -91,8 +91,8 @@ function Students({ captions, logo }) {
   if (!isLoaded) return <Flex>Loading...</Flex>;
 
   return (
-    <>
-    <Grid >
+<>
+  <Grid>
     <Flex direction="column" pt={{ base: "120px", md: "75px" }}>
       <Card overflowX={{ sm: "scroll", xl: "hidden" }} bg={bgColor} borderRadius={'20px'}>
         <CardHeader p="6px 0px 22px 0px">
@@ -104,27 +104,23 @@ function Students({ captions, logo }) {
           <Table variant="simple">
             <Thead>
               <Tr my=".8rem" pl="0px" color="gray.400">
-              <Th color="gray.400">Student</Th>
-              <Th color="gray.400">Number</Th>
-              <Th color="gray.400">Gender</Th>
-              <Th color="gray.400">Status</Th>
-              <Th color="gray.400">Age</Th>     
-              <Th color="gray.400">Course</Th>    
-            </Tr>
+                <Th color="gray.400">Student</Th>
+                <Th color="gray.400">Number</Th>
+                <Th color="gray.400">Gender</Th>
+                <Th color="gray.400">Status</Th>
+                <Th color="gray.400">Age</Th>
+                <Th color="gray.400">Course</Th>
+                <Th color="gray.400">Actions</Th>
+              </Tr>
             </Thead>
             <Tbody>
               {listeStudent.map((student, key) => (
                 <Tr key={key}>
                   <Td minWidth={{ sm: "250px" }} pl="0px">
-                    <Flex
-                      align="center"
-                      py=".8rem"
-                      minWidth="100%"
-                      flexWrap="nowrap"
-                    >
-                      <Avatar src={student.avatar} w="50px" borderRadius="25px" me="18px" />
-                      <Flex direction="column">
-                        <Text fontSize="md" fontWeight="bold" minWidth="100%">
+                    <Flex align="center" py=".8rem" minWidth="100%" flexWrap="wrap">
+                    <Avatar src={require(`../../../../assets/${student.avatar}`)} style={{ maxWidth: "100px", height: "auto", marginRight: "10px" }} alt="avatar" />                    
+                    <Flex direction="column" minWidth="0">
+                        <Text fontSize="md" fontWeight="bold">
                           {student.firstName} {student.lastName}
                         </Text>
                         <Text fontSize="sm" fontWeight="normal">
@@ -153,7 +149,7 @@ function Students({ captions, logo }) {
                     >
                       {student.status}
                     </Badge>
-                  </Td>          
+                  </Td>
                   <Td>
                     <Text fontSize="md" fontWeight="bold" pb=".5rem">
                       {student.age}
@@ -161,33 +157,21 @@ function Students({ captions, logo }) {
                   </Td>
                   <Td>
                     <Text fontSize="md" fontWeight="bold" pb=".5rem">
-                      {student.course_types}
+                      {student.course_types.join(', ')}
                     </Text>
                   </Td>
                   <Td>
-                    <Flex direction={{ sm: "column", md: "row" }} align="flex-start">
-                      <Button
-                        onClick={() => toggleModal(student)}
-                        colorScheme="blue"
-                        mr={2}
-                      >
-                        <Icon as={FaEye} mr={1} />
+                    <Flex>
+                      <Button onClick={() => toggleModal(student)} colorScheme="blue" mr={2}>
                         View
                       </Button>
-                      <Button
-                        onClick={() => handleDelete(student.id)}
-                        colorScheme="red"
-                        mr={2}
-                      >
-                        <Icon as={FaTrashAlt} mr={1} />
+                      <Button onClick={() => handleDelete(student.id)} colorScheme="red" mr={2}>
                         Delete
                       </Button>
-                        <Button as={RouterLink} to={`/admin/tables/update/${student.id}`} colorScheme="green" mr={2}>
-                          <Icon as={FaPencilAlt} mr={1} />
-                          Edit
-                        </Button>
+                      <Button as={RouterLink} to={`/admin/tables/update/${student.id}`} colorScheme="green" mr={2}>
+                        Edit
+                      </Button>
                       <Button as={RouterLink} to={`/admin/tables/create/`} colorScheme="green">
-                        <Icon as={FaPlus} mr={1} />
                         Create
                       </Button>
                     </Flex>
@@ -199,9 +183,10 @@ function Students({ captions, logo }) {
         </CardBody>
       </Card>
       <StudentView isOpen={isOpen} toggleModal={toggleModal} student={selectedStudent} />
-      </Flex>
-      </Grid>
-    </>
+    </Flex>
+  </Grid>
+</>
+
   );
 }
 

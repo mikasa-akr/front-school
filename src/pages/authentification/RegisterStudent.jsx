@@ -1,15 +1,26 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import Swal from 'sweetalert2';
-import Layout from '../../components/Layout';
-import MultiSelect from "react-multi-select-component";
-import logo from '../../assets/img/signnn.png'; // Import your logo image
+import { Button, FormControl, FormLabel, Text, Input, Select } from '@chakra-ui/react';
+import { CardElement, useElements, useStripe } from '@stripe/react-stripe-js';
+import { Link, useLocation } from 'react-router-dom';
+import logo from '../../assets/img/signnn.png';
 
-function RegisterStudent() {
+const RegisterStudent = () => {
+    const stripe = useStripe();
+    const elements = useElements();
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
     const forfait_id = queryParams.get('forfait_id');
+    const amount = queryParams.get('forfait_price');
+
+    const [error, setError] = useState(null);
+    const [success, setSuccess] = useState(false);
+    const [isSaving, setIsSaving] = useState(false);
+    const [method, setMethod] = useState('stripeCard');
+    const [fileTransaction, setFileTransaction] = useState(null);
+    const [studentId, setStudentId] = useState(null); // State to store student ID
+
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [email, setEmail] = useState('');
@@ -17,10 +28,9 @@ function RegisterStudent() {
     const [number, setNumber] = useState('');
     const [gender, setGender] = useState('');
     const [age, setAge] = useState('');
-    const [avatar, setAvatar] = useState('');
+    const [avatar, setAvatar] = useState(null);
     const [courses, setCourses] = useState([]);
     const [selectedCourseIds, setSelectedCourseIds] = useState([]);
-    const [isSaving, setIsSaving] = useState(false);
 
     useEffect(() => {
         fetchCourses();
@@ -35,29 +45,56 @@ function RegisterStudent() {
         }
     };
 
-    const handleSave = () => {
+    const handleRegisterAndPay = async () => {
         setIsSaving(true);
-
-        axios
-            .post('/signUp/student', {
-                firstName,
-                lastName,
-                email,
-                password,
-                number,
-                gender,
-                age,
-                avatar,
-                course_id: selectedCourseIds,
-                forfait_id,
-            })
-            .then(function (response) {
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Student saved successfully!',
-                    showConfirmButton: false,
-                    timer: 1500,
-                });
+    
+        if (!selectedCourseIds.length) {
+            setError('Please select at least one course.');
+            setIsSaving(false);
+            return;
+        }
+    
+        try {
+            const formData = new FormData();
+            formData.append('firstName', firstName);
+            formData.append('lastName', lastName);
+            formData.append('email', email);
+            formData.append('password', password);
+            formData.append('number', number);
+            formData.append('gender', gender);
+            formData.append('age', age);
+            formData.append('avatar', avatar);
+            const courseIdsAsNumbers = selectedCourseIds.map(id => Number(id));
+            formData.append('course_ids', JSON.stringify(courseIdsAsNumbers));
+            formData.append('forfait_id', forfait_id);
+            formData.append('method', method);
+            formData.append('amount', amount);
+            formData.append('fileTransaction', fileTransaction);
+    
+            const response = await axios.post('/signUp/student', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            });
+            
+            console.log('Response data:', response.data); // Log the response data
+            
+            const { clientSecret, studentId } = response.data;
+            console.log('Student ID:', studentId); // Log the student ID
+            
+            setStudentId(studentId);
+    
+            const paymentResult = await stripe.confirmCardPayment(clientSecret, {
+                payment_method: {
+                    card: elements.getElement(CardElement),
+                }
+            });
+    
+            if (paymentResult.error) {
+                setIsSaving(false);
+                setError(`Payment failed: ${paymentResult.error.message}`);
+            } else {
+                setSuccess(true);
                 setIsSaving(false);
                 setFirstName('');
                 setLastName('');
@@ -66,27 +103,61 @@ function RegisterStudent() {
                 setNumber('');
                 setGender('');
                 setAge('');
-                setAvatar('');
+                setAvatar(null);
                 setSelectedCourseIds([]);
-            })
-            .catch(function (error) {
+    
                 Swal.fire({
-                    icon: 'error',
-                    title: 'An Error Occurred!',
+                    icon: 'success',
+                    title: 'Registration and payment successful!',
                     showConfirmButton: false,
                     timer: 1500,
+                }).then(() => {
+                    // Call saveData only if studentId is available
+                    if (studentId) {
+                        saveData(studentId, formData);
+                    }
                 });
-                setIsSaving(false);
-            });
+            }
+        } catch (error) {
+            setIsSaving(false);
+            setError('An error occurred during registration and payment.');
+            console.error('Error registering and paying:', error);
+        }
     };
+    
+    
+    const saveData = async (studentId) => {
+        console.log('Student ID in saveData:', studentId); // Log the student ID
+        if (!studentId) {
+            console.warn('studentId not available yet. Skipping saveData');
+            return;
+        }
+    
+        try {
+            const formData = new FormData();
+    
+            await axios.post(`/save/${studentId}`, formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            });
+        } catch (error) {
+            console.error('Error saving data:', error);
+        }
+    };
+    
 
+    const handleFileChange = (e) => {
+        setAvatar(e.target.files[0]);
+        setFileTransaction(e.target.files[0]);
+    };
     return (
         <>
         <div className="row justify-content-md-center">
             <div className="col-12">
                 <nav className="navbar navbar-expand-lg navbar-light">
                     <div className="container-fluid">
-                        <a className="navbar-brand" href="/" style={{ color: "#4fd1c5" }}>school</a>
+                        <a className="navbar-brand" href="/" style={{ color: "#4fd1c5" }}>Edu School</a>
                         <div className="d-flex ms-auto align-items-center">
                             <p className="me-3 mb-0">Are you a Teacher?</p>
                             <a className="navbar-brand" style={{ color: "#4fd1c5", fontSize: "16px" }} href='/register/teacher'>Apply as Teacher</a>
@@ -188,23 +259,46 @@ function RegisterStudent() {
                                     </div>
                                     <div className="mb-3">
                                         <label htmlFor="courseSelect">Select Courses:</label>
-                                        <select multiple={true} className="form-control multi-select" id="courseSelect" value={selectedCourseIds} onChange={(e) => setSelectedCourseIds(Array.from(e.target.selectedOptions, (option) => option.value))}>
-                                            {courses.map(course => (
-                                                <option key={course.id} value={course.id}>
-                                                    {course.type}
-                                                </option>
-                                            ))}
-                                        </select>
+                                        <select
+    multiple={true}
+    className="form-control multi-select"
+    id="courseSelect"
+    value={selectedCourseIds}
+    onChange={(e) => setSelectedCourseIds(Array.from(e.target.selectedOptions, (option) => option.value))}
+>
+    {courses.map(course => (
+        <option key={course.id} value={course.id}>
+            {course.type}
+        </option>
+    ))}
+</select>
                                     </div>
-                                    <button
-                                        disabled={isSaving}
-                                        onClick={handleSave}
-                                        type="button"
-                                        className="btn"
-                                        style={{ width: "120px", backgroundColor: "#4fd1c5", color: "#ffffff", borderRadius: '40px', marginLeft: '35%' }}
-                                    >
-                                        {isSaving ? 'Saving...' : 'Sign Up'}
-                                    </button>
+                                    <Input type="file" onChange={handleFileChange} />
+                                    <Text>Payment</Text>
+                                    <FormControl mb={4}>
+                <FormLabel>Payment Method</FormLabel>
+                <Select value={method} onChange={(e) => setMethod(e.target.value)}>
+                    <option value="stripeCard">Stripe Card</option>
+                    <option value="transaction">File Transaction</option>
+                </Select>
+            </FormControl>
+            {method === 'stripeCard' && (
+                <FormControl mb={4}>
+                    <FormLabel>Card Details</FormLabel>
+                    <CardElement options={{ hidePostalCode: true }} />
+                </FormControl>
+            )}
+            {method === 'transaction' && (
+                <FormControl mb={4}>
+                    <FormLabel>Upload Transaction File</FormLabel>
+                    <Input type="file" onChange={handleFileChange} />
+                </FormControl>
+            )}
+            {error && <Text color="red.500">{error}</Text>}
+            {success && <Text color="green.500">Payment successful!</Text>}
+                                        <Button colorScheme="teal" onClick={handleRegisterAndPay} disabled={!stripe || isSaving}>
+                                            {isSaving ? 'Processing...' : 'Register & Pay'}
+                                        </Button>
                                     <p className="text-center">
                                         Already have an account? <Link to="/login" style={{ color: "#4fd1c5" }}>Login here</Link>
                                     </p>

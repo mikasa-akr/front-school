@@ -7,7 +7,6 @@ import RegisterStudent from './RegisterStudent';
 import RegisterTeacher from './RegisterTeacher';
 import ChooseRes from './ChooseRes';
 import ForfaitList from '../../components/ForfaitListe';
-import PaymentForm from '../PaymentForm';
 
 function MainAuthentification() {
   
@@ -19,7 +18,6 @@ function MainAuthentification() {
           <Route exact path="/student"  element={<RegisterStudent/>} />
           <Route exact path="/teacher"  element={<RegisterTeacher/>} />
           <Route exact path="/forfait/"  element={<ForfaitList/>} />
-          <Route exact path="/payment"  element={<PaymentForm/>} />
 
           </Routes>
       </>

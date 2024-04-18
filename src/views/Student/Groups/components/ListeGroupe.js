@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Box, Text, UnorderedList, ListItem,useColorModeValue } from '@chakra-ui/react';
+import { Box, Text, Table, Thead, Tbody, Tr, Th, Td, useColorModeValue, Image,Flex,Avatar } from '@chakra-ui/react';
 import Swal from 'sweetalert2';
 
 function ListeGroupe() {
@@ -21,17 +21,35 @@ function ListeGroupe() {
     return (
         <Box bg={bgColor} marginTop="10%" className="container" borderRadius={'20px'}>
             <Box className="row" marginBottom="2">
-                <Box className="col-md-6">
-                    <Text fontSize="40px" marginBottom="4">List of Groups</Text>
-                    <UnorderedList listStyleType="none" padding="0">
-                        {selectedGroups.map((group) => (
-                            <ListItem key={group.id} marginBottom="2" padding="3">
-                                <Text>
-                                    Number: {group.number} &nbsp; Type: {group.type}
-                                </Text>
-                            </ListItem>
-                        ))}
-                    </UnorderedList>
+                <Box className="col-md-12">
+                    <Text fontSize="xl" marginBottom="4" fontWeight="bold">List of Groups</Text>
+                    <Table variant="simple">
+                        <Thead>
+                            <Tr>
+                                <Th>Group</Th>
+                                <Th>Type</Th>
+                                <Th>Teacher</Th>
+                            </Tr>
+                        </Thead>
+                        <Tbody>
+                            {selectedGroups.map((group) => (
+                                <Tr key={group.id}>
+                                    <Td minWidth={{ sm: "250px" }} pl="0px">
+                                        <Flex align="center" py=".8rem" minWidth="100%" flexWrap="wrap">
+                                        <Avatar src={require(`../../../../assets/${group.avatar}`)} style={{ maxWidth: "100px", height: "auto", marginRight: "10px" }} alt="avatar" />                    
+                                        <Flex direction="column" minWidth="0">
+                                            <Text fontSize="md" fontWeight="bold">
+                                            {group.name}
+                                            </Text>
+                                        </Flex>
+                                        </Flex>
+                                    </Td>             
+                                    <Td>{group.type}</Td>
+                                    <Td>{group.teacher}</Td>
+                                </Tr>
+                            ))}
+                        </Tbody>
+                    </Table>
                 </Box>
             </Box>
         </Box>

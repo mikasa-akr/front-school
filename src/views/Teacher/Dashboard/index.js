@@ -9,6 +9,9 @@ import Card from "../../../components/Card/Card";
 import TotalGroup from "./components/TotalGroup";
 import TotalSession from "./components/TotalSession";
 import TotalAnnulation from "./components/TotalAnnulation";
+import CountSession from "./components/CountSession";
+import TotalSalary from "./components/TotalSalary";
+import CountFacture from "./components/CountFacture";
 
 export default function Dashboard() {
   const firstName = localStorage.getItem('first_name');
@@ -24,17 +27,32 @@ export default function Dashboard() {
         </Card>
       </Flex>
     </Flex>
-    <Flex flexDirection="row" >
-        <Flex >
-          <TotalGroup />
-        </Flex>
-        <Flex >
-          <TotalSession />
-        </Flex>
-        <Flex >
-          <TotalAnnulation />
-        </Flex>
+    <Flex flexDirection="row" pt={{ base: "120px" }}>
+     <SimpleGrid columns={4} spacing={8} width="100%">
+    <Flex justifyContent="center">
+      <TotalSalary />
     </Flex>
+    <Flex justifyContent="center">
+      <TotalGroup />
+    </Flex>
+    <Flex justifyContent="center">
+      <TotalAnnulation />
+    </Flex>
+    <Flex justifyContent="center">
+      <TotalSession />
+    </Flex>
+    </SimpleGrid>
+  </Flex>
+  <Flex flexDirection="row" pt={{ base: "120px" }} mt={'5%'}>
+  <SimpleGrid columns={2} spacing={10} width="100%">
+      <Flex justifyContent="center">
+      <CountSession />
+    </Flex>
+    <Flex justifyContent="center">
+      <CountFacture />
+    </Flex>
+  </SimpleGrid>
+  </Flex>
     </>
   );
 }

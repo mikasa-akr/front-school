@@ -7,6 +7,7 @@ import {
   HomeIcon,
   StatsIcon,
   PersonIcon,
+  DocumentIcon,
   TeamIcon,
 } from "./components/Icons/Icons.js";
 import { CalendarIcon } from '@chakra-ui/icons'; // Importing the schedule icon from react-icons
@@ -36,14 +37,14 @@ var dashRoutes = [
   {
     path: "/students",
     name: "Students",
-    icon: <TeamIcon color="inherit" />,
+    icon: <PersonIcon color="inherit" />,
     component: Students,
     layout: "/teacher",
   },
   {
     path: "/facture",
     name: "Facture",
-    icon: <TeamIcon color="inherit" />,
+    icon: <DocumentIcon color="inherit" />,
     component: Facture,
     layout: "/teacher",
   },

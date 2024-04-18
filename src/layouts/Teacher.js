@@ -13,8 +13,8 @@ import Groups from '../views/Teacher/Groups/index.js';
 import Calendar from '../views/Teacher/Calendar/index.js';
 import Students from '../views/Teacher/Students/index.js';
 import Profile from '../views/Teacher/Profile /index.js';
-import Dashboard from '../views/Teacher/Dashboard/index.js';
-import Facture from '../views/Teacher/Facture/index.js';
+import Dashboard from '../views/Teacher/Dashboard';
+import Facture from '../views/Teacher/Facture';
 
 function Teacher(props) {
   const { ...rest } = props;

@@ -4,12 +4,14 @@ import {
   Flex,
   IconButton,
   Menu,
+  Avatar,
   MenuButton,
   MenuItem,
   MenuList,
+  useColorMode,
   useColorModeValue,
 } from "@chakra-ui/react";
-import { BellIcon, SettingsIcon, CloseIcon } from "@chakra-ui/icons";
+import { BellIcon, SettingsIcon, CloseIcon, SunIcon, MoonIcon } from "@chakra-ui/icons";
 import { ProfileIcon } from "../Icons/Icons";
 import SidebarResponsive from "../Sidebar/SidebarResponsive";
 import PropTypes from "prop-types";
@@ -22,7 +24,9 @@ export default function HeaderLinks(props) {
 
   const navbarIcon = useColorModeValue("gray.500", "gray.200");
   const navigate = useNavigate();
+  const { colorMode, toggleColorMode } = useColorMode();
   const id = localStorage.getItem('id');
+  const avatar = localStorage.getItem('avatar');
 
   const handleLogout = () => {
     axios.put(`/update_status/${id}`, { status: 'offline' })
@@ -33,6 +37,8 @@ export default function HeaderLinks(props) {
           localStorage.removeItem("id");
           localStorage.removeItem("first_name");
           localStorage.removeItem("last_name");
+          localStorage.removeItem("avatar");
+
         
             // Navigate to login page
             navigate("/login");
@@ -46,7 +52,6 @@ export default function HeaderLinks(props) {
     });
 };
 
-
   return (
     <Flex
       pe={{ sm: "0px", md: "16px" }}
@@ -55,8 +60,7 @@ export default function HeaderLinks(props) {
       flexDirection="row"
     >
       <Menu>
-        <MenuButton as={IconButton} icon={<ProfileIcon />} variant="ghost"/>
-        <MenuList p="16px 8px">
+      <MenuButton as={Avatar} src={require(`../../assets/${avatar}`)} style={{ maxWidth: "50px", height: "auto", marginRight: "10px" }} alt="avatar" />        <MenuList p="16px 8px">
           <MenuItem onClick={handleLogout} icon={<CloseIcon />}>
             Logout
           </MenuItem>
@@ -69,8 +73,16 @@ export default function HeaderLinks(props) {
         {...props}
       />
       <Menu>
-        <MenuButton as={IconButton} icon={<BellIcon />} variant="ghost" />
+        <MenuButton as={IconButton} icon={<BellIcon />} variant="ghost" fontSize="xl" />
       </Menu>
+      <Flex ml="8px">
+        <IconButton
+          icon={colorMode === "dark" ? <SunIcon /> : <MoonIcon />}
+          variant="ghost"
+          fontSize="xl"
+          onClick={toggleColorMode}
+        />
+      </Flex>
     </Flex>
   );
 }

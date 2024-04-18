@@ -3,7 +3,7 @@ import axios from "axios";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
-import { Box, Button, Modal, Select, ModalOverlay, ModalContent,useColorModeValue, ModalHeader, ModalBody, ModalFooter, FormControl, FormLabel, Input } from "@chakra-ui/react";
+import { Box, Button, Modal, Select, ModalOverlay, ModalContent, useColorModeValue, ModalHeader, ModalBody, ModalFooter, FormControl, FormLabel, Input } from "@chakra-ui/react";
 import Card from "../../../../components/Card/Card";
 
 function CalendarDom() {
@@ -66,7 +66,7 @@ function CalendarDom() {
   }, [id]); // Add id as a dependency to fetch new data when id changes
 
   const handleEventClick = (eventClickInfo) => {
-    if (eventClickInfo.event.extendedProps.status === 'canceled session' || eventClickInfo.event.extendedProps.status === 'rattrrapage scheduling' || eventClickInfo.event.extendedProps.status === 'done' ) {
+    if (eventClickInfo.event.extendedProps.status === 'rattrrapage scheduling' || eventClickInfo.event.extendedProps.status === 'done' ) {
       return;
     }
     setSelectedEvent(eventClickInfo.event);
@@ -124,24 +124,22 @@ function CalendarDom() {
     }
   };
   
-  const handleCreateRattrapage = async () => {
+  const handleCompleteSession = async () => {
     try {
-      // Perform validation checks for date and time input fields here
-      
-      const response = await axios.post(`/rattrapage/create/${selectedEvent.id}`, {
-        date: date,
-        time: time,
-      });
-      
+      const response = await axios.post(`/facture/teacher/complete/${selectedEvent.id}`);
+      if (response.status === 201) {
         setRegistrationStatus('success');
-        setRegistrationMessage('Rattrapage registered successfully');
-
-      setShowMessage(true); 
+        setRegistrationMessage('Session completed successfully');
+      } else {
+        setRegistrationStatus('error');
+        setRegistrationMessage('Failed to complete session');
+      }
+      setShowMessage(true);
       console.log(response.data);
     } catch (error) {
-      console.error("Error creating rattrapage:", error);
+      console.error("Error completing session:", error);
       setRegistrationStatus('error');
-      setRegistrationMessage('An error occurred while registration rattrapage');
+      setRegistrationMessage('An error occurred while completing session');
       setShowMessage(true);
     }
   };
@@ -192,12 +190,13 @@ function CalendarDom() {
                   <FormLabel>Time</FormLabel>
                   <Input type="time" value={time} onChange={(e) => setTime(e.target.value)} />
                 </FormControl>
-                <Button colorScheme="blue" onClick={handleCreateRattrapage} mt={4} mr={3}>Confirm</Button>
               </>
             ) : (
               <>
                 {timeDifference >= 24 ? (
-                  <Button colorScheme="blue" onClick={handleAnnulation} mr={3}>Confirm</Button>
+                  <>
+                    <Button colorScheme="blue" onClick={handleCompleteSession} mr={3}>Complete Session</Button>
+                  </>
                 ) : (
                   <>
                     <Select
@@ -228,4 +227,3 @@ function CalendarDom() {
 }
 
 export default CalendarDom;
-

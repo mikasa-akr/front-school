@@ -15,6 +15,7 @@ function CalendarDom() {
   const [registrationMessage, setRegistrationMessage] = useState('');
   const [showMessage, setShowMessage] = useState(false);
   const [timeDifference, setTimeDifference] = useState(0);
+  const [selectedReclamationType, setSelectedReclamationType] = useState('');
   const bgColor = useColorModeValue("white", "gray.700");
 
   const id = localStorage.getItem('id'); // Assuming the token is stored in localStorage
@@ -63,6 +64,7 @@ function CalendarDom() {
     fetchEvents(); // Call fetchEvents immediately inside useEffect
 
   }, [id]); // Add id as a dependency to fetch new data when id changes
+
   const handleEventClick = (eventClickInfo) => {
     if (eventClickInfo.event.extendedProps.status === 'canceled session' || eventClickInfo.event.extendedProps.status === 'rattrrapage scheduling' || eventClickInfo.event.extendedProps.status === 'done' ) {
       return;
@@ -90,7 +92,7 @@ function CalendarDom() {
         console.log("Selected event is missing");
         return;
       }
-  
+
       const formattedData = {
         reason: reason,
         date_seance: selectedEvent.start.toISOString(), // Convert date_seance to ISO string
@@ -99,9 +101,18 @@ function CalendarDom() {
       };
   
       const sessionId = selectedEvent.id; // Extract the session ID from the selected event
+
+      // Conditionally call the annulation or reclame endpoint based on the selectedReclamationType
+      let response;
+      if (selectedReclamationType === 'annulation') {
+        response = await axios.post(`/reclamation/annulation/session/${sessionId}`, formattedData);
+      } else if (selectedReclamationType === 'reclame') {
+        response = await axios.post(`/reclamation/student/reclame/${sessionId}`, { reason: reason });
+      } else {
+        console.error("Invalid reclamation type");
+        return;
+      }
   
-      const response = await axios.post(`/reclamation/annulation/teacher/${sessionId}`, formattedData); // Use the session ID in the request URL
-      
       // Update the registration status and message based on the response
       if (response.status === 201) {
         setRegistrationStatus('success');
@@ -137,11 +148,11 @@ function CalendarDom() {
         eventClick={handleEventClick}
         eventContent={(eventInfo) => (
           <Box
-          style={{
-            backgroundColor: eventInfo.event.extendedProps.status === 'canceled session' ? 'red' : 
-            eventInfo.event.extendedProps.status === 'rattrrapage scheduling' ? 'green' : 
-            eventInfo.event.extendedProps.status === 'done' ? 'blue' : '',
-          }}
+            style={{
+              backgroundColor: eventInfo.event.extendedProps.status === 'canceled session' ? 'red' : 
+              eventInfo.event.extendedProps.status === 'rattrrapage scheduling' ? 'green' : 
+              eventInfo.event.extendedProps.status === 'done' ? 'blue' : '',
+            }}
           >
             <b>{eventInfo.event.title}</b> (Course: {eventInfo.event.extendedProps.course})
             <br />
@@ -153,26 +164,53 @@ function CalendarDom() {
       <Modal isOpen={isModalOpen} onClose={handleCloseModal}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Annulation</ModalHeader>
+          <ModalHeader>Annulation / Reclame</ModalHeader>
           <ModalBody>
-{timeDifference >= 24 ? (
-                <Button colorScheme="blue" onClick={handleAnnulation} mr={3}>Confirm</Button>
+            {selectedReclamationType !== 'annulation' && selectedReclamationType !== 'reclame' && (
+              <>
+                <Button colorScheme="blue" variant="outline" onClick={() => setSelectedReclamationType('annulation')} mb={3} ml={3}>Annulation</Button>
+                <Button colorScheme="blue" variant="outline" onClick={() => setSelectedReclamationType('reclame')} mb={3} ml={8}>Reclame</Button>
+              </>
+            )}
+            {selectedReclamationType === 'annulation' && (
+              <>
+                {timeDifference >= 24 ? (
+                  <Button colorScheme="blue" onClick={handleAnnulation} mr={3}>Confirm</Button>
                 ) : (
-  <>
-    <Select
-      id="reason"
-      value={reason}
-      onChange={(event) => setReason(event.target.value)}
-      placeholder="Select Reason"
-      size="md"
-    >
-      <option value="sick">Sick</option>
-      <option value="urgency">Urgency</option>
-    </Select>
-    <Button colorScheme="blue" onClick={handleAnnulation} mr={3}>Confirm</Button>
-  </>
-)}
-            <Button onClick={handleCloseModal}>Cancel</Button>
+                  <>
+                    <Select
+                      id="reason"
+                      value={reason}
+                      onChange={(event) => setReason(event.target.value)}
+                      placeholder="Select Reason"
+                      size="md"
+                      mb={3}
+                    >
+                      <option value="sick">Sick</option>
+                      <option value="urgency">Urgency</option>
+                    </Select>
+                    <Button colorScheme="blue" onClick={handleAnnulation} mr={3}>Confirm</Button>
+                  </>
+                )}
+              </>
+            )}
+            
+            {selectedReclamationType === 'reclame' && (
+              <>
+                <Select
+                  id="reason"
+                  value={reason}
+                  onChange={(event) => setReason(event.target.value)}
+                  placeholder="Select Reason"
+                  size="md"
+                  mb={3}
+                >
+                  <option value="retard_prof">Retard prof</option>
+                  <option value="absence_prof">Absence prof</option>
+                </Select>
+                <Button colorScheme="blue" onClick={handleAnnulation} mr={3}>Confirm</Button>
+              </>
+            )}
             {showMessage && (
               <span>{registrationStatus === 'success' ? registrationMessage : registrationStatus === 'error' ? registrationMessage : ''}</span>
             )}
@@ -181,6 +219,7 @@ function CalendarDom() {
       </Modal>
     </Card>
   );
+  
 }
 
 export default CalendarDom;

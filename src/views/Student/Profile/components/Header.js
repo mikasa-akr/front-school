@@ -1,28 +1,44 @@
-// Chakra imports
 import {
   Avatar,
   Box,
-  Button,
   Flex,
   Text,
   useColorModeValue,
 } from "@chakra-ui/react";
-import React from "react";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 
-const Header = ({
-  backgroundHeader,
-  backgroundProfile,
-  avatarImage,
-  name,
-  email,
-}) => {
+const Header = ({ backgroundHeader, backgroundProfile, tabs }) => {
+  const [studentInfo, setStudentInfo] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const text = useColorModeValue("gray.700", "white");
+  const border = useColorModeValue("white", "rgba(255, 255, 255, 0.31)");
+  const email = useColorModeValue("gray.400", "gray.300");
+  const ID = localStorage.getItem("id"); // Assuming the token is stored in localStorage
+
+  useEffect(() => {
+    const fetchListeStudent = async () => {
+      try {
+        const response = await axios.get(`/crud/student/${ID}`);
+        setStudentInfo(response.data);
+        setIsLoading(false);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    fetchListeStudent();
+  }, []);
+
+  if (isLoading || !studentInfo) return <div>Loading...</div>;
+
+  const { avatar, firstName, lastName, email: userEmail } = studentInfo;
+
   // Chakra color mode
-  const textColor = useColorModeValue("gray.700", "white");
-  const borderProfileColor = useColorModeValue(
-    "white",
-    "rgba(255, 255, 255, 0.31)"
-  );
-  const emailColor = useColorModeValue("gray.400", "gray.300");
+  const textColor = text;
+  const borderProfileColor = border;
+  const emailColor = email;
+
   return (
     <Box
       mb={{ sm: "205px", md: "75px", xl: "70px" }}
@@ -70,7 +86,7 @@ const Header = ({
             textAlign={{ sm: "center", md: "start" }}>
             <Avatar
               me={{ md: "22px" }}
-              src={avatarImage}
+              src={require(`../../../../assets/${avatar}`)}
               w='80px'
               h='80px'
               borderRadius='15px'
@@ -81,13 +97,13 @@ const Header = ({
                 color={textColor}
                 fontWeight='bold'
                 ms={{ sm: "8px", md: "0px" }}>
-                {name}
+                {firstName} {lastName}
               </Text>
               <Text
                 fontSize={{ sm: "sm", md: "md" }}
                 color={emailColor}
                 fontWeight='semibold'>
-                {email}
+                {userEmail}
               </Text>
             </Flex>
           </Flex>

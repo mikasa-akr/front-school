@@ -101,6 +101,7 @@ function Groups({ captions, logo }) {
     <Table variant="simple">
       <Thead>
         <Tr my=".8rem" pl="0px" color="gray.400">
+          <Th color="gray.400">Group</Th>
           <Th color="gray.400">Type</Th>
           <Th color="gray.400">Student</Th>
           <Th color="gray.400">Teacher</Th>
@@ -116,26 +117,27 @@ function Groups({ captions, logo }) {
                 minWidth="100%"
                 flexWrap="nowrap"
               >
-                <Avatar src={logo} w="50px" borderRadius="12px" me="18px" />
+                <Avatar src={require(`../../../../assets/${group.avatar}`)} w="50px" borderRadius="12px" me="18px" />
                 <Flex direction="column">
                   <Text fontSize="md" fontWeight="bold" minWidth="100%">
-                    {group.type}
+                    {group.name}
                   </Text>
                 </Flex>
               </Flex>
             </Td>
             <Td>
+              <Text fontSize="md" fontWeight="bold">{group.type}</Text>
+            </Td>
+            <Td>
             <Text fontSize="md" fontWeight="bold">
   {group.student_id && group.student_id.length > 0
-    ? group.student_id.map((student) => `${student.firstName} ${student.lastName}`).join(", ")
+    ? group.student_id.map((student) => `${student.firstName} ${student.lastName}`).join(" , ")
     : "None"}
 </Text>
             </Td>
             <Td>
               <Text fontSize="md" fontWeight="bold" pb=".5rem">
-                {group.teacher_id && group.teacher_id.length > 0
-                  ? group.teacher_id.map((teacher) => `${teacher.firstName} ${teacher.lastName}`).join(", ")
-                  : "None"}
+                {group.teacher_first} {group.teacher_last}
               </Text>
             </Td>
             <Td>

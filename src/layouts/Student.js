@@ -14,6 +14,7 @@ import Calendar from '../views/Student/Calendar/index.js';
 import Profile from '../views/Student/Profile/index.js';
 import Dashboard from '../views/Student/Dashboard/index.js';
 import Facture from '../views/Student/Facture/index.js';
+import Annulations from '../views/Student/TablesAnnulation/index.js';
 
 function Student(props) {
   const { ...rest } = props;
@@ -117,6 +118,7 @@ function Student(props) {
                 <Route path="/calendar" element={<Calendar />} />
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/facture" element={<Facture />} />
+                <Route path="/liste/*" element={<Annulations />} />
 
                 </Routes>              
             </PanelContainer>

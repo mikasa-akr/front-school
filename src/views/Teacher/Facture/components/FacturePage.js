@@ -1,101 +1,218 @@
 import React, { useEffect, useState } from "react";
 import {
   Text,
+  Center,
   Grid,
+  Flex,
+  Checkbox,
+  Button,
+  FormControl,
+  FormLabel,
   Table,
   Thead,
   Tbody,
   Th,
   Tr,
   Td,
-  Box,
-  Flex,
   useColorModeValue,
 } from "@chakra-ui/react";
+import {
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
+  Select,
+} from "@chakra-ui/react"; // Import missing components
 import axios from "axios";
-import Card from "../../../../components/Card/Card.js";
-import CardBody from "../../../../components/Card/CardBody.js";
-import CardHeader from "../../../../components/Card/CardHeader.js";
+import { CardElement, Elements, useElements, useStripe } from '@stripe/react-stripe-js';
+import { loadStripe } from '@stripe/stripe-js';
+const stripePromise = loadStripe("pk_test_51OyasWBNWgwGqFvzzcG0jn80B1lHgihqrkhbRdcCvexIeAZcLur7KbRpipxkKC9DTkO1xhsLehILhrBNm8Wi9ep400Td1NEJiI");
 
 function FacturePage() {
+  const stripe = useStripe();
+  const elements = useElements();
   const [factures, setFactures] = useState([]);
   const [isLoaded, setIsLoaded] = useState(false);
-  const [total, setTotal] = useState(0);
-  const bgColor = useColorModeValue("white", "gray.700");
-  const ID = localStorage.getItem('id'); // Assuming the token is stored in localStorage
+  const [selectedFactureIds, setSelectedFactureIds] = useState([]);
+  const [showModal, setShowModal] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [error, setError] = useState(null);
+  const bgColor = useColorModeValue("black", "white");
+  const ID = localStorage.getItem('id');
 
   useEffect(() => {
     const fetchFactures = async () => {
-        try {
-            const response = await axios.get(`/facture/teacher/${ID}`);
-            const responseData = response.data;
-            setFactures(responseData.factures);
-            setTotal(responseData.total);
-            setIsLoaded(true);
-        } catch (error) {
-            console.error('Error fetching factures:', error);
-        }
+      try {
+        const response = await axios.get(`/facture/teacher/${ID}`);
+        const responseData = response.data;
+  
+        // Directly use factures from the server
+        setFactures(responseData.factures);
+        setIsLoaded(true);
+      } catch (error) {
+        console.error('Error fetching factures:', error);
+      }
     };
-
+  
     fetchFactures();
-}, [ID]);
+  }, [ID]);
+  
 
+  const handlePay = () => {
+    setShowModal(true);
+  };
+
+  const closeModal = () => {
+    setShowModal(false);
+  };
+
+  const handlePayment = async () => {
+    setIsSaving(true);
+
+    try {
+      const response = await axios.post(`facture/teacher/payment/teacher/${ID}`, {
+        factureIds: selectedFactureIds
+      });
+
+      const { clientSecret } = response.data;
+
+      const paymentResult = await stripe.confirmCardPayment(clientSecret, {
+        payment_method: {
+          card: elements.getElement(CardElement),
+        }
+      });
+
+      if (paymentResult.error) {
+        setIsSaving(false);
+        setError(`Payment failed: ${paymentResult.error.message}`);
+      } else {
+        setIsSaving(false);
+        closeModal();
+        setFactures([]);
+        setSelectedFactureIds([]);
+        setIsLoaded(false);
+        setShowModal(false);
+
+        console.log('Payment successful!');
+      }
+    } catch (error) {
+      setIsSaving(false);
+      setError('An error occurred during payment.');
+      console.error('Error processing payment:', error);
+    }
+  };
+  const handleCheckboxChange = (id) => {
+    // 1. Create a copy of the factures array
+    const updatedFactures = [...factures];
+  
+    // 2. Toggle the selected state of the clicked facture
+    const newFactures = updatedFactures.map((facture) => 
+      facture.id === id ? { ...facture, selected: !facture.selected } : facture
+    );
+  
+    // 3. Set the state with the updated factures
+    setFactures(newFactures);
+  
+    // 4. Access the updated facture ID
+    const factureId = id;
+    console.log(factureId)
+  
+    // 5. Update selectedFactureIds based on selection
+    setSelectedFactureIds(prevIds => {
+      if (newFactures.find(facture => facture.id === id).selected) {
+        return [...prevIds, factureId];
+      } else {
+        return prevIds.filter(id => id !== factureId);
+      }
+    });
+  };
+  
   if (!isLoaded) return <div>Loading...</div>;
 
   return (
-    <Grid>
-      <Flex direction="column" pt={{ base: "120px", md: "75px" }}>
-        <Card bg={bgColor} overflowX={{ sm: "scroll", xl: "hidden" }} borderRadius={'20px'}>
-          <CardHeader p="6px 0px 22px 0px">
-            <Text fontSize="xl" fontWeight="bold">
-              Factures
-            </Text>
-          </CardHeader>
-          <CardBody>
-            <Table variant="simple" size="sm">
-              <Thead>
-                <Tr my=".8rem" pl="0px" color="gray.400">
-                  <Th color="gray.400">Status</Th>
-                  <Th color="gray.400">Date Pay</Th>
-                  <Th color="gray.400">Amount</Th>
-                </Tr>
-              </Thead>
-              <Tbody>
-                {factures.map((facture, key) => (
-                  <Tr key={key}>
-                    <Td>
-                      <Text fontSize="md" fontWeight="bold">
-                        {facture.status}
-                      </Text>
-                    </Td>
-                    <Td>
-                      <Text fontSize="md" fontWeight="bold">
-                        {facture.datePay}
-                      </Text>
-                    </Td>
-                    <Td>
-                      <Text fontSize="md" fontWeight="bold">
-                        {facture.amount} $
-                      </Text>
-                    </Td>
-                  </Tr>
-                ))}
-                <Tr>
-                  <Td></Td>
-                  <Td></Td>
-                  <Td>
-                    <Text fontSize="md" fontWeight="bold">
-                      Total : {total} $
-                    </Text>
-                  </Td>
-                </Tr>
-              </Tbody>
-            </Table>
-          </CardBody>
-        </Card>
+    <Grid gap={6}>
+      <Flex direction="column" pt={{ base: "120px", md: "75px" }} mt={20}>
+        <Text fontSize="2xl" fontWeight="bold" color={bgColor} mb={4}>Pending Factures</Text>
+        <Table variant="simple">
+          <Thead>
+            <Tr>
+              <Th>Facture ID</Th>
+              <Th>Amount</Th>
+              <Th>Status</Th>
+              <Th>Date</Th>
+              <Th>Select</Th>
+            </Tr>
+          </Thead>
+          <Tbody>
+            {factures.filter(facture => facture.status !== 'payed').map((facture, index) => (
+              <Tr key={facture.id}>
+                <Td>{facture.id}</Td>
+                <Td>{facture.amount} $</Td>
+                <Td>{facture.status}</Td>
+                <Td>{facture.dateAt}</Td>
+                <Td>
+                  <Checkbox isChecked={facture.selected} onChange={() => handleCheckboxChange(facture.id)} />
+                </Td>
+              </Tr>
+            ))}
+          </Tbody>
+        </Table>
+        <Center mt={4}>
+          <Button size="md" onClick={handlePay}>Pay</Button>
+        </Center>
+        <Text fontSize="2xl" fontWeight="bold" color={bgColor} mt={8} mb={4}>Paid Factures</Text>
+        <Table variant="simple">
+          <Thead>
+            <Tr>
+              <Th>Facture ID</Th>
+              <Th>Amount</Th>
+              <Th>Status</Th>
+              <Th>Date Paid</Th>
+            </Tr>
+          </Thead>
+          <Tbody>
+            {factures.filter(facture => facture.status === 'payed').map((facture, index) => (
+              <Tr key={facture.id}>
+                <Td>{facture.id}</Td>
+                <Td>{facture.amount} $</Td>
+                <Td>{facture.status}</Td>
+                <Td>{facture.datePay}</Td>
+              </Tr>
+            ))}
+          </Tbody>
+        </Table>
+  
+        <Modal isOpen={showModal} onClose={closeModal}>
+          <ModalOverlay/>
+          <ModalContent>
+            <ModalHeader>Payment</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>
+              <FormControl mt={4}>
+                <FormLabel>Card Details</FormLabel>
+                <CardElement options={{ hidePostalCode: true }} />
+              </FormControl>
+            </ModalBody>
+            <ModalFooter>
+              <Button size="md" colorScheme="teal" mr={3} onClick={handlePayment} isLoading={isSaving}>
+                Pay
+              </Button>
+              <Button size="md" onClick={closeModal}>Cancel</Button>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
       </Flex>
     </Grid>
   );
 }
 
-export default FacturePage;
+const WrappedFacturePage = () => (
+  <Elements stripe={stripePromise}>
+    <FacturePage />
+  </Elements>
+);
+
+export default WrappedFacturePage;

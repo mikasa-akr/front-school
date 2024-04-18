@@ -8,9 +8,12 @@ import {
   HomeIcon,
   StatsIcon,
   PersonIcon,
+  DocumentIcon,
   TeamIcon,
   CalendarIcon
 } from "./components/Icons/Icons.js";
+import Annulation from "./views/Student/TablesAnnulation";
+
 var dashRoutes = [
   {
     path: "/dashboard",
@@ -36,8 +39,15 @@ var dashRoutes = [
   {
     path: "/facture",
     name: "Facture",
-    icon: <TeamIcon color="inherit" />,
+    icon: <DocumentIcon color="inherit" />,
     component: Facture,
+    layout: "/student",
+  },
+  {
+    path: "/liste/*",
+    name: "Reclamation",
+    icon: <StatsIcon color="inherit" />,
+    component: Annulation,
     layout: "/student",
   },
   {

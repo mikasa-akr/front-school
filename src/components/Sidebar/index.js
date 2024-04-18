@@ -51,20 +51,7 @@ function Sidebar(props) {
           overflowY="auto"
         >
           <SidebarContent routes={routes} logoText={"EDU SCHOOL"} display="none" sidebarVariant={sidebarVariant} />
-          <Flex
-                justifyContent="space-between"
-                alignItems="center"
-                mt="50%"
-              >
-                <Text fontSize="larger" fontWeight="600" mb="4px">
-                  Dark/Light
-                </Text>
-                <Switch
-                  colorScheme="teal"
-                  isChecked={colorMode === "dark"}
-                  onChange={toggleColorMode}
-                />
-              </Flex>
+
         </Box>
       </Box>
     </Box>

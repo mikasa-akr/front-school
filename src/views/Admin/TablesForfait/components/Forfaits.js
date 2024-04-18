@@ -11,7 +11,7 @@ function Forfaits() {
   const [forfaits, setForfaits] = useState([]);
   const [hoveredIndex, setHoveredIndex] = useState(-1);
   const bgColor = useColorModeValue("white", "gray.700");
-  const bgC = useColorModeValue("gray.100", "gray.800");
+  const bgC = useColorModeValue("beige", "gray.800");
 
   useEffect(() => {
     fetchForfaits();

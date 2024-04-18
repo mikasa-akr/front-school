@@ -12,6 +12,7 @@ import {
     Icon,RadioGroup, Stack, Flex 
 } from '@chakra-ui/react';
 import { CalendarIcon } from '@chakra-ui/icons'; // Importing the schedule icon from react-icons
+import gens from "../../../../assets/img/calendrier.png";
 
 const VoteRattrapage = () => {
     const [vote, setVote] = useState('');
@@ -83,11 +84,13 @@ const VoteRattrapage = () => {
 
     return (
         <Card bg={bgColor} borderRadius={'20px'}>
-            <CardHeader>   
-                <Text fontSize='2xl' color={textColor} fontWeight='bold'>
-                <CalendarIcon  mr={2} color={submitColor} />
+            <CardHeader>  
+            <Box textAlign="center" display="flex" alignItems="center"> 
+            <img src={gens} alt="Group Icon" width={50} height={50} />
+                <Text fontSize='2xl' color={textColor} padding={15}>
                     Rattrapage schedule
                 </Text>
+            </Box>
             </CardHeader>
             {showCardBody && (
                 <CardBody>

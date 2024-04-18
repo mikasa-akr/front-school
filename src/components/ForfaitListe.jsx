@@ -51,7 +51,7 @@ function ForfaitList() {
               }}
             >
               <Link
-                to={`/register/student?forfait_id=${forfait.id}`}
+                to={`/register/student?forfait_id=${forfait.id}?forfait_price=${forfait.price}`}
                 className="text-decoration-none"
               >
                 <div

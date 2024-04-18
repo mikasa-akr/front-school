@@ -3,7 +3,6 @@ import Tables from './views/Admin/Tables';
 import Teachers from './views/Admin/TablesTeacher';
 import Groups from './views/Admin/TablesGroup';
 import Session from "./views/Admin/Calendar";
-import Profile from "./views/Admin/Profile";
 import Reclamation from './views/Admin/TablesReclamation';
 import Rattrapages from "./views/Admin/TablesRattrapage";
 import Forfaits from "./views/Admin/TablesForfait";
@@ -13,10 +12,12 @@ import {
   HomeIcon,
   StatsIcon,
   PersonIcon,
+  WalletIcon,
+  TeamIcon,
+  DocumentIcon
 } from "./components/Icons/Icons";
 import { CalendarIcon } from '@chakra-ui/icons';
 import Facture from "./views/Admin/Factures";
-import FactureTeacher from "./views/Admin/Factures/components/TeacherFacture";
 
 var dashRoutes = [
   {
@@ -26,24 +27,24 @@ var dashRoutes = [
     component: Dashboard,
     layout: "/admin",
   },
-  {
+  { 
     path: "/tables/*",
     name: "Table Student",
-    icon: <StatsIcon color="inherit" />,
+    icon: <PersonIcon color="inherit" />,
     component: Tables,
     layout: "/admin",
   },
   {
     path: "/table/teacher/*",
     name: "Table Teacher",
-    icon: <StatsIcon color="inherit" />,
+    icon: <PersonIcon color="inherit" />,
     component: Teachers,
     layout: "/admin",
   },
   {
     path: "/table/group/*",
     name: "Table Group",
-    icon: <StatsIcon color="inherit" />,
+    icon: <TeamIcon color="inherit" />,
     component: Groups,
     layout: "/admin",
   },
@@ -71,38 +72,23 @@ var dashRoutes = [
   {
     path: "/table/forfait/*",
     name: "Table Forfait",
-    icon: <StatsIcon color="inherit" />,
+    icon: <DocumentIcon color="inherit" />,
     component: Forfaits,
     layout: "/admin",
   },
   {
     path: "/table/expenses/*",
     name: "Table Expenses",
-    icon: <StatsIcon color="inherit" />,
+    icon: <WalletIcon color="inherit" />,
     component: Expenses,
     layout: "/admin",
   },
   {
     path: "/facture/*",
     name: "Facture",
-    icon: <StatsIcon color="inherit" />,
+    icon: <DocumentIcon color="inherit" />,
     component: Facture,
     layout: "/admin",
-  },
-  {
-    name: "ACCOUNT PAGES",
-    category: "account",
-    state: "pageCollapse",
-    views: [
-      {
-        path: "/profile",
-        name: "Profile",
-        icon: <PersonIcon color="inherit" />,
-        secondaryNavbar: true,
-        component: Profile,
-        layout: "/admin",
-      },
-    ],
   },
   
   

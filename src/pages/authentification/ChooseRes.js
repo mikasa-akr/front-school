@@ -24,7 +24,7 @@ function ChooseRes() {
                             <div className="d-flex">
                                 <ul className="navbar-nav">
                                     <li className="nav-item">
-                                        <a className="nav-link" aria-current="page" href="/">school</a>
+                                        <a className="nav-link" aria-current="page" href="/">Edu School</a>
                                     </li>
                                 </ul>
                             </div>

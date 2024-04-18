@@ -122,7 +122,7 @@ function Teachers({ captions, logo }) {
                       minWidth="100%"
                       flexWrap="nowrap"
                     >
-                      <Avatar src={logo} w="50px" borderRadius="12px" me="18px" />
+                      <Avatar src={require(`../../../../assets/${teacher.avatar}`)} w="50px" borderRadius="12px" me="18px" />
                       <Flex direction="column">
                         <Text fontSize="md" fontWeight="bold" minWidth="100%">
                           {teacher.firstName} {teacher.lastName}

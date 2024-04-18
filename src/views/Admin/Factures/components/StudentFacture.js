@@ -1,41 +1,35 @@
-import { Flex, Radio, RadioGroup, Text, Tbody,Select } from "@chakra-ui/react";
-import React, { useEffect, useState } from "react";
-import {
-  Avatar,
-  Icon,
-  Td,
-  Tr,
-  Grid,
-  Button,
-  useColorModeValue,
-  Badge,
-  Table,
-  Thead,
-  Th,
-} from "@chakra-ui/react";
+import { Flex, Select, Table,useColorModeValue, Thead, Tbody,Badge, Tr, Th, Td, Button, Modal, ModalOverlay, ModalContent, ModalBody, Text } from "@chakra-ui/react";import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Card from "../../../../components/Card/Card.js";
 import CardBody from "../../../../components/Card/CardBody.js";
 import CardHeader from "../../../../components/Card/CardHeader.js";
+
 function StudentFacture({ captions, logo }) {
   const [listeFacture, setListeFacture] = useState([]);
   const [isLoaded, setIsLoaded] = useState(false);
-  const [selectedStudent, setSelectedStudent] = useState(null); // State to store the selected student
-  const [isOpen, setIsOpen] = useState(false); // State to control the modal in StudentView
   const [selectedOption, setSelectedOption] = useState("transaction");
-  const textColor = useColorModeValue("gray.700", "white");
-  const bgStatus = useColorModeValue("gray.400", "#1a202c");
-  const colorStatus = useColorModeValue("white", "gray.400");
-  const bgColor = useColorModeValue("white", "gray.700");
+  const [isOpen, setIsOpen] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(null);
   const paymentMethods = ["transaction", "stripeCard"]; // Payment method options
-  const toggleModal = (student) => {
-    setSelectedStudent(student);
-    setIsOpen(!isOpen);
-  };
-
+  const bgStatus = useColorModeValue("red.400", "red.400");
+  const colorStatus = useColorModeValue("white", "white");
   useEffect(() => {
     fetchListeFacture();
   }, []);
+
+  const handleUpdateStatus = async (id) => {
+    try {
+      // Make a PUT request to the update_status endpoint with the payment ID
+      await axios.put(`/facture/student/update_status/${id}`, { status: "payed" });
+      // Assuming id is available in the scope
+      // You might need to adjust this part based on your component's structure
+      console.log("Status updated successfully");
+      // You can also perform any additional actions after the status is updated
+    } catch (error) {
+      console.error("Error updating status:", error);
+      // Handle errors if necessary
+    }
+  };
 
   const fetchListeFacture = async () => {
     try {
@@ -44,47 +38,46 @@ function StudentFacture({ captions, logo }) {
       });
       const filteredData = response.data.filter((facture) =>
         facture.method === selectedOption
-      ); // Filter data based on method
+      );
       setListeFacture(filteredData);
       setIsLoaded(true);
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   };
 
   const handleChangeOption = async (event) => {
     const value = event.target.value;
     setSelectedOption(value);
-    setIsLoaded(false); // Set loaded to false to display the loading message
+    setIsLoaded(false);
     try {
       const response = await axios.get("/facture/student", {
         params: { method: value },
       });
       const filteredData = response.data.filter((facture) =>
         facture.method === value
-      ); // Filter data based on method
+      );
       setListeFacture(filteredData);
-      setIsLoaded(true); // Set loaded to true once data is fetched
+      setIsLoaded(true);
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
+  };
+
+  const handleViewImage = (imageUrl) => {
+    setSelectedImage(imageUrl);
+    setIsOpen(true);
   };
 
   if (!isLoaded) return <Flex>Loading...</Flex>;
 
   return (
     <>
-      <Grid>
-        <Flex direction="column" pt={{ base: "120px", md: "75px" }}>
-          <Card
-            overflowX={{ sm: "scroll", xl: "hidden" }}
-            bg={bgColor}
-            borderRadius={"20px"}
-          >
-            <CardHeader p="6px 0px 22px 0px">
-            </CardHeader>
-            <Flex justifyContent="center" mb={4}>
-              <Select
+      <Flex direction="column" pt={{ base: "120px", md: "75px" }}>
+        <Card overflowX={{ sm: "scroll", xl: "hidden" }} borderRadius={"20px"}>
+          <CardHeader p="6px 0px 22px 0px"></CardHeader>
+          <Flex justifyContent="center" mb={4}>
+          <Select
                 value={selectedOption}
                 onChange={handleChangeOption}
               >
@@ -105,6 +98,7 @@ function StudentFacture({ captions, logo }) {
                     <Th color="gray.400">Date</Th>
                     <Th color="gray.400">File</Th>
                     <Th color="gray.400">Status</Th>
+                    
                   </Tr>
                 </Thead>
                 <Tbody>
@@ -126,26 +120,29 @@ function StudentFacture({ captions, logo }) {
                         </Text>
                       </Td>
                       <Td>
-                      <img
-  src={require("../../../../assets/3e1e6e4ab844cb27d49a43239daf9f42.png")} // Assuming filename is in transactionFile  style={{ maxWidth: "200px", maxHeight: "100px" }}
-/>
+                      <Button onClick={() => handleViewImage(fature.file)}>View</Button>
                     </Td>
                       <Td>
-                        <Text fontSize="md" fontWeight="bold">
-                          {fature.status}
-                        </Text>
-                      </Td>
+                      <Badge
+                      bg={fature.status === "payed" ? "green.400" : bgStatus}
+                      color={fature.status === "payed" ? "white" : colorStatus}
+                      fontSize="16px"
+                      p="3px 10px"
+                      borderRadius="8px"
+                    >
+                      {fature.status}
+                    </Badge>                      </Td>
                       <Td>
                         <Flex
                           direction={{ sm: "column", md: "row" }}
                           align="flex-start"
                         >
-                          <Button
-                            colorScheme="teal"
-                            mr={2}
-                          >
-                            Valid
-                          </Button>
+                    <Button
+                      colorScheme="teal"
+                      onClick={() => handleUpdateStatus(fature.id)} // Assuming the payment ID is available in facture.id
+                    >
+                      Valid
+                    </Button>
                         </Flex>
                       </Td>
                     </Tr>
@@ -188,18 +185,37 @@ function StudentFacture({ captions, logo }) {
                       </Text>
                     </Td>
                     <Td>
-                      <Text fontSize="md" fontWeight="bold">
-                        {fature.status}
-                      </Text>
-                    </Td>
+                    <Badge
+                      bg={fature.status === "payed" ? "green.400" : bgStatus}
+                      color={fature.status === "payed" ? "white" : colorStatus}
+                      fontSize="16px"
+                      p="3px 10px"
+                      borderRadius="8px"
+                    >
+                      {fature.status}
+                    </Badge>
+                  </Td> 
                   </Tr>
                 ))}
               </Tbody>
             </Table>)}
-            </CardBody>
-          </Card>
-        </Flex>
-      </Grid>
+          </CardBody>
+        </Card>
+      </Flex>
+      {isOpen && (
+        <Modal isOpen={isOpen} onClose={() => setIsOpen(false)}>
+          <ModalOverlay />
+          <ModalContent>
+          <ModalBody display="flex" justifyContent="center" alignItems="center">
+  <img
+    src={require(`../../../../assets/${selectedImage}`)}
+    alt="Factura Image"
+    style={{ maxWidth: "1000vh" }}
+  />
+</ModalBody>
+          </ModalContent>
+        </Modal>
+      )}
     </>
   );
 }
