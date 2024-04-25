@@ -10,7 +10,8 @@ function StudentUpdate() {
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [email, setEmail] = useState('');
-    const [gender, setGender] = useState('');
+    const [genders, setGender] = useState([]);
+    const [selectedGenderId, setSelectedGenderId] = useState('');
     const [number, setNumber] = useState('');
     const [age, setAge] = useState('');
     const [isSaving, setIsSaving] = useState(false);
@@ -22,6 +23,7 @@ function StudentUpdate() {
     useEffect(() => {
         fetchCourses();
         fetchForfait();
+        fetchGender();
     }, []);
 
     const fetchCourses = async () => {
@@ -41,6 +43,15 @@ function StudentUpdate() {
         }
     };
 
+    const fetchGender = async () => {
+        try {
+            const response = await axios.get('/gender'); // Adjust the URL accordingly
+            setCourses(response.data);
+        } catch (error) {
+            console.error('Error fetching genders:', error);
+        }
+    };
+
     useEffect(() => {
         axios.put(`/crud/student/${id}/edit`)
         .then(function (response) {
@@ -53,6 +64,7 @@ function StudentUpdate() {
             setAge(student.age);
             setSelectedCourseId(student.course.id);
             setSelectedForfaitId(student.forfait.id);
+            setSelectedGenderId(student.gender.id);
 
         })
         .catch(function (error) {
@@ -73,7 +85,7 @@ function StudentUpdate() {
             firstName: firstName,
             lastName: lastName,
             email:email,
-            gender:gender,
+            gender:genders,
             number:number,
             age:age,
             course_id: selectedCourseId,
@@ -136,13 +148,13 @@ function StudentUpdate() {
                     <FormControl>
                         <FormLabel>Gender:</FormLabel>
                         <Select
-                            value={gender}
-                            onChange={(e) => setGender(e.target.value)}
-                            name="gender"
+                            value={selectedGenderId}
+                            onChange={(e) => setSelectedGenderId(e.target.value)}
+                            name="course"
                         >
-                            <option value="male">Male</option>
-                            <option value="female">Female</option>
-                            <option value="children">Children</option>
+                            {genders.map(gend => (
+                                <option key={gend.id} value={gend.id}>{gend.name}</option>
+                            ))}
                         </Select>
                     </FormControl>
                     <FormControl>

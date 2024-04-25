@@ -171,9 +171,6 @@ function Students({ captions, logo }) {
                       <Button as={RouterLink} to={`/admin/tables/update/${student.id}`} colorScheme="green" mr={2}>
                         Edit
                       </Button>
-                      <Button as={RouterLink} to={`/admin/tables/create/`} colorScheme="green">
-                        Create
-                      </Button>
                     </Flex>
                   </Td>
                 </Tr>

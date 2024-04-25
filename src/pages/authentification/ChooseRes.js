@@ -5,6 +5,7 @@ import { jwtDecode } from 'jwt-decode'; // Import jwtDecode for decoding JWT tok
 import { Link } from 'react-router-dom';
 import teacher from '../../Icons/teacher.png';
 import student from '../../Icons/student.png';
+import image from '../../assets/img/Snapshot_2024-04-23_15-26-04-removebg-preview.png'
 
 function ChooseRes() {
     const [selectedOption, setSelectedOption] = useState(null);
@@ -24,7 +25,7 @@ function ChooseRes() {
                             <div className="d-flex">
                                 <ul className="navbar-nav">
                                     <li className="nav-item">
-                                        <a className="nav-link" aria-current="page" href="/">Edu School</a>
+                                        <a className="nav-link" aria-current="page" href="/"><img src={image}  style={{color: '#4FD1C5',width:'150px'}} /></a>
                                     </li>
                                 </ul>
                             </div>

@@ -8,6 +8,7 @@ import {
   MenuButton,
   MenuItem,
   MenuList,
+  Text,
   useColorMode,
   useColorModeValue,
 } from "@chakra-ui/react";
@@ -27,6 +28,9 @@ export default function HeaderLinks(props) {
   const { colorMode, toggleColorMode } = useColorMode();
   const id = localStorage.getItem('id');
   const avatar = localStorage.getItem('avatar');
+  const first = localStorage.getItem('first_name');
+  const last = localStorage.getItem('last_name');
+  const roles = localStorage.getItem('roles');
 
   const handleLogout = () => {
     axios.put(`/update_status/${id}`, { status: 'offline' })
@@ -38,10 +42,10 @@ export default function HeaderLinks(props) {
           localStorage.removeItem("first_name");
           localStorage.removeItem("last_name");
           localStorage.removeItem("avatar");
+          localStorage.removeItem("roles");
 
-        
-            // Navigate to login page
-            navigate("/login");
+          // Navigate to login page
+          navigate("/login");
         } else {
             throw new Error('Failed to update status');
         }
@@ -50,8 +54,18 @@ export default function HeaderLinks(props) {
         console.error("Error updating status:", error);
         // Handle error (e.g., display an error message to the user)
     });
-};
+  };
 
+  const navigateToProfile = () => {
+    if (roles === 'ROLE_STUDENT') {
+      navigate("/student/profile");
+    } else if (roles === 'ROLE_TEACHER') {
+      navigate("/teacher/profile");
+    }
+    // Add this condition to prevent navigation for ROLE_ADMIN
+    else if (roles === 'ROLE_ADMIN') {
+    }
+  };
   return (
     <Flex
       pe={{ sm: "0px", md: "16px" }}
@@ -60,7 +74,16 @@ export default function HeaderLinks(props) {
       flexDirection="row"
     >
       <Menu>
-      <MenuButton as={Avatar} src={require(`../../assets/${avatar}`)} style={{ maxWidth: "50px", height: "auto", marginRight: "10px" }} alt="avatar" />        <MenuList p="16px 8px">
+        <MenuButton as={Avatar} src={require(`../../assets/${avatar}`)} style={{ maxWidth: "50px", height: "auto", marginRight: "10px" }} alt="avatar" />
+        <MenuList p="20px 8px">
+        <MenuItem onClick={navigateToProfile} display="flex" alignItems="center">
+  <Avatar
+    src={require(`../../assets/${avatar}`)}
+    style={{ maxWidth: "40px", height: "auto", marginRight: "10px" }}
+    alt="avatar"
+  />
+  <Text mt={4} fontSize="lg">{first} {last}</Text>
+</MenuItem>
           <MenuItem onClick={handleLogout} icon={<CloseIcon />}>
             Logout
           </MenuItem>

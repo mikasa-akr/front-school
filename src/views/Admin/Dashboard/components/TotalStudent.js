@@ -11,7 +11,7 @@ function TotalStudent() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get("/crud/student/total"); // Make a GET request to the Symfony API endpoint
+        const response = await axios.get("/total/student"); // Make a GET request to the Symfony API endpoint
         setTotalStudents(response.data); // Update state with the total number of students received from the API
       } catch (error) {
         console.error("Error fetching total students:", error);

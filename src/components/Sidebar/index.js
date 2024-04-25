@@ -8,6 +8,7 @@ import {
 } from "@chakra-ui/react";
 import React, { useState } from "react";
 import SidebarContent from "./SidebarContent";
+import image from '../../assets/img/Snapshot_2024-04-23_15-26-04-removebg-preview.png'
 
 function Sidebar(props) {
   const mainPanel = React.useRef();
@@ -50,7 +51,7 @@ function Sidebar(props) {
           // Add overflow: auto to allow scrolling
           overflowY="auto"
         >
-          <SidebarContent routes={routes} logoText={"EDU SCHOOL"} display="none" sidebarVariant={sidebarVariant} />
+          <SidebarContent routes={routes} logoText={image} display="none" sidebarVariant={sidebarVariant} />
 
         </Box>
       </Box>

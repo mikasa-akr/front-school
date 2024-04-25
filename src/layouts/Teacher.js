@@ -15,7 +15,7 @@ import Students from '../views/Teacher/Students/index.js';
 import Profile from '../views/Teacher/Profile /index.js';
 import Dashboard from '../views/Teacher/Dashboard';
 import Facture from '../views/Teacher/Facture';
-
+import Annulations from '../views/Teacher/TablesAnnulation';
 function Teacher(props) {
   const { ...rest } = props;
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -119,6 +119,7 @@ function Teacher(props) {
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/facture" element={<Facture />} />
+                <Route path="/liste/*" element={<Annulations />} />
                 </Routes>              
             </PanelContainer>
           </PanelContent>

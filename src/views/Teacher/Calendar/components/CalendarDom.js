@@ -124,6 +124,29 @@ function CalendarDom() {
     }
   };
   
+  const handleCreateRattrapage = async () => {
+    try {
+      const response = await axios.post(`/rattrapage/create/${selectedEvent.id}`, {
+        date: date,
+        time: time,
+      });
+      if (response.status === 200) {
+        console.log('Rattrapage created successfully:', response.data.message);
+        setRegistrationStatus('success');
+        setRegistrationMessage('Rattrapage created successfully');
+      } else {
+        console.error('Failed to create rattrapage:', response.data.error);
+        setRegistrationStatus('error');
+        setRegistrationMessage('Failed to create rattrapage');
+      }
+    } catch (error) {
+      console.error('Error creating rattrapage:', error);
+      setRegistrationStatus('error');
+      setRegistrationMessage('An error occurred while creating rattrapage');
+    }
+    setShowMessage(true);
+  };
+  
   const handleCompleteSession = async () => {
     try {
       const response = await axios.post(`/facture/teacher/complete/${selectedEvent.id}`);
@@ -175,53 +198,55 @@ function CalendarDom() {
           </Box>
         )}
       />
-      <Modal isOpen={isModalOpen} onClose={handleCloseModal}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>{status === true ? 'Create Rattrapage' : 'Annulation'}</ModalHeader>
-          <ModalBody>
-            {status === true ? (
-              <>
-                <FormControl>
-                  <FormLabel>Date</FormLabel>
-                  <Input type="date" value={date} onChange={(e) => setDate(e.target.value)} />
-                </FormControl>
-                <FormControl mt={4}>
-                  <FormLabel>Time</FormLabel>
-                  <Input type="time" value={time} onChange={(e) => setTime(e.target.value)} />
-                </FormControl>
-              </>
-            ) : (
-              <>
-                {timeDifference >= 24 ? (
-                  <>
-                    <Button colorScheme="blue" onClick={handleCompleteSession} mr={3}>Complete Session</Button>
-                  </>
-                ) : (
-                  <>
-                    <Select
-                      id="reason"
-                      value={reason}
-                      onChange={(event) => setReason(event.target.value)}
-                      placeholder="Select Reason"
-                      size="md"
-                      mt={4}
-                    >
-                      <option value="sick">Sick</option>
-                      <option value="urgency">Urgency</option>
-                    </Select>
-                    <Button colorScheme="blue" onClick={handleAnnulation} mt={4} mr={3}>Confirm</Button>
-                  </>
-                )}
-              </>
-            )}
-            <Button onClick={handleCloseModal} mt={4}>Cancel</Button>
-            {showMessage && (
-              <span>{registrationStatus === 'success' ? registrationMessage : registrationStatus === 'error' ? registrationMessage : ''}</span>
-            )}
-          </ModalBody>
-        </ModalContent>
-      </Modal>
+<Modal isOpen={isModalOpen} onClose={handleCloseModal}>
+  <ModalOverlay />
+  <ModalContent>
+    <ModalHeader>{status === true ? 'Create Rattrapage' : 'Annulation'}</ModalHeader>
+    <ModalBody>
+      {status === true ? (
+        <>
+          <FormControl>
+            <FormLabel>Date</FormLabel>
+            <Input type="date" value={date} onChange={(e) => setDate(e.target.value)} />
+          </FormControl>
+          <FormControl mt={4}>
+            <FormLabel>Time</FormLabel>
+            <Input type="time" value={time} onChange={(e) => setTime(e.target.value)} />
+          </FormControl>
+        </>
+      ) : (
+        <>
+          {timeDifference >= 24 ? (
+            <>
+              <Button colorScheme="blue" onClick={handleCompleteSession} mr={3}>Complete Session</Button>
+            </>
+          ) : (
+            <>
+              <Select
+                id="reason"
+                value={reason}
+                onChange={(event) => setReason(event.target.value)}
+                placeholder="Select Reason"
+                size="md"
+                mt={4}
+              >
+                <option value="sick">Sick</option>
+                <option value="urgency">Urgency</option>
+              </Select>
+              <Button colorScheme="blue" onClick={handleAnnulation} mt={4} mr={3}>Confirm</Button>
+            </>
+          )}
+        </>
+      )}
+      <Button colorScheme="blue" onClick={handleCreateRattrapage} mt={4} mr={3}>Confirm Rattrapage</Button>
+      <Button onClick={handleCloseModal} mt={4}>Cancel</Button>
+      {showMessage && (
+        <span>{registrationStatus === 'success' ? registrationMessage : registrationStatus === 'error' ? registrationMessage : ''}</span>
+      )}
+    </ModalBody>
+  </ModalContent>
+</Modal>
+
     </Card>
   );
 }

@@ -35,6 +35,14 @@ function Login() {
                 localStorage.setItem('last_name', datalast);
                 const dataavatar = response.data.data.avatar;
                 localStorage.setItem('avatar', dataavatar);
+                const datarole = response.data.data.roles;
+                if (datarole && datarole.length > 0) {
+                    const firstRole = datarole[0];
+                    localStorage.setItem('roles', firstRole);
+                } else {
+                    // Handle the case where no roles are returned
+                    localStorage.removeItem('roles');
+                }
 
                 // Decode the token and extract user roles
                 const roles = jwtDecode(token).roles.filter(role => role !== 'ROLE_USER');

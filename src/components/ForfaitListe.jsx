@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
+import image from '../assets/img/Snapshot_2024-04-23_15-26-04-removebg-preview.png'
 
 function ForfaitList() {
   const [forfaits, setForfaits] = useState([]);
@@ -28,7 +29,7 @@ function ForfaitList() {
               <div className="d-flex">
                 <ul className="navbar-nav">
                   <li className="nav-item">
-                    <a className="nav-link" aria-current="page" href="/">school</a>
+                    <a className="nav-link" aria-current="page" href="/"><img src={image}  style={{color: '#4FD1C5',width:'150px'}} /></a>
                   </li>
                 </ul>
               </div>

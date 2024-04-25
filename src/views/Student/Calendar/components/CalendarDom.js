@@ -3,11 +3,14 @@ import axios from "axios";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
-import { Box, Button,Select, Modal, ModalOverlay,useColorModeValue, ModalContent, ModalHeader, ModalBody, ModalFooter } from "@chakra-ui/react";
+import { Box, Button,Select, Modal, ModalOverlay,Text,useColorModeValue, ModalContent, ModalHeader, ModalBody, ModalFooter } from "@chakra-ui/react";
 import Card from "../../../../components/Card/Card";
 
 function CalendarDom() {
   const [events, setEvents] = useState([]);
+  const [info, setInfo] = useState(null);
+  const [loadingInfo, setLoadingInfo] = useState(false);
+  const [loadingVote, setLoadingVote] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [reason, setReason] = useState('');
@@ -16,9 +19,37 @@ function CalendarDom() {
   const [showMessage, setShowMessage] = useState(false);
   const [timeDifference, setTimeDifference] = useState(0);
   const [selectedReclamationType, setSelectedReclamationType] = useState('');
+  const [vote, setVote] = useState('');
   const bgColor = useColorModeValue("white", "gray.700");
+  const [sessionId, setSessionId] = useState(null);
 
   const id = localStorage.getItem('id'); // Assuming the token is stored in localStorage
+
+
+  useEffect(() => {
+    const fetchInfo = async () => {
+        try {
+            setLoadingInfo(true);
+            const response = await axios.get(`/rattrapage/info/${id}`);
+            const sessions = response.data;
+            if (sessions.length > 0) {
+                const firstSession = sessions[0];
+                const sessionIdFromResponse = firstSession.sessionId;
+                setSessionId(sessionIdFromResponse);
+            } else {
+                console.error('No sessions found in the response');
+            }
+            setInfo(sessions);
+        } catch (error) {
+            console.error('Error fetching info:', error);
+        } finally {
+            setLoadingInfo(false);
+        }
+    };
+
+    fetchInfo(); // Call fetchInfo on component mount
+}, [id]); // Add id as a dependency
+
 
   useEffect(() => {
     async function fetchEvents() {
@@ -51,7 +82,6 @@ function CalendarDom() {
             end: endDateTime,
             id: eventData.id,
             status: eventData.status
-
           };
         });
         
@@ -66,19 +96,15 @@ function CalendarDom() {
   }, [id]); // Add id as a dependency to fetch new data when id changes
 
   const handleEventClick = (eventClickInfo) => {
-    if (eventClickInfo.event.extendedProps.status === 'canceled session' || eventClickInfo.event.extendedProps.status === 'rattrrapage scheduling' || eventClickInfo.event.extendedProps.status === 'done' ) {
+    const eventStatus = eventClickInfo.event.extendedProps.status;
+    if (eventStatus === 'canceled session' || eventStatus === 'done') {
       return;
+    } else if (eventStatus === 'rattrrapage scheduling') {
+      setSelectedEvent(eventClickInfo.event);
+      setIsModalOpen(true);
+    } else {
+      // Handle other event types here
     }
-    setSelectedEvent(eventClickInfo.event);
-
-    // Calculate time difference between current time and session time
-    const currentTime = new Date();
-    const sessionTime = eventClickInfo.event.start;
-    const diffInMilliseconds = sessionTime - currentTime;
-    const diffInHours = Math.abs(diffInMilliseconds / (1000 * 60 * 60));
-
-    setTimeDifference(diffInHours);
-    setIsModalOpen(true);
   };
   
   const handleAnnulation = async (e) => {
@@ -133,6 +159,21 @@ function CalendarDom() {
     }
   };
 
+  const handleSubmitVote = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await axios.post(`/rattrapage/vote/${selectedEvent.id}`, { agree: vote }); // Send the selected vote as 'agree'
+      console.log(response.data);
+      // Handle success, e.g., show a success message to the user
+    } catch (error) {
+      console.error('Error saving vote:', error);
+      // Handle error, e.g., show an error message to the user
+    } finally {
+      setIsModalOpen(false); // Close the modal after voting
+      setVote(''); // Reset the vote state
+    }
+  };
+
   const handleCloseModal = () => {
     setIsModalOpen(false);
     setSelectedEvent(null);
@@ -164,19 +205,87 @@ function CalendarDom() {
       <Modal isOpen={isModalOpen} onClose={handleCloseModal}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Annulation / Reclame</ModalHeader>
+          <ModalHeader>{selectedEvent ? 'Vote' : 'Annulation / Reclame'}</ModalHeader>
           <ModalBody>
-            {selectedReclamationType !== 'annulation' && selectedReclamationType !== 'reclame' && (
+          {selectedEvent && (
+    <>
+      <Box>
+        {info.length > 0 ? (
+          info.map((sessionInfo, index) => (
+            <div key={index}>
+              <Text>
+                Your teacher {sessionInfo.nameF} {sessionInfo.nameL} canceled the Session {sessionInfo.sessionDate} and Rattrapage it with {sessionInfo.rattrapageDate}
+              </Text>
+            </div>
+          ))
+        ) : (
+          <Text>No Rattrapage given</Text>
+        )}
+        <Text fontSize="xl" fontWeight="bold" mt={4}>
+          Do you agree with this rattrapage?
+        </Text>
+      </Box>
+      <form onSubmit={handleSubmitVote} style={{ display: 'flex', alignItems: 'center' }}>
+        <Box mr={4}>
+          <input
+            type="radio"
+            id="yes"
+            value="yes"
+            checked={vote === 'yes'}
+            onChange={(e) => setVote(e.target.value)}
+            style={{ marginRight: '5px' }}
+          />
+          <label htmlFor="yes">Yes</label>
+        </Box>
+        <Box>
+          <input
+            type="radio"
+            id="no"
+            value="no"
+            checked={vote === 'no'}
+            onChange={(e) => setVote(e.target.value)}
+            style={{ marginRight: '5px' }}
+          />
+          <label htmlFor="no">No</label>
+        </Box>
+        <Button type="submit" colorScheme="blue" ml={3}>
+          Submit Vote
+        </Button>
+      </form>
+    </>
+  )}
+            {!selectedEvent && (
               <>
-                <Button colorScheme="blue" variant="outline" onClick={() => setSelectedReclamationType('annulation')} mb={3} ml={3}>Annulation</Button>
-                <Button colorScheme="blue" variant="outline" onClick={() => setSelectedReclamationType('reclame')} mb={3} ml={8}>Reclame</Button>
-              </>
-            )}
-            {selectedReclamationType === 'annulation' && (
-              <>
-                {timeDifference >= 24 ? (
-                  <Button colorScheme="blue" onClick={handleAnnulation} mr={3}>Confirm</Button>
-                ) : (
+                {selectedReclamationType !== 'annulation' && selectedReclamationType !== 'reclame' && (
+                  <>
+                    <Button colorScheme="blue" variant="outline" onClick={() => setSelectedReclamationType('annulation')} mb={3} ml={3}>Annulation</Button>
+                    <Button colorScheme="blue" variant="outline" onClick={() => setSelectedReclamationType('reclame')} mb={3} ml={8}>Reclame</Button>
+                  </>
+                )}
+                {selectedReclamationType === 'annulation' && (
+                  <>
+                    {timeDifference >= 24 ? (
+                      <Button colorScheme="blue" onClick={handleAnnulation} mr={3}>Confirm</Button>
+                    ) : (
+                      <>
+                        <Select
+                          id="reason"
+                          value={reason}
+                          onChange={(event) => setReason(event.target.value)}
+                          placeholder="Select Reason"
+                          size="md"
+                          mb={3}
+                        >
+                          <option value="sick">Sick</option>
+                          <option value="urgency">Urgency</option>
+                        </Select>
+                        <Button colorScheme="blue" onClick={handleAnnulation} mr={3}>Confirm</Button>
+                      </>
+                    )}
+                  </>
+                )}
+                
+                {selectedReclamationType === 'reclame' && (
                   <>
                     <Select
                       id="reason"
@@ -186,40 +295,22 @@ function CalendarDom() {
                       size="md"
                       mb={3}
                     >
-                      <option value="sick">Sick</option>
-                      <option value="urgency">Urgency</option>
+                      <option value="retard_prof">Retard prof</option>
+                      <option value="absence_prof">Absence prof</option>
                     </Select>
                     <Button colorScheme="blue" onClick={handleAnnulation} mr={3}>Confirm</Button>
                   </>
                 )}
+                {showMessage && (
+                  <span>{registrationStatus === 'success' ? registrationMessage : registrationStatus === 'error' ? registrationMessage : ''}</span>
+                )}
               </>
-            )}
-            
-            {selectedReclamationType === 'reclame' && (
-              <>
-                <Select
-                  id="reason"
-                  value={reason}
-                  onChange={(event) => setReason(event.target.value)}
-                  placeholder="Select Reason"
-                  size="md"
-                  mb={3}
-                >
-                  <option value="retard_prof">Retard prof</option>
-                  <option value="absence_prof">Absence prof</option>
-                </Select>
-                <Button colorScheme="blue" onClick={handleAnnulation} mr={3}>Confirm</Button>
-              </>
-            )}
-            {showMessage && (
-              <span>{registrationStatus === 'success' ? registrationMessage : registrationStatus === 'error' ? registrationMessage : ''}</span>
             )}
           </ModalBody>
         </ModalContent>
       </Modal>
     </Card>
   );
-  
 }
 
 export default CalendarDom;

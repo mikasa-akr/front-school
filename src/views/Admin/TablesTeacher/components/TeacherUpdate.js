@@ -18,6 +18,7 @@ function TeacherUpdate() {
 
     useEffect(() => {
         fetchCourses();
+        fetchGender();
     }, []);
 
     const fetchCourses = async () => {
@@ -26,6 +27,15 @@ function TeacherUpdate() {
             setCourses(response.data);
         } catch (error) {
             console.error('Error fetching courses:', error);
+        }
+    };
+
+    const fetchGender = async () => {
+        try {
+            const response = await axios.get('/gender'); // Adjust the URL accordingly
+            setCourses(response.data);
+        } catch (error) {
+            console.error('Error fetching genders:', error);
         }
     };
 
@@ -39,6 +49,7 @@ function TeacherUpdate() {
             setGender(student.gender);
             setNumber(student.number);
             setSelectedCourseId(student.course.id);
+            setSelectedCourseId(student.gender.id);
 
         })
         .catch(function (error) {

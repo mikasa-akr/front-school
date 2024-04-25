@@ -28,7 +28,7 @@ function CountSession() {
           <img src={gens} alt="Group Icon" width={50} height={50} />
           <Divider orientation="vertical" mx={4} Color="teal.400" />
           <Text fontSize="2xl" color={textColor}>
-          Session Complate :
+          Session Complete :
           </Text>
           <Text fontSize="xl" ml={4}>
           {CountSessions.totalsessionsDone}

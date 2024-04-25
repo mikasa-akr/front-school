@@ -45,8 +45,8 @@ function Profile() {
         email={email}
         tabs={[]}
       />
-      <Grid templateColumns={{ sm: "1fr", xl: "repeat(3, 1fr)" }} gap='22px' mt={'10%'}>
-        <Flex justify="center">
+      <Grid gap='22px' mt={'10%'}>
+        <Flex justify={'center'}>
           <ProfileView />
         </Flex>
       </Grid>

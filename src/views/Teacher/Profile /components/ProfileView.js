@@ -13,7 +13,7 @@ function ProfileView() {
   const bgColor = useColorModeValue("white", "gray.700");
 
   useEffect(() => {
-    axios.get(`/crud/student/${id}`)
+    axios.get(`/crud/teacher/${id}`)
       .then(function (response) {
         setProfileData(response.data);
       })
@@ -77,14 +77,6 @@ function ProfileView() {
                   </Text>
                   <Text fontSize="md" color="gray.500" fontWeight="400">
                     {profileData.gender}
-                  </Text>
-                </Flex>
-                <Flex direction="row" width="100%" mb="20px" >
-                  <Text fontSize="md" fontWeight="bold">
-                    Date Age: 
-                  </Text>
-                  <Text fontSize="md" color="gray.500" fontWeight="400">
-                    {profileData.age}
                   </Text>
                 </Flex>
                 <IconButton

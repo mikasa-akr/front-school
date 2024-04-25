@@ -26,8 +26,8 @@ const VoteRattrapage = () => {
     const bgColor = useColorModeValue("gray.10", "gray.700");
     const submitColor = useColorModeValue("teal.300", "teal.300");
 
-    const handleVoteChange = (e) => {
-        setVote(e.target.value);
+    const handleVoteChange = (value) => {
+        setVote(value);
     };
 
     useEffect(() => {
@@ -39,7 +39,7 @@ const VoteRattrapage = () => {
                 if (sessions.length > 0) {
                     const firstSession = sessions[0];
                     const sessionIdFromResponse = firstSession.sessionId;
-                    setSessionId(sessionIdFromResponse); // Set the sessionId state
+                    setSessionId(sessionIdFromResponse);
                 } else {
                     console.error('No sessions found in the response');
                 }
@@ -53,19 +53,6 @@ const VoteRattrapage = () => {
     
         fetchInfo(); // Call fetchInfo on component mount
     }, [id]); // Add id as a dependency
-    
-    const rattrapageDateTime = info && info.length > 0 && info[0].dateAtR ? new Date(info[0].dateAtR.date) : null;
-    
-    useEffect(() => {
-        if (info && rattrapageDateTime) {
-            const currentTime = new Date(); 
-            const timeDiff = Math.abs(currentTime - rattrapageDateTime);
-            const diffHours = timeDiff / (1000 * 60 * 60); 
-    
-            setShowCardBody(diffHours <= 3);
-    
-        }
-    }, [info, rattrapageDateTime, sessionId]);  
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -98,21 +85,20 @@ const VoteRattrapage = () => {
                         <Text>Loading session information...</Text>
                     ) : info ? (
                         <Box>
-                            {info.map((sessionInfo, index) => (
-                                <div key={index}>
-                                    <Text>
-                                        You teacher {sessionInfo.nameF} {sessionInfo.nameL} canceled the Session {sessionInfo.sessionDate.date} and Rattrapage it with {sessionInfo.rattrapageDate.date}
-                                    </Text>
-                                </div>
-                            ))}
-                            <Text>Do you agree with this rattrapage?</Text>
-                        </Box>
-                    ) : 
-                   <h1>No Rattrapage gived</h1> }
-                    <form onSubmit={handleSubmit}>
+                            {info.length > 0 ? (
+                                info.map((sessionInfo, index) => (
+                                    <>
+                                    <div key={index}>
+                                        <Text>
+                                            Your teacher {sessionInfo.nameF} {sessionInfo.nameL} canceled the Session {sessionInfo.sessionDate} and Rattrapage it with {sessionInfo.rattrapageDate}
+                                        </Text>
+                                    </div>
+                                    <Text>Do you agree with this rattrapage?</Text>
+
+                                    <form onSubmit={handleSubmit}>
                         <Flex direction="row" alignItems="center">
-                            <RadioGroup value={vote} onChange={handleVoteChange}>
-                                <Stack direction="row" spacing={4}>
+                        <RadioGroup value={vote} onChange={handleVoteChange}>                                
+                        <Stack direction="row" spacing={4}>
                                     <Radio value="yes" isChecked={vote === "yes"}>
                                         Yes
                                     </Radio>
@@ -125,13 +111,23 @@ const VoteRattrapage = () => {
                                 type="submit"
                                 disabled={!info || loadingVote}
                                 color={submitColor}
-                                mt={0} // Adjust the margin top as needed
-                                ml={3} // Adjust the margin left for spacing
+                                mt={0}
+                                ml={3} 
                             >
                                 Submit Vote
                             </Button>
                         </Flex>
                     </form>
+                                    </>
+
+                                ))
+                            ) : (
+                                
+                                <h1>No Rattrapage given</h1>
+                            )}
+                        </Box>
+                    ) : 
+                   <h1>No Rattrapage given</h1> }
                     {loadingVote && <Text>Saving vote...</Text>}
                 </CardBody>
             )}

@@ -11,11 +11,10 @@ function ProfileUpdateForm({ profileData }) {
     const [email, setEmail] = useState('');
     const [gender, setGender] = useState('');
     const [number, setNumber] = useState('');
-    const [age, setAge] = useState('');
     const [isSaving, setIsSaving] = useState(false);
 
     useEffect(() => {
-        axios.get(`/crud/student/${id}`)
+        axios.get(`/crud/teacher/${id}`)
         .then(function (response) {
             let student = response.data;
             setFirstName(student.firstName);
@@ -23,7 +22,6 @@ function ProfileUpdateForm({ profileData }) {
             setEmail(student.email);
             setGender(student.gender);
             setNumber(student.number);
-            setAge(student.age);
         })
         .catch(function (error) {
             Swal.fire({
@@ -37,18 +35,17 @@ function ProfileUpdateForm({ profileData }) {
 
     const handleSave = () => {
         setIsSaving(true);
-        axios.put(`/crud/student/${id}/edit`, {
+        axios.put(`/crud/teacher/${id}/edit`, {
             firstName: firstName,
             lastName: lastName,
             email:email,
             gender:gender,
             number:number,
-            age:age,
         })
         .then(function (response) {
             Swal.fire({
                 icon: 'success',
-                title: 'Student updated successfully!',
+                title: 'Teacher updated successfully!',
                 showConfirmButton: false,
                 timer: 1500
             });
@@ -110,14 +107,6 @@ function ProfileUpdateForm({ profileData }) {
                     <option value="female">Female</option>
                     <option value="other">Other</option>
                 </Select>
-            </FormControl>
-            <FormControl>
-                <FormLabel>Age:</FormLabel>
-                <Input
-                    value={age}
-                    onChange={(e) => setAge(e.target.value)}
-                    type="date"
-                />
             </FormControl>
             <Button
                 onClick={handleSave}

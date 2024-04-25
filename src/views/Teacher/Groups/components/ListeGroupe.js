@@ -4,6 +4,7 @@ import Swal from 'sweetalert2';
 import {
   Box,
   Button,
+  Avatar,
   Container,
   Divider,
   Flex,
@@ -19,26 +20,20 @@ import {
   ModalOverlay,
   Text,
   useColorModeValue,
+  Table,
+  Thead,
+  Tbody,
+  Tr,
+  Td,
+  Th,
   useDisclosure,
 } from '@chakra-ui/react';
 import Card from '../../../../components/Card/Card';
 
 function ListeGroupe() {
-  const [groups, setGroups] = useState([]);
   const [selectedGroups, setSelectedGroups] = useState([]);
   const ID = localStorage.getItem('id'); // Assuming the token is stored in localStorage
-  const { isOpen, onOpen, onClose } = useDisclosure();
   const bgColor = useColorModeValue("white", "gray.700");
-
-  useEffect(() => {
-    axios.get(`/crud/teacher/listeGroupe/${ID}`)
-      .then(function (response) {
-        setGroups(response.data);
-      })
-      .catch(function (error) {
-        console.error('Error fetching groups:', error);
-      });
-  }, [ID]);
 
   useEffect(() => {
     axios.get(`/crud/teacher/Groupes/${ID}`)
@@ -50,79 +45,41 @@ function ListeGroupe() {
       });
   }, [ID]);
 
-  const handleAssociateTeacherWithGroup = (groupId) => {
-    axios.post(`/crud/teacher/selectGroup/${ID}/${groupId}`)
-      .then(function (response) {
-        Swal.fire({
-          icon: 'success',
-          title: 'Group selected successfully!',
-          showConfirmButton: false,
-          timer: 1500,
-        });
-      })
-      .catch(function (error) {
-        console.error('Error selecting group:', error);
-        Swal.fire({
-          icon: 'error',
-          title: 'An Error Occurred!',
-          text: 'Failed to select the group. Please try again.',
-          showConfirmButton: false,
-          timer: 1500,
-        });
-      });
-  };
-
   return (
     <Card mt="10%" bg={bgColor} borderRadius={'20px'}>
       <Flex justify="space-between" mb="4">
         <Heading>Select Group</Heading>
       </Flex>
-      <Divider mb="4"/>
-      <Flex>
-        <Box w="100%">
-        <List spacing={3}>
-          {groups.map((group) => (
-            <ListItem key={group.id}>
-              <Flex justify="space-between" alignItems="center" width="100%">
-                <Flex flexDirection="column">
-                  <Text>Number: {group.number}</Text>
-                  <Text>Type: {group.type}</Text>
+      <Table variant="simple">
+        <Thead>
+          <Tr>
+            <Th>Name</Th>
+            <Th>Type</Th>
+          </Tr>
+        </Thead>
+        <Tbody>
+          {selectedGroups.map((group) => (
+            <Tr key={group.id}>
+            <Td minWidth={{ sm: "250px" }} pl="0px">
+              <Flex
+                align="center"
+                py=".8rem"
+                minWidth="100%"
+                flexWrap="nowrap"
+              >
+                <Avatar src={require(`../../../../assets/${group.avatar}`)} w="50px" borderRadius="12px" me="18px" />
+                <Flex direction="column">
+                  <Text fontSize="md" fontWeight="bold" minWidth="100%">
+                    {group.name}
+                  </Text>
                 </Flex>
-                <Button
-                  variant="outline"
-                  borderColor="teal.500"
-                  color="teal.500"
-                  onClick={() => handleAssociateTeacherWithGroup(group.id)}
-                >
-                  Select
-                </Button>
               </Flex>
-            </ListItem>
+            </Td>              
+            <Td>{group.type}</Td>
+            </Tr>
           ))}
-        </List>
-          <Button colorScheme="teal" onClick={onOpen}>View Selected Groups</Button>
-        </Box>
-      </Flex>
-      <Modal isOpen={isOpen} onClose={onClose} size="lg" >
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Selected Groups</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            <List spacing={3}>
-              {selectedGroups.map((group) => (
-                <ListItem key={group.id}>
-                  <Text>Number: {group.number}</Text>
-                  <Text>Type: {group.type}</Text>
-                </ListItem>
-              ))}
-            </List>
-          </ModalBody>
-          <ModalFooter>
-            <Button colorScheme="teal" onClick={onClose}>Close</Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+        </Tbody>
+      </Table>
     </Card>
   );
 }

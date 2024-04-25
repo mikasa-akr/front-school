@@ -30,7 +30,7 @@ function TotalRevenue() {
         revenue Total:
       </Text>
       <Text fontSize="xl" ml={4}>
-      {totalRevenue}
+      {totalRevenue} $
       </Text>
     </Box>
   </Center>

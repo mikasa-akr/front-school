@@ -180,14 +180,10 @@ function Teachers({ captions, logo }) {
                           <Icon as={FaPencilAlt} mr={1} />
                           Edit
                         </Button>
-                      <Button as={RouterLink} to={`/admin/table/teacher/create/`} colorScheme="green">
-                        <Icon as={FaPlus} mr={1} />
-                        Create
-                      </Button>
                     </Flex>
                   </Td>
                 </Tr>
-              ))}
+              ))} 
             </Tbody>
           </Table>
         </CardBody>

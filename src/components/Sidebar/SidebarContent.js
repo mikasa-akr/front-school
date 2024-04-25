@@ -6,6 +6,7 @@ import {
     Link,
     Stack,
     Text,
+    background,
     useColorModeValue
 } from "@chakra-ui/react";
 import IconBox from "../Icons/IconBox";
@@ -183,9 +184,7 @@ const SidebarContent = ({ logoText, routes }) => {
         alignItems="center"
         fontSize="11px"
       >
-        <Text fontSize="25px" mt="3px" color={'teal.200'}>
-          {logoText}
-        </Text>
+<img src={logoText} style={{width:'150px'}} />
       </Link>
       <Separator></Separator>
     </Box>

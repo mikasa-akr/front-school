@@ -5,6 +5,7 @@ import { Button, FormControl, FormLabel, Text, Input, Select } from '@chakra-ui/
 import { CardElement, useElements, useStripe } from '@stripe/react-stripe-js';
 import { Link, useLocation } from 'react-router-dom';
 import logo from '../../assets/img/signnn.png';
+import image from '../../assets/img/Snapshot_2024-04-23_15-26-04-removebg-preview.png'
 
 const RegisterStudent = () => {
     const stripe = useStripe();
@@ -26,14 +27,16 @@ const RegisterStudent = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [number, setNumber] = useState('');
-    const [gender, setGender] = useState('');
+    const [gender, setGender] = useState([]);    
     const [age, setAge] = useState('');
     const [avatar, setAvatar] = useState(null);
     const [courses, setCourses] = useState([]);
     const [selectedCourseIds, setSelectedCourseIds] = useState([]);
+    const [selectedGenderIds, setSelectedGenderIds] = useState([]);
 
     useEffect(() => {
         fetchCourses();
+        fetchGenders();
     }, []);
 
     const fetchCourses = async () => {
@@ -42,6 +45,15 @@ const RegisterStudent = () => {
             setCourses(response.data);
         } catch (error) {
             console.error('Error fetching courses:', error);
+        }
+    };
+
+    const fetchGenders = async () => {
+        try {
+            const response = await axios.get('/gender');
+            setGender(response.data); // Assuming response.data is an array of genders
+        } catch (error) {
+            console.error('Error fetching genders:', error);
         }
     };
 
@@ -101,10 +113,10 @@ const RegisterStudent = () => {
                 setEmail('');
                 setPassword('');
                 setNumber('');
-                setGender('');
                 setAge('');
                 setAvatar(null);
                 setSelectedCourseIds([]);
+                setSelectedGenderIds([]);
     
                 Swal.fire({
                     icon: 'success',
@@ -112,10 +124,7 @@ const RegisterStudent = () => {
                     showConfirmButton: false,
                     timer: 1500,
                 }).then(() => {
-                    // Call saveData only if studentId is available
-                    if (studentId) {
-                        saveData(studentId, formData);
-                    }
+
                 });
             }
         } catch (error) {
@@ -124,28 +133,6 @@ const RegisterStudent = () => {
             console.error('Error registering and paying:', error);
         }
     };
-    
-    
-    const saveData = async (studentId) => {
-        console.log('Student ID in saveData:', studentId); // Log the student ID
-        if (!studentId) {
-            console.warn('studentId not available yet. Skipping saveData');
-            return;
-        }
-    
-        try {
-            const formData = new FormData();
-    
-            await axios.post(`/save/${studentId}`, formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data'
-                }
-            });
-        } catch (error) {
-            console.error('Error saving data:', error);
-        }
-    };
-    
 
     const handleFileChange = (e) => {
         setAvatar(e.target.files[0]);
@@ -157,7 +144,7 @@ const RegisterStudent = () => {
             <div className="col-12">
                 <nav className="navbar navbar-expand-lg navbar-light">
                     <div className="container-fluid">
-                        <a className="navbar-brand" href="/" style={{ color: "#4fd1c5" }}>Edu School</a>
+                        <a className="navbar-brand" href="/" style={{ color: "#4fd1c5" }}><img src={image}  style={{color: '#4FD1C5',width:'150px'}} /></a>
                         <div className="d-flex ms-auto align-items-center">
                             <p className="me-3 mb-0">Are you a Teacher?</p>
                             <a className="navbar-brand" style={{ color: "#4fd1c5", fontSize: "16px" }} href='/register/teacher'>Apply as Teacher</a>
@@ -235,17 +222,18 @@ const RegisterStudent = () => {
                                         />
                                     </div>
                                     <div className="mb-3">
-                                        <select
-                                            className="form-control"
-                                            id="gender"
-                                            name="gender"
-                                            value={gender}
-                                            onChange={(e) => setGender(e.target.value)}
-                                        >
-                                            <option value="male">Male</option>
-                                            <option value="female">Female</option>
-                                            <option value="children">Children</option>
-                                        </select>
+                                    <select
+                                        className="form-control"
+                                        id="genderSelect"
+                                        value={selectedGenderIds} // Use selectedGenderIds directly for single selection
+                                        onChange={(e) => setSelectedGenderIds([e.target.value])} // Update the selected gender ID
+                                    >
+                                        {gender.map(gender => (
+                                            <option key={gender.id} value={gender.id}>
+                                                {gender.name}
+                                            </option>
+                                        ))}
+                                    </select>
                                     </div>
                                     <div className="mb-3">
                                         <input
@@ -296,9 +284,15 @@ const RegisterStudent = () => {
             )}
             {error && <Text color="red.500">{error}</Text>}
             {success && <Text color="green.500">Payment successful!</Text>}
-                                        <Button colorScheme="teal" onClick={handleRegisterAndPay} disabled={!stripe || isSaving}>
-                                            {isSaving ? 'Processing...' : 'Register & Pay'}
-                                        </Button>
+            <button
+                                            disabled={isSaving}
+                                            onClick={handleRegisterAndPay}
+                                            type="button"
+                                            className="btn"
+                                            style={{ width: "120px", backgroundColor: "#4fd1c5", color: "#ffffff", borderRadius: '40px', marginLeft: '35%' }}
+                                        >
+                                            {isSaving ? 'Saving...' : 'Sign Up'}
+                                        </button>
                                     <p className="text-center">
                                         Already have an account? <Link to="/login" style={{ color: "#4fd1c5" }}>Login here</Link>
                                     </p>
