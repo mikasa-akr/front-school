@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { FormControl, FormLabel, Input, Select, Button, VStack, Grid } from "@chakra-ui/react";
+import { FormControl, FormLabel, Input, Select, Button, VStack } from "@chakra-ui/react";
 import axios from 'axios';
-import { useParams } from "react-router-dom";
 import Swal from 'sweetalert2';
 
 function ProfileUpdateForm({ profileData }) {
@@ -12,6 +11,7 @@ function ProfileUpdateForm({ profileData }) {
     const [gender, setGender] = useState('');
     const [number, setNumber] = useState('');
     const [age, setAge] = useState('');
+    const [genders, setGenders] = useState([]);
     const [isSaving, setIsSaving] = useState(false);
 
     useEffect(() => {
@@ -27,23 +27,41 @@ function ProfileUpdateForm({ profileData }) {
         })
         .catch(function (error) {
             Swal.fire({
-                 icon: 'error',
-                title: 'An Error Occured!',
+                icon: 'error',
+                title: 'An Error Occurred!',
                 showConfirmButton: false,
                 timer: 1500
             });
         });
+
+        // Fetch genders when component mounts
+        fetchGender();
     }, [id]);
+
+    const fetchGender = async () => {
+        try {
+            const response = await axios.get('/gender');
+            if (Array.isArray(response.data)) {
+                setGenders(response.data);
+            } else {
+                console.error('Error: response data is not an array:', response.data);
+                setGenders([]); // Set genders to empty array if data is invalid
+            }
+        } catch (error) {
+            console.error('Error fetching genders:', error);
+            setGenders([]); // Set genders to empty array if there's an error
+        }
+    };
 
     const handleSave = () => {
         setIsSaving(true);
         axios.put(`/crud/student/${id}/edit`, {
             firstName: firstName,
             lastName: lastName,
-            email:email,
-            gender:gender,
-            number:number,
-            age:age,
+            email: email,
+            gender: gender,
+            number: number,
+            age: age,
         })
         .then(function (response) {
             Swal.fire({
@@ -56,8 +74,8 @@ function ProfileUpdateForm({ profileData }) {
         })
         .catch(function (error) {
             Swal.fire({
-                 icon: 'error',
-                title: 'An Error Occured!',
+                icon: 'error',
+                title: 'An Error Occurred!',
                 showConfirmButton: false,
                 timer: 1500
             });
@@ -66,24 +84,22 @@ function ProfileUpdateForm({ profileData }) {
     }
 
     return (
-        <VStack spacing="5" align="center">
+        <VStack spacing="5" w="80%" ml='10%' h="100%">
             <h2>Edit Profile</h2>
-            <Grid templateColumns="repeat(2, 1fr)" gap="4">
-                <FormControl>
-                    <FormLabel>First Name</FormLabel>
-                    <Input
-                        value={firstName}
-                        onChange={(e) => setFirstName(e.target.value)}
-                    />
-                </FormControl>
-                <FormControl>
-                    <FormLabel>Last Name</FormLabel>
-                    <Input
-                        value={lastName}
-                        onChange={(e) => setLastName(e.target.value)}
-                    />
-                </FormControl>
-            </Grid>
+            <FormControl>
+                <FormLabel>First Name</FormLabel>
+                <Input
+                    value={firstName}
+                    onChange={(e) => setFirstName(e.target.value)}
+                />
+            </FormControl>
+            <FormControl>
+                <FormLabel>Last Name</FormLabel>
+                <Input
+                    value={lastName}
+                    onChange={(e) => setLastName(e.target.value)}
+                />
+            </FormControl>
             <FormControl>
                 <FormLabel>Email:</FormLabel>
                 <Input
@@ -106,9 +122,9 @@ function ProfileUpdateForm({ profileData }) {
                     value={gender}
                     onChange={(e) => setGender(e.target.value)}
                 >
-                    <option value="male">Male</option>
-                    <option value="female">Female</option>
-                    <option value="other">Other</option>
+                    {genders.map((genderOption, index) => (
+                        <option key={index} value={genderOption.id}>{genderOption.name}</option>
+                    ))}
                 </Select>
             </FormControl>
             <FormControl>

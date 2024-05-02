@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { FormControl, FormLabel, Input, Select, Button, VStack, Grid } from "@chakra-ui/react";
 import axios from 'axios';
-import { useParams } from "react-router-dom";
 import Swal from 'sweetalert2';
 
 function ProfileUpdateForm({ profileData }) {
@@ -12,35 +11,54 @@ function ProfileUpdateForm({ profileData }) {
     const [gender, setGender] = useState('');
     const [number, setNumber] = useState('');
     const [isSaving, setIsSaving] = useState(false);
+    const [genders, setGenders] = useState([]);
 
     useEffect(() => {
         axios.get(`/crud/teacher/${id}`)
         .then(function (response) {
-            let student = response.data;
-            setFirstName(student.firstName);
-            setLastName(student.lastName);
-            setEmail(student.email);
-            setGender(student.gender);
-            setNumber(student.number);
+            let teacher = response.data;
+            setFirstName(teacher.firstName);
+            setLastName(teacher.lastName);
+            setEmail(teacher.email);
+            setNumber(teacher.number);
+            // Assuming teacher.genders is an array of gender objects
+            setGenders(teacher.genders);
+            // Fetch genders when component mounts
+            fetchGender(); // Call fetchGender here
         })
         .catch(function (error) {
             Swal.fire({
-                 icon: 'error',
-                title: 'An Error Occured!',
+                icon: 'error',
+                title: 'An Error Occurred!',
                 showConfirmButton: false,
                 timer: 1500
             });
         });
     }, [id]);
 
+    const fetchGender = async () => {
+        try {
+            const response = await axios.get('/gender');
+            if (Array.isArray(response.data)) {
+                setGenders(response.data);
+            } else {
+                console.error('Error: response data is not an array:', response.data);
+                setGenders([]); // Set genders to empty array if data is invalid
+            }
+        } catch (error) {
+            console.error('Error fetching genders:', error);
+            setGenders([]); // Set genders to empty array if there's an error
+        }
+    };
+
     const handleSave = () => {
         setIsSaving(true);
         axios.put(`/crud/teacher/${id}/edit`, {
             firstName: firstName,
             lastName: lastName,
-            email:email,
-            gender:gender,
-            number:number,
+            email: email,
+            gender: gender,
+            number: number,
         })
         .then(function (response) {
             Swal.fire({
@@ -53,8 +71,8 @@ function ProfileUpdateForm({ profileData }) {
         })
         .catch(function (error) {
             Swal.fire({
-                 icon: 'error',
-                title: 'An Error Occured!',
+                icon: 'error',
+                title: 'An Error Occurred!',
                 showConfirmButton: false,
                 timer: 1500
             });
@@ -63,9 +81,8 @@ function ProfileUpdateForm({ profileData }) {
     }
 
     return (
-        <VStack spacing="5" align="center">
+        <VStack spacing="5" w="80%" ml='10%' h="100%">
             <h2>Edit Profile</h2>
-            <Grid templateColumns="repeat(2, 1fr)" gap="4">
                 <FormControl>
                     <FormLabel>First Name</FormLabel>
                     <Input
@@ -80,7 +97,6 @@ function ProfileUpdateForm({ profileData }) {
                         onChange={(e) => setLastName(e.target.value)}
                     />
                 </FormControl>
-            </Grid>
             <FormControl>
                 <FormLabel>Email:</FormLabel>
                 <Input
@@ -98,16 +114,18 @@ function ProfileUpdateForm({ profileData }) {
                 />
             </FormControl>
             <FormControl>
-                <FormLabel>Gender:</FormLabel>
-                <Select
-                    value={gender}
-                    onChange={(e) => setGender(e.target.value)}
-                >
-                    <option value="male">Male</option>
-                    <option value="female">Female</option>
-                    <option value="other">Other</option>
-                </Select>
-            </FormControl>
+    <FormLabel>Gender:</FormLabel>
+    {genders && (
+        <Select
+            value={gender}
+            onChange={(e) => setGender(e.target.value)}
+        >
+            {genders.map((genderOption, index) => (
+                <option key={index} value={genderOption.id}>{genderOption.name}</option>
+            ))}
+        </Select>
+    )}
+</FormControl>
             <Button
                 onClick={handleSave}
                 colorScheme="teal"

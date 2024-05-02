@@ -4,7 +4,6 @@ import Header from './components/Header';
 import ProfileUpdateForm from './components/ProfileUpdateForm';
 import axios from 'axios';
 import ProfileBgImage from '../../../assets/img/ProfileBackground.png';
-import ProfileView from './components/ProfileView';
 
 function Profile() {
   // Chakra color mode
@@ -15,6 +14,8 @@ function Profile() {
 
   const [studentInfo, setStudentInfo] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isEditing, setIsEditing] = useState(false);
+  const [showForm, setShowForm] = useState(false);
 
   useEffect(() => {
     const fetchListeStudent = async () => {
@@ -30,26 +31,37 @@ function Profile() {
     fetchListeStudent();
   }, []);
 
+  const toggleEdit = () => {
+    setIsEditing(!isEditing);
+    setShowForm(!showForm);
+  };
+
   if (isLoading || !studentInfo) return <div>Loading...</div>;
 
-  const { avatar, firstName, lastName, email } = studentInfo;
+  const { avatar, firstName, lastName, email, number, age, gender } = studentInfo;
 
   return (
-    <Flex direction="column">
+    <Flex direction="column" position="relative" mt='8%'>
       <Header
         backgroundHeader={ProfileBgImage}
         backgroundProfile={bgProfile}
         avatarImage={avatar}
         firstName={firstName}
         lastName={lastName}
+        number={number}
         email={email}
+        age={age}
+        gender={gender}
         tabs={[]}
+        toggleEdit={toggleEdit}
       />
-      <Grid gap='22px' mt={'10%'}>
-        <Flex justify={'center'}>
-          <ProfileView />
-        </Flex>
-      </Grid>
+      {showForm && (
+        <ProfileUpdateForm
+          profileData={studentInfo}
+          toggleEdit={toggleEdit}
+          backgroundProfile={bgProfile}
+        />
+      )}
     </Flex>
   );
 }

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Flex, useColorModeValue, Text, IconButton, Icon, Link, Box } from '@chakra-ui/react';
+import { Flex, useColorModeValue, Text, IconButton, Icon, Box, HStack } from '@chakra-ui/react';
 import { FaFacebook, FaInstagram, FaTwitter, FaEdit } from 'react-icons/fa';
 import axios from 'axios';
 import Swal from 'sweetalert2';
@@ -40,14 +40,22 @@ function ProfileView() {
         <Flex direction="column" alignItems="center" my={{ sm: '24px', xl: '0px' }}>
           {profileData ? (
             <>
+              <IconButton
+                icon={<Icon as={FaEdit} />}
+                onClick={toggleEdit}
+                aria-label="Edit Profile"
+                colorScheme="teal"
+                alignSelf="flex-end"
+                mt="10px"
+              />
               <Text fontSize="lg" fontWeight="bold" mb="12px">
                 Profile Information
               </Text>
-              <Flex direction="column" width="100%" mb="20px">
+              <Flex direction="column" width="100%" mb="20px" margin='10%'>
                 <Text fontSize="md" color="gray.500" fontWeight="400" mb="10px">
                   This is the user's profile information.
                 </Text>
-                <Flex direction="row" width="100%" mb="20px">
+                <Flex direction="row" width="100%" mb="20px" margin='15px'>
                   <Text fontSize="md" fontWeight="bold">
                     Full Name:
                   </Text>
@@ -55,7 +63,7 @@ function ProfileView() {
                     {`${profileData.firstName} ${profileData.lastName}`}
                   </Text>
                 </Flex>
-                <Flex direction="row" width="100%" mb="20px">
+                <Flex direction="row" width="100%" mb="20px" margin='15px'>
                   <Text fontSize="md" fontWeight="bold">
                     Mobile:
                   </Text>
@@ -63,7 +71,7 @@ function ProfileView() {
                     {profileData.number}
                   </Text>
                 </Flex>
-                <Flex direction="row" width="100%" mb="20px">
+                <Flex direction="row" width="100%" mb="20px" margin='15px'>
                   <Text fontSize="md" fontWeight="bold">
                     Email:
                   </Text>
@@ -71,7 +79,7 @@ function ProfileView() {
                     {profileData.email}
                   </Text>
                 </Flex>
-                <Flex direction="row" width="100%" mb="20px">
+                <Flex direction="row" width="100%" mb="20px" margin='15px'>
                   <Text fontSize="md" fontWeight="bold">
                     Gender:
                   </Text>
@@ -79,7 +87,7 @@ function ProfileView() {
                     {profileData.gender}
                   </Text>
                 </Flex>
-                <Flex direction="row" width="100%" mb="20px" >
+                <Flex direction="row" width="100%" mb="20px" margin='15px'>
                   <Text fontSize="md" fontWeight="bold">
                     Date Age: 
                   </Text>
@@ -87,14 +95,6 @@ function ProfileView() {
                     {profileData.age}
                   </Text>
                 </Flex>
-                <IconButton
-                  icon={<Icon as={FaEdit} />}
-                  onClick={toggleEdit}
-                  aria-label="Edit Profile"
-                  colorScheme="teal"
-                  alignSelf="flex-end"
-                  mt="10px"
-                />
               </Flex>
             </>
           ) : (
