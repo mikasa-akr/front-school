@@ -10,7 +10,7 @@ import {
   useColorModeValue,
   Flex,
 } from '@chakra-ui/react';
-import schoolImage from '../assets/QURAN-MAJEED.jpg';
+import schoolImage from '../assets/QURAN-MAJEED.png';
 import image from '../assets/img/Snapshot_2024-04-23_15-26-04-removebg-preview.png'
 import coran from '../assets/img/the-holy-quran-5-removebg-preview.png'
 import arabe from '../assets/img/images.jpeg'

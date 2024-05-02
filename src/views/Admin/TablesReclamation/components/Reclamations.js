@@ -23,7 +23,6 @@ import CardBody from "../../../../components/Card/CardBody.js";
 import CardHeader from "../../../../components/Card/CardHeader.js";
 import { FaPencilAlt, FaTrashAlt, FaEye, FaPlus } from "react-icons/fa";
 import Swal from "sweetalert2";
-import ReclamationView from './ReclamationView.js';
 
 function Reclamations({ captions, logo }) {
   const [ListeReclamation, setListeReclamation] = useState([]);
@@ -112,64 +111,63 @@ function Reclamations({ captions, logo }) {
         </Tr>
       </Thead>
       <Tbody>
-        {ListeReclamation.map((reclamation, key) => (
-          <Tr key={key}>
-            <Td>
-                  <Text fontSize="md" fontWeight="bold">
-                    {reclamation.type}
-                  </Text>
-            </Td>
-            <Td>
-              <Text fontSize="md" fontWeight="bold">
-                {reclamation.reason}
-              </Text>
-            </Td>
-            <Td>
-              <Text fontSize="md" fontWeight="bold">
-                {reclamation.time}
-              </Text>
-            </Td>
-            <Td>
-            <Badge
-                      bg={reclamation.status === "annulated" ? "red.400" : bgStatus}
-                      color={reclamation.status === "annulated" ? "white" : colorStatus}
-                      fontSize="16px"
-                      p="3px 10px"
-                      borderRadius="8px"
-                    >
-                      {reclamation.status}
-                    </Badge> 
-            </Td>
-            <Td>
-            <Text fontSize="md" fontWeight="bold">
-              {reclamation.student_id}
-            </Text>
-            </Td>
-            <Td>
-              <Text fontSize="md" fontWeight="bold" pb=".5rem">
-                {reclamation.teacher_id}
-              </Text>
-            </Td>
-            <Td>
-              <Flex direction={{ sm: "column", md: "row" }} align="flex-start">
-                <Button onClick={() => toggleModal(reclamation)} colorScheme="blue" mr={2}>
-                  <Icon as={FaEye} mr={1} />
-                  View
-                </Button>
-                <Button onClick={() => handleDelete(reclamation.id)} colorScheme="red" mr={2}>
-                  <Icon as={FaTrashAlt} mr={1} />
-                  Delete
-                </Button>
-              </Flex>
-            </Td>
-          </Tr>
-        ))}
-      </Tbody>
+  {ListeReclamation.map((reclamation, key) => (
+    // Check if the status is "annulated"
+    reclamation.status != "annulated" && (
+      <Tr key={key}>
+        <Td>
+          <Text fontSize="md" fontWeight="bold">
+            {reclamation.type}
+          </Text>
+        </Td>
+        <Td>
+          <Text fontSize="md" fontWeight="bold">
+            {reclamation.reason}
+          </Text>
+        </Td>
+        <Td>
+          <Text fontSize="md" fontWeight="bold">
+            {reclamation.time}
+          </Text>
+        </Td>
+        <Td>
+          <Badge
+            bg={reclamation.status === "annulated" ? "red.400" : bgStatus}
+            color={reclamation.status === "annulated" ? "white" : colorStatus}
+            fontSize="16px"
+            p="3px 10px"
+            borderRadius="8px"
+          >
+            {reclamation.status}
+          </Badge> 
+        </Td>
+        <Td>
+          <Text fontSize="md" fontWeight="bold">
+            {reclamation.student_id}
+          </Text>
+        </Td>
+        <Td>
+          <Text fontSize="md" fontWeight="bold" pb=".5rem">
+            {reclamation.teacher_id}
+          </Text>
+        </Td>
+        <Td>
+          <Flex direction={{ sm: "column", md: "row" }} align="flex-start">
+            <Button onClick={() => handleDelete(reclamation.id)} colorScheme="red" mr={2}>
+              <Icon as={FaTrashAlt} mr={1} />
+              Delete
+            </Button>
+          </Flex>
+        </Td>
+      </Tr>
+    )
+  ))}
+</Tbody>
+
     </Table>
   </CardBody>
 </Card>
 
-      <ReclamationView isOpen={isOpen} toggleModal={toggleModal} reclamation={selectedReclamation} />
       </Flex>
       </Grid>
     </>

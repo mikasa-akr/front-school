@@ -9,6 +9,7 @@ import {
   PersonIcon,
   DocumentIcon,
   TeamIcon,
+  ChatIcon
 } from "./components/Icons/Icons.js";
 import { CalendarIcon } from '@chakra-ui/icons'; // Importing the schedule icon from react-icons
 import Facture from "./views/Teacher/Facture";

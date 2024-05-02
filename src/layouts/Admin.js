@@ -20,7 +20,7 @@ import Expenses from '../views/Admin/TablesExpenses';
 import Facture from '../views/Admin/Factures';
 import Dashboard from '../views/Admin/Dashboard';
 
-function Admin(props) {
+function AdminLayout(props) {
   const { ...rest } = props;
   const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -140,4 +140,4 @@ function Admin(props) {
   );
 }
 
-export default Admin;
+export default AdminLayout;

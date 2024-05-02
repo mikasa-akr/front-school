@@ -163,12 +163,15 @@ function Students({ captions, logo }) {
                   <Td>
                     <Flex>
                       <Button onClick={() => toggleModal(student)} colorScheme="blue" mr={2}>
+                      <Icon as={FaEye} mr={1} />
                         View
                       </Button>
                       <Button onClick={() => handleDelete(student.id)} colorScheme="red" mr={2}>
+                      <Icon as={FaTrashAlt} mr={1} />
                         Delete
                       </Button>
                       <Button as={RouterLink} to={`/admin/tables/update/${student.id}`} colorScheme="green" mr={2}>
+                      <Icon as={FaPencilAlt} mr={1} />
                         Edit
                       </Button>
                     </Flex>

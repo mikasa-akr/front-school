@@ -86,7 +86,6 @@ function GroupCreate() {
     setFilteredStudents(filteredStudents); // Set filteredStudents state
   }, [students, type, teacherId, genderId, teachers]); // Trigger the filtering logic when dependencies change
   
-
   const handleChange = (event) => {
     const selectedOptions = Array.from(event.target.selectedOptions, option => option.value);
     setStudentId(selectedOptions);
@@ -102,7 +101,7 @@ function GroupCreate() {
     formData.append('type', type);
     formData.append('genderId', genderId);
     formData.append('teacherId', teacherId);
-    // Append each studentId to the FormData
+
     studentId.forEach(id => formData.append('studentId[]', id));
   
     axios

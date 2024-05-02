@@ -15,6 +15,7 @@ function TeacherUpdate() {
     const [isSaving, setIsSaving] = useState(false);
     const [courses, setCourses] = useState([]);
     const [selectedCourseId, setSelectedCourseId] = useState('');
+    const [selectedGenderId, setSelectedGenderId] = useState('');
 
     useEffect(() => {
         fetchCourses();
@@ -33,7 +34,7 @@ function TeacherUpdate() {
     const fetchGender = async () => {
         try {
             const response = await axios.get('/gender'); // Adjust the URL accordingly
-            setCourses(response.data);
+            setGender(response.data);
         } catch (error) {
             console.error('Error fetching genders:', error);
         }
@@ -70,7 +71,7 @@ function TeacherUpdate() {
             firstName: firstName,
             lastName: lastName,
             email:email,
-            gender:gender,
+            gender: selectedGenderId,
             number:number,
             course_id: selectedCourseId,
 
@@ -129,17 +130,25 @@ function TeacherUpdate() {
                         />
                     </FormControl>
                     <FormControl>
-                        <FormLabel>Gender:</FormLabel>
-                        <Select
-                            value={gender}
-                            onChange={(e) => setGender(e.target.value)}
-                            name="gender"
+                    <FormLabel>Gender:</FormLabel>
+  <Select
+                            value={selectedGenderId}
+                            onChange={(e) => setSelectedGenderId(e.target.value)}
+                            name="genders"
                         >
-                            <option value="male">Male</option>
-                            <option value="female">Female</option>
-                            <option value="children">Children</option>
+                            {gender.length > 0 ? ( // Check if genders array has elements
+                                gender.map((gend) => (
+                                    <option key={gend.id} value={gend.id}>{gend.name}</option>
+                                ))
+                            ) : (
+                                <option disabled>
+                                    { // Handle loading or error states
+                                        isSaving ? 'Fetching genders...' : 'Error fetching genders'
+                                    }
+                                </option>
+                            )}
                         </Select>
-                    </FormControl>
+</FormControl>
                     <FormControl>
                         <FormLabel>Select Course:</FormLabel>
                         <Select
@@ -163,7 +172,8 @@ function TeacherUpdate() {
                     </Button>
                     <Text color="gray.500" textAlign="center">
                         <Link to="/admin/table/teacher/*">View All Teachers</Link>
-                    </Text>                </VStack>
+                    </Text>                
+                </VStack>
             </Container>
         </Card>
     );

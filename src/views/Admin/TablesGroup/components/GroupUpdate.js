@@ -1,160 +1,150 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import axios from 'axios';
-import { Button, Container, FormControl, FormLabel, Input, Select,Text, VStack, Grid, Flex,Heading } from "@chakra-ui/react";
-import Card from '../../../../components/Card/Card';
+import {
+  Button,
+  Container,
+  FormControl,
+  FormLabel,
+  Select,
+  Text,
+  VStack,
+  Flex,
+  Heading,
+} from '@chakra-ui/react';
 
 function GroupUpdate() {
-    const [id, setId] = useState(useParams().id)
-    const [type, setType] = useState('');
-    const [teachers, setTeachers] = useState([]);
-    const [teacherId, setTeacherId] = useState('');
-    const [students, setStudents] = useState([]);
-    const [studentId, setStudentId] = useState('');
-    const [isSaving, setIsSaving] = useState(false);
+  const { id } = useParams();
+  const [students, setStudents] = useState([]);
+  const [studentId, setStudentId] = useState('');
+  const [isSaving, setIsSaving] = useState(false);
+  const [filteredStudents, setFilteredStudents] = useState([]);
+  const [teachers, setTeachers] = useState([]); // Add teachers state
 
-
-    useEffect(() => {
-        async function fetchTeachers() {
-            try {
-                const response = await axios.get('/crud/teacher/');
-                setTeachers(response.data);
-            } catch (error) {
-                console.error('Error fetching teachers:', error);
-            }
-        }
-        fetchTeachers();
-    }, []);
-
-    useEffect(() => {
-        async function fetchStudents() {
-            try {
-                const response = await axios.get('/crud/student/');
-                setStudents(response.data);
-            } catch (error) {
-                console.error('Error fetching students:', error);
-            }
-        }
-        fetchStudents();
-    }, []);
-
-    useEffect(() => {
-        axios.put(`/group/${id}/edit`)
-        .then(function (response) {
-            let group = response.data
-            setType(group.type);
-            setStudentId(group.student_id.id);
-            setTeacherId(group.teacher_id.id);
-        })
-        .catch(function (error) {
-            Swal.fire({
-                 icon: 'error',
-                title: 'An Error Occured!',
-                showConfirmButton: false,
-                timer: 1500
-            })
-        })
-          
-    }, [])
-  
-  
-    const handleSave = () => {
-        setIsSaving(true);
-        axios.put(`/group/${id}/edit`, {
-            type: type,
-            student_id: studentId,
-            teacher_id: teacherId,
-
-        })
-        .then(function (response) {
-            Swal.fire({
-                icon: 'success',
-                title: 'Group updated successfully!',
-                showConfirmButton: false,
-                timer: 1500
-            })
-            setIsSaving(false);
-        })
-        .catch(function (error) {
-            Swal.fire({
-                 icon: 'error',
-                title: 'An Error Occured!',
-                showConfirmButton: false,
-                timer: 1500
-            })
-            setIsSaving(false)
-        });
+  useEffect(() => {
+    async function fetchStudents() {
+      try {
+        const response = await axios.get('/crud/student/');
+        setStudents(response.data);
+      } catch (error) {
+        console.error('Error fetching students:', error);
+      }
     }
 
-    return (
-        <Flex>
-          <Container mt="10%">
-            <VStack spacing="6">
-              <Heading as="h4" size="md" color="#ffffff">
-                Update Group
-              </Heading>
-                <FormControl>
-                  <FormLabel htmlFor="type">Type:</FormLabel>
-                  <Select
-                    id="type"
-                    value={type}
-                    onChange={(event) => setType(event.target.value)}
-                    placeholder="Select type"
-                    size="md"
-                  >
-                    <option value="private">Private</option>
-                    <option value="public">Public</option>
-                  </Select>
-                </FormControl>
-                <FormControl>
-                  <FormLabel htmlFor="teacher">Select Teacher:</FormLabel>
-                  <Select
-                    id="teacher"
-                    value={teacherId}
-                    onChange={(event) => setTeacherId(event.target.value)}
-                    placeholder="Select teacher"
-                    size="md"
-                  >
-                    {teachers.map((teacher) => (
-                      <option key={teacher.id} value={teacher.id}>
-                        {teacher.lastName}
-                      </option>
-                    ))}
-                  </Select>
-                </FormControl>
-                <FormControl>
-                  <FormLabel htmlFor="student">Select Student:</FormLabel>
-                  <Select
-                    id="student"
-                    value={studentId}
-                    onChange={(event) => setStudentId(event.target.value)}
-                    placeholder="Select student"
-                    size="md"
-                  >
-                    {students.map((student) => (
-                      <option key={student.id} value={student.id}>
-                        {student.firstName}
-                      </option>
-                    ))}
-                  </Select>
-                </FormControl>
-              <Button
-                onClick={handleSave}
-                colorScheme="teal"
-                borderRadius="xl"
-                isLoading={isSaving}
-                loadingText="Saving..."
-              >
-                Save Group
-              </Button>
-              <Text color="gray.500" textAlign="center">
-                        <Link to="/admin/table/group/*">View All Groups</Link>
-                    </Text>
-            </VStack>
-          </Container>
-        </Flex>
-      );
+    async function fetchTeachers() {
+      try {
+        const response = await axios.get('/crud/teacher/'); // Adjust the endpoint based on your backend API
+        setTeachers(response.data);
+      } catch (error) {
+        console.error('Error fetching teachers:', error);
+      }
+    }
+
+    fetchStudents();
+    fetchTeachers(); // Fetch teachers data
+  }, []);
+
+  useEffect(() => {
+    const fetchGroupDetails = async () => {
+      try {
+        const response = await axios.get(`/group/${id}`);
+        const group = response.data[0];
+  
+        const selectedTeacher = teachers.find((t) => t.id === parseInt(group.teacherId));
+        
+        const filteredStudents = students.filter((student) => {
+          if (group.type === 'private' && group.teacherId && group.gender_id) {
+            return (
+              student.subscription === 'private' &&
+              selectedTeacher &&
+              student.course_types.some(course => course.trim().toLowerCase() === selectedTeacher.course_name.trim().toLowerCase()) &&
+              student.gender_id === Number(group.gender_id)
+            );
+          } else if (group.type === 'public' && group.teacherId && group.gender_id) {
+            return (
+              student.subscription === 'public' &&
+              selectedTeacher &&
+              student.course_types.some(course => course.trim().toLowerCase() === selectedTeacher.course_name.trim().toLowerCase()) &&
+              student.gender_id === Number(group.gender_id)
+            );
+          }
+        });
+        
+  
+        setFilteredStudents(filteredStudents);
+      } catch (error) {
+        console.error('Error fetching group details:', error);
+      }
+    };
+  
+    fetchGroupDetails();
+  }, [id, students, teachers]);
+  
+  const handleSave = () => {
+    setIsSaving(true);
+    axios
+      .put(`/group/${id}/edit`, {
+        student_id: studentId,
+      })
+      .then(function (response) {
+        Swal.fire({
+          icon: 'success',
+          title: 'Student added to group successfully!',
+          showConfirmButton: false,
+          timer: 1500,
+        });
+        setIsSaving(false);
+      })
+      .catch(function (error) {
+        Swal.fire({
+          icon: 'error',
+          title: 'An Error Occurred!',
+          text: 'Failed to add student to group.',
+        });
+        setIsSaving(false);
+      });
+  };
+
+  return (
+    <Flex>
+      <Container mt="10%">
+        <VStack spacing="6">
+          <Heading as="h4" size="md" color="#ffffff">
+            Add Student to Group
+          </Heading>
+          <FormControl>
+            <FormLabel htmlFor="student">Select Student:</FormLabel>
+            <Select
+              id="student"
+              value={studentId}
+              onChange={(event) => setStudentId(event.target.value)}
+              placeholder="Select student"
+              size="md"
+            >
+              {filteredStudents.map((student) => (
+                <option key={student.id} value={student.id}>
+                  {student.firstName} {student.lastName}
+                </option>
+              ))}
+            </Select>
+          </FormControl>
+          <Button
+            onClick={handleSave}
+            colorScheme="teal"
+            borderRadius="xl"
+            isLoading={isSaving}
+            loadingText="Adding..."
+          >
+            Add Student to Group
+          </Button>
+          <Text color="gray.500" textAlign="center">
+            <Link to="/admin/table/group/*">View All Groups</Link>
+          </Text>
+        </VStack>
+      </Container>
+    </Flex>
+  );
 }
 
 export default GroupUpdate;

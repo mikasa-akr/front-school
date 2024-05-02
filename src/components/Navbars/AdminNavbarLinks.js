@@ -1,4 +1,4 @@
-import React from "react";
+import React,{useState,useEffect} from "react";
 import {
   Button,
   Flex,
@@ -12,7 +12,7 @@ import {
   useColorMode,
   useColorModeValue,
 } from "@chakra-ui/react";
-import { BellIcon, SettingsIcon, CloseIcon, SunIcon, MoonIcon } from "@chakra-ui/icons";
+import { BellIcon, SettingsIcon, CloseIcon, SunIcon, MoonIcon,ChatIcon } from "@chakra-ui/icons";
 import { ProfileIcon } from "../Icons/Icons";
 import SidebarResponsive from "../Sidebar/SidebarResponsive";
 import PropTypes from "prop-types";
@@ -23,14 +23,15 @@ import axios from "axios";
 export default function HeaderLinks(props) {
   const { secondary, onOpen } = props;
 
-  const navbarIcon = useColorModeValue("gray.500", "gray.200");
-  const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);  const navigate = useNavigate();
   const { colorMode, toggleColorMode } = useColorMode();
   const id = localStorage.getItem('id');
   const avatar = localStorage.getItem('avatar');
   const first = localStorage.getItem('first_name');
   const last = localStorage.getItem('last_name');
   const roles = localStorage.getItem('roles');
+  const [notifications, setNotifications] = useState([]);
 
   const handleLogout = () => {
     axios.put(`/update_status/${id}`, { status: 'offline' })
@@ -62,10 +63,42 @@ export default function HeaderLinks(props) {
     } else if (roles === 'ROLE_TEACHER') {
       navigate("/teacher/profile");
     }
-    // Add this condition to prevent navigation for ROLE_ADMIN
     else if (roles === 'ROLE_ADMIN') {
+      navigate("/admin/dashboard");
     }
   };
+
+  const navigateToChat = () => {
+    if (roles === 'ROLE_STUDENT') {
+      navigate("/chat/student");
+    } else if (roles === 'ROLE_TEACHER') {
+      navigate("/chat/teacher");
+    }
+    else if (roles === 'ROLE_ADMIN') {
+      navigate("/chat/admin");
+    }
+  };
+
+  useEffect(() => {
+    const fetchChats = async () => {
+      try {
+        if (roles === 'ROLE_TEACHER') {
+          const response = await axios.get(`/notification/teacher/${id}`);
+          setNotifications(response.data);
+        } else {
+          const response = await axios.get(`/notification/student/${id}`);
+          setNotifications(response.data);
+        }        
+        setLoading(false);
+      } catch (error) {
+        setError(error.message);
+        setLoading(false);
+      }
+    };
+
+    fetchChats();
+  }, []);
+
   return (
     <Flex
       pe={{ sm: "0px", md: "16px" }}
@@ -95,14 +128,51 @@ export default function HeaderLinks(props) {
         routes={routes}
         {...props}
       />
+      <Flex ml="8px">
       <Menu>
-        <MenuButton as={IconButton} icon={<BellIcon />} variant="ghost" fontSize="xl" />
+          <MenuButton as={IconButton} icon={<BellIcon />} variant="ghost" fontSize="3xl" />
+          <MenuList p="20px 8px">
+          {notifications.map(notification => {
+  const notificationTime = new Date(notification.time);
+  const currentTime = new Date();
+
+  // Calculate the time difference in milliseconds
+  const timeDifference = currentTime - notificationTime;
+
+  // Convert milliseconds to hours
+  const timeDifferenceInHours = Math.floor(timeDifference / (1000 * 60 * 60));
+
+  // If the time difference is less than 24 hours, display in hours
+  if (timeDifferenceInHours < 24) {
+    return (
+      <MenuItem key={notification.id}>
+        {notification.content}<br /> 
+        {timeDifferenceInHours}h
+      </MenuItem>
+    );
+  } else {
+    // Calculate the time difference in days
+    const timeDifferenceInDays = Math.floor(timeDifferenceInHours / 24);
+    return (
+      <MenuItem key={notification.id}>
+        {notification.content}<br /> 
+        {timeDifferenceInDays} day{timeDifferenceInDays > 1 ? 's' : ''} ago
+      </MenuItem>
+    );
+  }
+})}
+          </MenuList>
       </Menu>
+      </Flex>
+      <Flex ml="8px">
+        <IconButton icon={<ChatIcon />} variant="ghost" fontSize="2xl" onClick={navigateToChat} />
+      </Flex>
+
       <Flex ml="8px">
         <IconButton
           icon={colorMode === "dark" ? <SunIcon /> : <MoonIcon />}
           variant="ghost"
-          fontSize="xl"
+          fontSize="3xl"
           onClick={toggleColorMode}
         />
       </Flex>

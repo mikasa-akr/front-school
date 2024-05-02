@@ -70,7 +70,6 @@ export default function AdminNavbar(props) {
       bg={navbarBg}
       borderColor={navbarBorder}
       filter={navbarFilter}
-      backdropFilter={navbarBackdrop}
       borderWidth="1.5px"
       borderStyle="solid"
       transitionDelay="0s, 0s, 0s, 0s"

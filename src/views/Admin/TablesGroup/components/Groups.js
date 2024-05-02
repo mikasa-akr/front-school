@@ -130,10 +130,10 @@ function Groups({ captions, logo }) {
             </Td>
             <Td>
             <Text fontSize="md" fontWeight="bold">
-  {group.student_id && group.student_id.length > 0
-    ? group.student_id.map((student) => `${student.firstName} ${student.lastName}`).join(" , ")
-    : "None"}
-</Text>
+            {group.student_id && group.student_id.length > 0
+              ? group.student_id.map((student) => `${student.firstName} ${student.lastName}`).join(" , ")
+              : "None"}
+          </Text>
             </Td>
             <Td>
               <Text fontSize="md" fontWeight="bold" pb=".5rem">
@@ -151,8 +151,8 @@ function Groups({ captions, logo }) {
                   Delete
                 </Button>
                 <Button as={RouterLink} to={`/admin/table/group/update/${group.id}`} colorScheme="green" mr={2}>
-                  <Icon as={FaPencilAlt} mr={1} />
-                  Edit
+                  <Icon as={FaPlus} mr={1} />
+                  student
                 </Button>
                 <Button as={RouterLink} to={`/admin/table/group/create/`} colorScheme="green">
                   <Icon as={FaPlus} mr={1} />

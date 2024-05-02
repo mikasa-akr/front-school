@@ -95,17 +95,21 @@ function CalendarDom() {
 
   }, [id]); // Add id as a dependency to fetch new data when id changes
 
-  const handleEventClick = (eventClickInfo) => {
-    const eventStatus = eventClickInfo.event.extendedProps.status;
-    if (eventStatus === 'canceled session' || eventStatus === 'done') {
-      return;
-    } else if (eventStatus === 'rattrrapage scheduling') {
-      setSelectedEvent(eventClickInfo.event);
-      setIsModalOpen(true);
-    } else {
-      // Handle other event types here
-    }
-  };
+const handleEventClick = (eventClickInfo) => {
+  const eventStatus = eventClickInfo.event.extendedProps.status;
+  if (eventStatus === 'canceled session' || eventStatus === 'done'|| eventStatus === 'perdu') {
+    return;
+  } 
+  else if (eventStatus === 'active') {
+    setSelectedReclamationType(' '); // Set the default reclamation type to 'annulation' for active sessions
+  } else if (eventStatus === 'rattrrapage scheduling') {
+    setSelectedReclamationType('vote'); // Set the default reclamation type to 'vote' for rattrrapage scheduling
+  }
+
+  setSelectedEvent(eventClickInfo.event);
+  setIsModalOpen(true);
+};
+
   
   const handleAnnulation = async (e) => {
     e.preventDefault();
@@ -131,9 +135,9 @@ function CalendarDom() {
       // Conditionally call the annulation or reclame endpoint based on the selectedReclamationType
       let response;
       if (selectedReclamationType === 'annulation') {
-        response = await axios.post(`/reclamation/annulation/session/${sessionId}`, formattedData);
+        response = await axios.post(`/reclamation/annulation/session/${id}/${sessionId}`, formattedData);
       } else if (selectedReclamationType === 'reclame') {
-        response = await axios.post(`/reclamation/student/reclame/${sessionId}`, { reason: reason });
+        response = await axios.post(`/reclamation/student/reclame/${id}/${sessionId}`, { reason: reason });
       } else {
         console.error("Invalid reclamation type");
         return;
@@ -192,7 +196,8 @@ function CalendarDom() {
             style={{
               backgroundColor: eventInfo.event.extendedProps.status === 'canceled session' ? 'red' : 
               eventInfo.event.extendedProps.status === 'rattrrapage scheduling' ? 'green' : 
-              eventInfo.event.extendedProps.status === 'done' ? 'blue' : '',
+              eventInfo.event.extendedProps.status === 'done' ? 'blue' :
+              eventInfo.event.extendedProps.status === 'perdu' ? 'red' : '',
             }}
           >
             <b>{eventInfo.event.title}</b> (Course: {eventInfo.event.extendedProps.course})
@@ -207,10 +212,20 @@ function CalendarDom() {
         <ModalContent>
           <ModalHeader>{selectedEvent ? 'Vote' : 'Annulation / Reclame'}</ModalHeader>
           <ModalBody>
-          {selectedEvent && (
+  {selectedEvent && selectedEvent.extendedProps.status === 'active' && (
+    <>
+      <Button colorScheme="blue" onClick={() => setSelectedReclamationType('annulation')} mb={3} ml={3}>
+        Annulation
+      </Button>
+      <Button colorScheme="blue" onClick={() => setSelectedReclamationType('reclame')} mb={3} ml={8}>
+        Reclame
+      </Button>
+    </>
+  )}
+  {selectedEvent && selectedEvent.extendedProps.status === 'rattrrapage scheduling' && timeDifference <= 24 && (
     <>
       <Box>
-        {info.length > 0 ? (
+        {info && info.length > 0 ? (
           info.map((sessionInfo, index) => (
             <div key={index}>
               <Text>
@@ -254,59 +269,48 @@ function CalendarDom() {
       </form>
     </>
   )}
-            {!selectedEvent && (
-              <>
-                {selectedReclamationType !== 'annulation' && selectedReclamationType !== 'reclame' && (
-                  <>
-                    <Button colorScheme="blue" variant="outline" onClick={() => setSelectedReclamationType('annulation')} mb={3} ml={3}>Annulation</Button>
-                    <Button colorScheme="blue" variant="outline" onClick={() => setSelectedReclamationType('reclame')} mb={3} ml={8}>Reclame</Button>
-                  </>
-                )}
-                {selectedReclamationType === 'annulation' && (
-                  <>
-                    {timeDifference >= 24 ? (
-                      <Button colorScheme="blue" onClick={handleAnnulation} mr={3}>Confirm</Button>
-                    ) : (
-                      <>
-                        <Select
-                          id="reason"
-                          value={reason}
-                          onChange={(event) => setReason(event.target.value)}
-                          placeholder="Select Reason"
-                          size="md"
-                          mb={3}
-                        >
-                          <option value="sick">Sick</option>
-                          <option value="urgency">Urgency</option>
-                        </Select>
-                        <Button colorScheme="blue" onClick={handleAnnulation} mr={3}>Confirm</Button>
-                      </>
-                    )}
-                  </>
-                )}
-                
-                {selectedReclamationType === 'reclame' && (
-                  <>
-                    <Select
-                      id="reason"
-                      value={reason}
-                      onChange={(event) => setReason(event.target.value)}
-                      placeholder="Select Reason"
-                      size="md"
-                      mb={3}
-                    >
-                      <option value="retard_prof">Retard prof</option>
-                      <option value="absence_prof">Absence prof</option>
-                    </Select>
-                    <Button colorScheme="blue" onClick={handleAnnulation} mr={3}>Confirm</Button>
-                  </>
-                )}
-                {showMessage && (
-                  <span>{registrationStatus === 'success' ? registrationMessage : registrationStatus === 'error' ? registrationMessage : ''}</span>
-                )}
-              </>
-            )}
-          </ModalBody>
+  {selectedReclamationType === 'annulation' && (
+    <>
+          <Select
+            id="reason"
+            value={reason}
+            onChange={(event) => setReason(event.target.value)}
+            placeholder="Select Reason"
+            size="md"
+            mb={3}
+          >
+            <option value="sick">Sick</option>
+            <option value="urgency">Urgency</option>
+          </Select>
+          <Button colorScheme="blue" onClick={handleAnnulation} mr={3}>
+            Confirm
+          </Button>
+    </>
+  )}
+  {selectedReclamationType === 'reclame' && (
+    <>
+      <Select
+        id="reason"
+        value={reason}
+        onChange={(event) => setReason(event.target.value)}
+        placeholder="Select Reason"
+        size="md"
+        mb={3}
+      >
+        <option value="retard_prof">Retard prof</option>
+        <option value="absence_prof">Absence prof</option>
+      </Select>
+      <Button colorScheme="blue" onClick={handleAnnulation} mr={3}>
+        Confirm
+      </Button>
+    </>
+  )}
+  {showMessage && (
+    <span>{registrationStatus === 'success' ? registrationMessage : registrationStatus === 'error' ? registrationMessage : ''}</span>
+  )}
+</ModalBody>
+
+
         </ModalContent>
       </Modal>
     </Card>

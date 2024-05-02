@@ -61,8 +61,6 @@ function Login() {
                     } else if (paymentStatus === 'not payed') {
                         setShowPaymentModal(true); // Show the payment modal
                     } else {
-                        // Handle other payment statuses or scenarios
-                        // For example, if payment status is undefined
                         navigate('/student/payment');
                     }
                 } else {

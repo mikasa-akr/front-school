@@ -15,6 +15,7 @@ import {
   Tbody,
   Th,
   Flex,
+  Badge
 } from "@chakra-ui/react";
 import axios from "axios";
 import Card from "../../../../components/Card/Card.js";
@@ -30,6 +31,9 @@ function Annulations({ captions, logo }) {
   const [isOpen, setIsOpen] = useState(false); // State to control the modal in StudentView
   const bgColor = useColorModeValue("white", "gray.700");
   const ID = localStorage.getItem('id');
+  const bgStatus = useColorModeValue("green.400", "green.400");
+  const colorStatus = useColorModeValue("white", "white");
+  
   // Function to toggle the modal state and set the selected student
   const toggleModal = (reclamation) => {
     setSelectedReclamation(reclamation);
@@ -92,9 +96,15 @@ function Annulations({ captions, logo }) {
               </Text>
             </Td>
             <Td>
-              <Text fontSize="md" fontWeight="bold">
-                {reclamation.status}
-              </Text>
+            <Badge
+            bg={reclamation.status === "annulated" ? "red.400" : bgStatus}
+            color={reclamation.status === "annulated" ? "white" : colorStatus}
+            fontSize="16px"
+            p="3px 10px"
+            borderRadius="8px"
+          >
+            {reclamation.status}
+          </Badge> 
             </Td>
           </Tr>
         ))}

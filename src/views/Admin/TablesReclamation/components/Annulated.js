@@ -14,8 +14,8 @@ import {
   Thead,
   Tbody,
   Th,
+  Badge,
   Flex,
-  Badge
 } from "@chakra-ui/react";
 import axios from "axios";
 import Card from "../../../../components/Card/Card.js";
@@ -30,10 +30,8 @@ function Reclamations({ captions, logo }) {
   const [selectedReclamation, setSelectedReclamation] = useState(null); // State to store the selected student
   const [isOpen, setIsOpen] = useState(false); // State to control the modal in StudentView
   const bgColor = useColorModeValue("white", "gray.700");
-  const ID = localStorage.getItem('id');
   const bgStatus = useColorModeValue("green.400", "green.400");
   const colorStatus = useColorModeValue("white", "white");
-
   // Function to toggle the modal state and set the selected student
   const toggleModal = (reclamation) => {
     setSelectedReclamation(reclamation);
@@ -44,7 +42,7 @@ function Reclamations({ captions, logo }) {
   }, []);
 
   const fetchListeReclamation = () => {
-      axios.get(`/reclamation/student/reclamation/${ID}`)
+      axios.get('/reclamation/')
           .then(function (response) {
               setListeReclamation(response.data);
               setIsLoaded(true);
@@ -52,6 +50,39 @@ function Reclamations({ captions, logo }) {
           .catch(function (error) {
               console.log(error);
           });
+  }
+
+  const handleDelete = (id) => {
+      Swal.fire({
+          title: 'Are you sure?',
+          text: "You won't be able to revert this!",
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Yes, delete it!'
+      }).then((result) => {
+          if (result.isConfirmed) {
+              axios.delete(`/reclamation/${id}`)
+                  .then(function (response) {
+                      Swal.fire({
+                          icon: 'success',
+                          title: 'reclamation deleted successfully!',
+                          showConfirmButton: false,
+                          timer: 1500
+                      });
+                      fetchListeReclamation();
+                  })
+                  .catch(function (error) {
+                      Swal.fire({
+                          icon: 'error',
+                          title: 'An Error Occured!',
+                          showConfirmButton: false,
+                          timer: 1500
+                      });
+                  });
+          }
+      });
   }
 
   if (!isLoaded)
@@ -64,7 +95,7 @@ function Reclamations({ captions, logo }) {
     <Card bg={bgColor} overflowX={{ sm: "scroll", xl: "hidden" }} borderRadius={'20px'}>
   <CardHeader p="6px 0px 22px 0px">
     <Text fontSize="xl" fontWeight="bold">
-      Reclamations Table
+      Annulations Table
     </Text>
   </CardHeader>
   <CardBody>
@@ -75,28 +106,32 @@ function Reclamations({ captions, logo }) {
           <Th color="gray.400">Reason</Th>
           <Th color="gray.400">Time</Th>
           <Th color="gray.400">Status</Th>
+          <Th color="gray.400">Student</Th>
+          <Th color="gray.400">Teacher</Th>
         </Tr>
       </Thead>
       <Tbody>
-        {ListeReclamation.map((reclamation, key) => (
-          <Tr key={key}>
-            <Td>
-                  <Text fontSize="md" fontWeight="bold">
-                    {reclamation.type}
-                  </Text>
-            </Td>
-            <Td>
-              <Text fontSize="md" fontWeight="bold">
-                {reclamation.reason}
-              </Text>
-            </Td>
-            <Td>
-              <Text fontSize="md" fontWeight="bold">
-                {reclamation.time}
-              </Text>
-            </Td>
-            <Td>
-            <Badge
+  {ListeReclamation.map((reclamation, key) => (
+    // Check if the status is "annulated"
+    reclamation.status === "annulated" && (
+      <Tr key={key}>
+        <Td>
+          <Text fontSize="md" fontWeight="bold">
+            {reclamation.type}
+          </Text>
+        </Td>
+        <Td>
+          <Text fontSize="md" fontWeight="bold">
+            {reclamation.reason}
+          </Text>
+        </Td>
+        <Td>
+          <Text fontSize="md" fontWeight="bold">
+            {reclamation.time}
+          </Text>
+        </Td>
+        <Td>
+          <Badge
             bg={reclamation.status === "annulated" ? "red.400" : bgStatus}
             color={reclamation.status === "annulated" ? "white" : colorStatus}
             fontSize="16px"
@@ -105,13 +140,34 @@ function Reclamations({ captions, logo }) {
           >
             {reclamation.status}
           </Badge> 
-            </Td>
-          </Tr>
-        ))}
-      </Tbody>
+        </Td>
+        <Td>
+          <Text fontSize="md" fontWeight="bold">
+            {reclamation.student_id}
+          </Text>
+        </Td>
+        <Td>
+          <Text fontSize="md" fontWeight="bold" pb=".5rem">
+            {reclamation.teacher_id}
+          </Text>
+        </Td>
+        <Td>
+          <Flex direction={{ sm: "column", md: "row" }} align="flex-start">
+            <Button onClick={() => handleDelete(reclamation.id)} colorScheme="red" mr={2}>
+              <Icon as={FaTrashAlt} mr={1} />
+              Delete
+            </Button>
+          </Flex>
+        </Td>
+      </Tr>
+    )
+  ))}
+</Tbody>
+
     </Table>
   </CardBody>
 </Card>
+
       </Flex>
       </Grid>
     </>

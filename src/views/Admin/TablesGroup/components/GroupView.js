@@ -40,6 +40,12 @@ function GroupView({ isOpen, toggleModal, group }) {
                     </Text>
                   </Text>
                   <Text color="gray.400" fontSize="sm" fontWeight="semibold">
+                    Gender:{" "}
+                    <Text as="span" color="gray.500">
+                    {group.gender}
+                    </Text>
+                  </Text>
+                  <Text color="gray.400" fontSize="sm" fontWeight="semibold">
                     Student:{" "}
                     <Text as="span" color="gray.500">
                     {group.student_id && group.student_id.length > 0 ? group.student_id.map(student => `${student.firstName} ${student.lastName}`).join(', ') : 'None'}
@@ -48,7 +54,7 @@ function GroupView({ isOpen, toggleModal, group }) {
                   <Text color="gray.400" fontSize="sm" fontWeight="semibold">
                     Teacher:{" "}
                     <Text as="span" color="gray.500">
-                    {group.teacher_id && group.teacher_id.length > 0 ? group.teacher_id.map(teacher => `${teacher.firstName} ${teacher.lastName}`).join(', ') : 'None'}
+                    {group.teacher_first} {group.teacher_last}
                     </Text>
                   </Text>
                 </Flex>

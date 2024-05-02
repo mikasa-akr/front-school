@@ -20,7 +20,7 @@ function CalendarDom() {
   const [timeDifference, setTimeDifference] = useState(0);
   const id = localStorage.getItem('id'); // Assuming the token is stored in localStorage
   const bgColor = useColorModeValue("white", "gray.700");
-
+  const [selectedAction, setSelectedAction] = useState(null);
   useEffect(() => {
     async function fetchEvents() {
       try {
@@ -29,22 +29,40 @@ function CalendarDom() {
           console.error("Empty or invalid response:", response.data);
           return;
         }
-        
-        const eventObjects = response.data.map(eventData => {
+  
+        const eventObjects = response.data.map(async eventData => {
           // Convert date_seance, time_start, and time_end to Date objects
           const startDateTime = new Date(eventData.date_seance.date);
           const endDateTime = new Date(eventData.time_end.date);
-          
+  
           // Extract time_start date and time
           const timeStart = new Date(eventData.time_start.date);
           startDateTime.setHours(timeStart.getHours());
           startDateTime.setMinutes(timeStart.getMinutes());
-
+  
           // Extract time_start date and time
           const timeEnd = new Date(eventData.time_end.date);
           endDateTime.setHours(timeEnd.getHours());
           endDateTime.setMinutes(timeEnd.getMinutes());
-          
+  
+          // Check if the session is active and if it's past 24 hours from the start date
+          const currentTime = new Date();
+          const sessionTime = startDateTime;
+          const diffInMilliseconds = sessionTime - currentTime;
+          const diffInHours = Math.abs(diffInMilliseconds / (1000 * 60 * 60));
+          const sessionTimePlus24Hours = new Date(startDateTime.getTime() + 24 * 60 * 60 * 1000); // Add 24 hours to session time
+
+          if (eventData.status === 'active' && sessionTimePlus24Hours < currentTime) {
+            // Call the API to mark the session as "perdu"
+            try {
+              await axios.post(`/session/perdu/${eventData.id}`);
+              eventData.status = 'perdu'; // Update the status in the event object
+            } catch (error) {
+              console.error("Error marking session as perdu:", error);
+            }
+          }
+  
+  
           return {
             title: eventData.status,
             course: eventData.seance_course_id,
@@ -54,19 +72,20 @@ function CalendarDom() {
             status: eventData.status // Include status in event object
           };
         });
-        
-        setEvents(eventObjects);
+  
+        const resolvedEvents = await Promise.all(eventObjects);
+        setEvents(resolvedEvents);
       } catch (error) {
         console.error("Error fetching sessions:", error);
       }
-    }
-    
-    fetchEvents(); // Call fetchEvents immediately inside useEffect
-
-  }, [id]); // Add id as a dependency to fetch new data when id changes
+    }    
+  
+    fetchEvents();
+  }, [id]);
+  
 
   const handleEventClick = (eventClickInfo) => {
-    if (eventClickInfo.event.extendedProps.status === 'rattrrapage scheduling' || eventClickInfo.event.extendedProps.status === 'done' ) {
+    if (eventClickInfo.event.extendedProps.status === 'rattrrapage scheduling' || eventClickInfo.event.extendedProps.status === 'done' || eventClickInfo.event.extendedProps.status === 'perdu' ) {
       return;
     }
     setSelectedEvent(eventClickInfo.event);
@@ -167,14 +186,48 @@ function CalendarDom() {
     }
   };
 
-  const handleCloseModal = () => {
+  const handleCloseModal = async () => {
     setIsModalOpen(false);
     setSelectedEvent(null);
     setReason('');
     setDate('');
     setTime('');
     setShowMessage(false);
+  
+    // Check if the session is active and if the current date has passed the session date
+    if (
+      selectedEvent &&
+      selectedEvent.extendedProps.status === 'active' &&
+      new Date() > selectedEvent.start
+    ) {
+      try {
+        // Calculate the time difference between the current date and the session start date
+        const currentTime = new Date();
+        const sessionTime = selectedEvent.start;
+        const diffInMilliseconds = currentTime - sessionTime;
+        const diffInHours = Math.abs(diffInMilliseconds / (1000 * 60 * 60));
+  
+        // If 24 hours have passed since the session start date, simulate marking the session as 'perdu'
+        if (diffInHours >= 24) {
+          // Simulating marking the session as 'perdu' by updating the event object
+          const updatedEvent = { ...selectedEvent };
+          updatedEvent.extendedProps.status = 'perdu';
+          setEvents(prevEvents => prevEvents.map(event => event.id === selectedEvent.id ? updatedEvent : event));
+          
+          // Display success message
+          setRegistrationStatus('success');
+          setRegistrationMessage('Session marked as perdu');
+          setShowMessage(true);
+        }
+      } catch (error) {
+        console.error("Error marking session as perdu:", error);
+        setRegistrationStatus('error');
+        setRegistrationMessage('An error occurred while marking session as perdu');
+        setShowMessage(true);
+      }
+    }
   };
+  
 
   return (
     <Card marginTop="10%" bg={bgColor} borderRadius={'20px'}>
@@ -188,7 +241,8 @@ function CalendarDom() {
           style={{
             backgroundColor: eventInfo.event.extendedProps.status === 'canceled session' ? 'red' : 
             eventInfo.event.extendedProps.status === 'rattrrapage scheduling' ? 'green' : 
-            eventInfo.event.extendedProps.status === 'done' ? 'blue' : '',
+            eventInfo.event.extendedProps.status === 'done' ? 'blue' :
+            eventInfo.event.extendedProps.status === 'perdu' ? 'red' : '',
  }}
           >
             <b>{eventInfo.event.title}</b> (Course: {eventInfo.event.extendedProps.course})
@@ -201,9 +255,25 @@ function CalendarDom() {
 <Modal isOpen={isModalOpen} onClose={handleCloseModal}>
   <ModalOverlay />
   <ModalContent>
-    <ModalHeader>{status === true ? 'Create Rattrapage' : 'Annulation'}</ModalHeader>
+    <ModalHeader>Rattrapage Schedule / Annulation</ModalHeader>
     <ModalBody>
-      {status === true ? (
+      {(selectedEvent && selectedEvent.extendedProps.status === 'active' && timeDifference <= 24) && (
+        <>
+          <Select
+            id="reason"
+            value={reason}
+            onChange={(event) => setReason(event.target.value)}
+            placeholder="Select Reason"
+            size="md"
+            mt={4}
+          >
+            <option value="sick">Sick</option>
+            <option value="urgency">Urgency</option>
+          </Select>
+          <Button colorScheme="red" onClick={handleAnnulation} mt={4} mr={3}>Confirm Annulation</Button>
+        </>
+      )}
+      {(selectedEvent && selectedEvent.extendedProps.status === 'canceled session') && (
         <>
           <FormControl>
             <FormLabel>Date</FormLabel>
@@ -213,32 +283,12 @@ function CalendarDom() {
             <FormLabel>Time</FormLabel>
             <Input type="time" value={time} onChange={(e) => setTime(e.target.value)} />
           </FormControl>
-        </>
-      ) : (
-        <>
-          {timeDifference >= 24 ? (
-            <>
-              <Button colorScheme="blue" onClick={handleCompleteSession} mr={3}>Complete Session</Button>
-            </>
-          ) : (
-            <>
-              <Select
-                id="reason"
-                value={reason}
-                onChange={(event) => setReason(event.target.value)}
-                placeholder="Select Reason"
-                size="md"
-                mt={4}
-              >
-                <option value="sick">Sick</option>
-                <option value="urgency">Urgency</option>
-              </Select>
-              <Button colorScheme="blue" onClick={handleAnnulation} mt={4} mr={3}>Confirm</Button>
-            </>
-          )}
+          <Button colorScheme="blue" onClick={handleCreateRattrapage} mt={4} mr={3}>Confirm Rattrapage</Button>
         </>
       )}
-      <Button colorScheme="blue" onClick={handleCreateRattrapage} mt={4} mr={3}>Confirm Rattrapage</Button>
+{(selectedEvent && selectedEvent.extendedProps.status === 'active' && new Date() > selectedEvent.start) && (
+  <Button colorScheme="blue" onClick={handleCompleteSession} mt={4} mr={3}>Complete Session</Button>
+)}
       <Button onClick={handleCloseModal} mt={4}>Cancel</Button>
       {showMessage && (
         <span>{registrationStatus === 'success' ? registrationMessage : registrationStatus === 'error' ? registrationMessage : ''}</span>

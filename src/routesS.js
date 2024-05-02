@@ -10,10 +10,10 @@ import {
   PersonIcon,
   DocumentIcon,
   TeamIcon,
-  CalendarIcon
+  CalendarIcon,
+  ChatIcon
 } from "./components/Icons/Icons.js";
 import Annulation from "./views/Student/TablesAnnulation";
-
 var dashRoutes = [
   {
     path: "/dashboard",

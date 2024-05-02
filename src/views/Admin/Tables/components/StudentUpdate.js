@@ -10,7 +10,7 @@ function StudentUpdate() {
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [email, setEmail] = useState('');
-    const [genders, setGender] = useState([]);
+    const [genders, setGender] = useState([]);    
     const [selectedGenderId, setSelectedGenderId] = useState('');
     const [number, setNumber] = useState('');
     const [age, setAge] = useState('');
@@ -45,10 +45,16 @@ function StudentUpdate() {
 
     const fetchGender = async () => {
         try {
-            const response = await axios.get('/gender'); // Adjust the URL accordingly
-            setCourses(response.data);
+            const response = await axios.get('/gender');
+            if (Array.isArray(response.data)) {
+                setGender(response.data);
+            } else {
+                console.error('Error: response data is not an array:', response.data);
+                setGender([]); // Set genders to empty array if data is invalid
+            }
         } catch (error) {
             console.error('Error fetching genders:', error);
+            setGender([]); // Set genders to empty array if there's an error
         }
     };
 
@@ -84,14 +90,14 @@ function StudentUpdate() {
         axios.put(`/crud/student/${id}/edit`, {
             firstName: firstName,
             lastName: lastName,
-            email:email,
-            gender:genders,
-            number:number,
-            age:age,
+            email: email,
+            gender: selectedGenderId, // Pass selected gender ID instead of genders array
+            number: number,
+            age: age,
             course_id: selectedCourseId,
             forfait_id: forfaitId,
-
         })
+        
         .then(function (response) {
             Swal.fire({
                 icon: 'success',
@@ -146,17 +152,25 @@ function StudentUpdate() {
                         />
                     </FormControl>
                     <FormControl>
-                        <FormLabel>Gender:</FormLabel>
-                        <Select
+  <FormLabel>Gender:</FormLabel>
+  <Select
                             value={selectedGenderId}
                             onChange={(e) => setSelectedGenderId(e.target.value)}
-                            name="course"
+                            name="genders"
                         >
-                            {genders.map(gend => (
-                                <option key={gend.id} value={gend.id}>{gend.name}</option>
-                            ))}
+                            {genders.length > 0 ? ( // Check if genders array has elements
+                                genders.map((gend) => (
+                                    <option key={gend.id} value={gend.id}>{gend.name}</option>
+                                ))
+                            ) : (
+                                <option disabled>
+                                    { // Handle loading or error states
+                                        isSaving ? 'Fetching genders...' : 'Error fetching genders'
+                                    }
+                                </option>
+                            )}
                         </Select>
-                    </FormControl>
+</FormControl>
                     <FormControl>
                         <FormLabel>Age:</FormLabel>
                         <Input
