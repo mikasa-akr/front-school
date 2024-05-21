@@ -20,6 +20,7 @@ function CalendarDom() {
   const [timeDifference, setTimeDifference] = useState(0);
   const id = localStorage.getItem('id'); // Assuming the token is stored in localStorage
   const bgColor = useColorModeValue("white", "gray.700");
+  const [selectedReclamationType, setSelectedReclamationType] = useState('');
   const [selectedAction, setSelectedAction] = useState(null);
   useEffect(() => {
     async function fetchEvents() {
@@ -88,6 +89,9 @@ function CalendarDom() {
     if (eventClickInfo.event.extendedProps.status === 'rattrrapage scheduling' || eventClickInfo.event.extendedProps.status === 'done' || eventClickInfo.event.extendedProps.status === 'perdu' ) {
       return;
     }
+    else if (eventClickInfo.event.extendedProps.status === 'active') {
+      setSelectedReclamationType(' '); // Set the default reclamation type to 'annulation' for active sessions
+    }
     setSelectedEvent(eventClickInfo.event);
     const status = eventClickInfo.event.extendedProps.status === 'canceled session';
     console.log('status', status);
@@ -137,6 +141,46 @@ function CalendarDom() {
       console.log(response.data);
     } catch (error) {
       console.error("Error cancelling session:", error);
+      setRegistrationStatus('error');
+      setRegistrationMessage('An error occurred while registering reclamation');
+      setShowMessage(true);
+    }
+  };
+
+  const handleReclamation = async (e) => {
+    e.preventDefault();
+    
+    try {
+      if (!selectedEvent) {
+        console.log("Selected event is missing");
+        return;
+      }
+  
+      const formattedData = {
+        reason: reason,
+        date_seance: selectedEvent.start.toISOString(), // Convert date_seance to ISO string
+        time_start: selectedEvent.start.toLocaleTimeString(), // Convert time_start to string
+        time_end: selectedEvent.end ? selectedEvent.end.toLocaleTimeString() : '' // Convert time_end to string if selectedEvent.end is not null
+      };
+  
+      const sessionId = selectedEvent.id;
+  
+      const response = await axios.post(`/reclamation/teacher/reclame/${sessionId}`, formattedData); // Use the session ID in the request URL
+      
+      // Update the registration status and message based on the response
+      if (response.status === 201) {
+        setRegistrationStatus('success');
+        setRegistrationMessage('Reclamation registered successfully');
+      } else {
+        setRegistrationStatus('error');
+        setRegistrationMessage('Failed to register reclamation');
+      }
+  
+      setShowMessage(true); 
+  
+      console.log(response.data);
+    } catch (error) {
+      console.error("Error reclamation session:", error);
       setRegistrationStatus('error');
       setRegistrationMessage('An error occurred while registering reclamation');
       setShowMessage(true);
@@ -229,7 +273,7 @@ function CalendarDom() {
   };
   
 
-  return (
+  return (    
     <Card marginTop="10%" bg={bgColor} borderRadius={'20px'}>
       <FullCalendar
         plugins={[dayGridPlugin, timeGridPlugin]}
@@ -257,7 +301,17 @@ function CalendarDom() {
   <ModalContent>
     <ModalHeader>Rattrapage Schedule / Annulation</ModalHeader>
     <ModalBody>
-      {(selectedEvent && selectedEvent.extendedProps.status === 'active' && timeDifference <= 24) && (
+      {(selectedEvent && selectedEvent.extendedProps.status === 'active' && timeDifference <=24) && (
+        <>
+                  <Button colorScheme="blue" onClick={() => setSelectedReclamationType('annulation')} mb={3} ml={3}>
+                    Annulation
+                  </Button>
+                  <Button colorScheme="blue" onClick={() => setSelectedReclamationType('reclamation')} mb={3} ml={8}>
+                    Reclame
+                  </Button>
+                </>
+      )}
+        {selectedReclamationType === 'annulation' && (
         <>
           <Select
             id="reason"
@@ -273,6 +327,20 @@ function CalendarDom() {
           <Button colorScheme="red" onClick={handleAnnulation} mt={4} mr={3}>Confirm Annulation</Button>
         </>
       )}
+      {selectedReclamationType === 'reclamation' && (
+        <>
+                <Input
+                  type="text"
+                  value={reason}
+                  onChange={(event) => setReason(event.target.value)}
+                  placeholder="Enter Reason"
+                  size="md"
+                  mt={4}
+                />
+          <Button colorScheme="green" onClick={handleReclamation} mt={4} mr={3}>Confirm reclamation</Button>
+        </>
+      )}
+
       {(selectedEvent && selectedEvent.extendedProps.status === 'canceled session') && (
         <>
           <FormControl>
@@ -289,7 +357,6 @@ function CalendarDom() {
 {(selectedEvent && selectedEvent.extendedProps.status === 'active' && new Date() > selectedEvent.start) && (
   <Button colorScheme="blue" onClick={handleCompleteSession} mt={4} mr={3}>Complete Session</Button>
 )}
-      <Button onClick={handleCloseModal} mt={4}>Cancel</Button>
       {showMessage && (
         <span>{registrationStatus === 'success' ? registrationMessage : registrationStatus === 'error' ? registrationMessage : ''}</span>
       )}

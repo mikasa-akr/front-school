@@ -11,6 +11,7 @@ import {
   Text,
   useColorMode,
   useColorModeValue,
+  Divider,
 } from "@chakra-ui/react";
 import { BellIcon, SettingsIcon, CloseIcon, SunIcon, MoonIcon,ChatIcon } from "@chakra-ui/icons";
 import { ProfileIcon } from "../Icons/Icons";
@@ -128,42 +129,48 @@ export default function HeaderLinks(props) {
         routes={routes}
         {...props}
       />
-      <Flex ml="8px">
-      <Menu>
-          <MenuButton as={IconButton} icon={<BellIcon />} variant="ghost" fontSize="3xl" />
-          <MenuList p="20px 8px">
-          {notifications.map(notification => {
-  const notificationTime = new Date(notification.time);
-  const currentTime = new Date();
+<Flex ml="8px">
+  <Menu>
+    <MenuButton as={IconButton} icon={<BellIcon />} variant="ghost" fontSize="3xl" />
+    <MenuList p="20px 8px" overflowY="auto" maxHeight="500px">
+      <Text fontWeight='bold'>Notifications</Text>
+      <Divider />
+      {notifications.map((notification) => {
+        const notificationTime = new Date(notification.time);
+        const currentTime = new Date();
 
-  // Calculate the time difference in milliseconds
-  const timeDifference = currentTime - notificationTime;
+        // Calculate the time difference in milliseconds
+        const timeDifference = currentTime - notificationTime;
 
-  // Convert milliseconds to hours
-  const timeDifferenceInHours = Math.floor(timeDifference / (1000 * 60 * 60));
+        // Convert milliseconds to hours
+        const timeDifferenceInHours = Math.floor(timeDifference / (1000 * 60 * 60));
 
-  // If the time difference is less than 24 hours, display in hours
-  if (timeDifferenceInHours < 24) {
-    return (
-      <MenuItem key={notification.id}>
-        {notification.content}<br /> 
-        {timeDifferenceInHours}h
-      </MenuItem>
-    );
-  } else {
-    // Calculate the time difference in days
-    const timeDifferenceInDays = Math.floor(timeDifferenceInHours / 24);
-    return (
-      <MenuItem key={notification.id}>
-        {notification.content}<br /> 
-        {timeDifferenceInDays} day{timeDifferenceInDays > 1 ? 's' : ''} ago
-      </MenuItem>
-    );
-  }
-})}
-          </MenuList>
-      </Menu>
-      </Flex>
+        // If the time difference is less than 24 hours, display in hours
+        if (timeDifferenceInHours < 24) {
+          return (
+            <MenuItem key={notification.id}>
+              {notification.content}
+              <br />
+              {timeDifferenceInHours}h
+            </MenuItem>
+          );
+        } else {
+          // Calculate the time difference in days
+          const timeDifferenceInDays = Math.floor(timeDifferenceInHours / 24);
+          return (
+            <MenuItem key={notification.id}>
+              {notification.content}
+              <br />
+              {timeDifferenceInDays} day{timeDifferenceInDays > 1 ? 's' : ''} ago
+            </MenuItem>
+          );
+        }
+      })}
+    </MenuList>
+  </Menu>
+</Flex>
+
+
       <Flex ml="8px">
         <IconButton icon={<ChatIcon />} variant="ghost" fontSize="2xl" onClick={navigateToChat} />
       </Flex>

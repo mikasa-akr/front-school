@@ -86,12 +86,13 @@ function GroupCreate() {
     setFilteredStudents(filteredStudents); // Set filteredStudents state
   }, [students, type, teacherId, genderId, teachers]); // Trigger the filtering logic when dependencies change
   
+  const filteredTeachers = teachers.filter(teacher => teacher.gender_id === Number(genderId));  
+
   const handleChange = (event) => {
     const selectedOptions = Array.from(event.target.selectedOptions, option => option.value);
     setStudentId(selectedOptions);
   };
 
-  const filteredTeachers = teachers.filter(teacher => teacher.gender_id === Number(genderId));  
 
   const handleSave = () => {
     setIsSaving(true);

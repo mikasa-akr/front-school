@@ -62,16 +62,27 @@ const TeacherMessagesPage = ({ selectedChatId, selectedChatInfo }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!messageInput.trim()) return;
-
+  
     try {
+      // Post the new message
       const response = await axios.post(`/Messagerie/create/group/${teacherId}/${selectedChatId}`, { context: messageInput });
-      setMessages([...messages, response.data]); // Assuming the response data is the new message
+      const newMessage = response.data;
+      
+      // Update messages state with the new message
+      setMessages([...messages, newMessage]);
+  
+      // Fetch the updated list of messages
+      const updatedResponse = await axios.get(`/Messagerie/messages/${selectedChatId}`);
+      const updatedMessages = updatedResponse.data;
+      setMessages(updatedMessages); // Update messages state with the updated list
+  
       setMessageInput('');
-      scrollToBottom(); // Scroll to the bottom after a new message is sent
+      scrollToBottom(); // Scroll to bottom of message list
     } catch (error) {
       console.error('Error sending message:', error);
     }
   };
+  
 
   const scrollToBottom = () => {
     if (chatEndRef.current) { // Check if chatEndRef is not null
@@ -122,9 +133,9 @@ const TeacherMessagesPage = ({ selectedChatId, selectedChatInfo }) => {
         <Box overflowY="scroll" flex="1">
           {loading ? (
             <Center>
-        <Text fontWeight="bold" fontSize="2rem" mt="60%">
-          No Chat selected. Please select a chat.
-        </Text>
+            <Text fontWeight="bold" fontSize="2rem" mt="60%">
+              No Chat selected. Please select a chat.
+            </Text>            
             </Center>
           ) : error ? (
             <Text>Error: {error}</Text>
@@ -133,26 +144,35 @@ const TeacherMessagesPage = ({ selectedChatId, selectedChatInfo }) => {
           ) : (
             Object.entries(groupedMessages).map(([date, msgs]) => (
               <VStack key={date} spacing="4" align="flex-start" w='165vh'>                
-              <Text fontWeight="bold" ml='50%'>{date}</Text>
+                <Text fontWeight="bold" ml='50%'>{date}</Text>
                 {msgs.map((message) => (
                   <Box
                     key={message.id}
                     p="4"
                   >
-                    <Flex>
+                    <Flex >
                       {message.senderId !== teacherId && (
                         <Image
-                        src={message.senderA ? require(`../../../assets/${message.senderA}`) : ''} boxSize="30px"
+                          src={message.senderA ? require(`../../../assets/${message.senderA}`) : ''}
+                          boxSize="30px"
                           borderRadius="50%"
                           mr="2"
                         />
                       )}
-                      <Text fontWeight="bold">{message.sender}</Text>
+                      <Text fontWeight="bold" ml={message.senderId === teacherId ? 'auto' : '0'}>{message.sender}</Text>
                     </Flex>
-                    <Flex bg={message.senderId == teacherId ? 'teal.200' : text} flexDirection={'column'} borderRadius='10px' padding='0.2cm'>  
+                    <Flex
+                      bg={message.senderId == teacherId ? 'teal.200' : text}
+                      flexDirection={'column'}
+                      borderRadius='10px'
+                      padding='0.2cm'
+                      ml={message.senderId == teacherId ? 'auto' : '0'}
+                    >  
                       <Text >{message.context}</Text>              
-                      <Text fontSize="smaller" mt="-3" mb="-1" ml="10" align="end">{new Date(message.timeSend).toLocaleTimeString()}</Text>
-                    </Flex>
+                      <Text fontSize="smaller" mt="-3" mb="-1" ml="10" align="end">
+                    {new Date(message.timeSend).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                  </Text>                    
+                  </Flex>
                   </Box>
                 ))}
               </VStack>
@@ -169,8 +189,8 @@ const TeacherMessagesPage = ({ selectedChatId, selectedChatInfo }) => {
               placeholder="Type your message..."
               style={{ fontFamily: "'Segoe UI Emoji', 'Apple Color Emoji', 'Noto Color Emoji', sans-serif" }}
             />
-          <Button colorScheme="teal" ml="5" mr="5" type="submit" leftIcon={<FaPaperPlane />}></Button>            
-          <EmojiPickerComponent onSelect={handleEmojiSelect} />
+            <Button colorScheme="teal" ml="5" mr="5" type="submit" leftIcon={<FaPaperPlane />} />
+            <EmojiPickerComponent onSelect={handleEmojiSelect} />
           </Flex>
         </form>
       </VStack>

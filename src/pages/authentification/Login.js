@@ -53,16 +53,8 @@ function Login() {
                 } else if (roles.includes('ROLE_TEACHER')) {
                     navigate('/teacher/dashboard');
                 } else if (roles.includes('ROLE_STUDENT')) {
-                    // Assuming you have a payment status in the response data
-                    const paymentStatus = response.data.data.status;
+                    navigate('/student/dashboard');
 
-                    if (paymentStatus === 'payed') {
-                        navigate('/student/dashboard');
-                    } else if (paymentStatus === 'not payed') {
-                        setShowPaymentModal(true); // Show the payment modal
-                    } else {
-                        navigate('/student/payment');
-                    }
                 } else {
                     navigate('/');
                 }

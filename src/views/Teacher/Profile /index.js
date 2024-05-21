@@ -41,7 +41,7 @@ function Profile() {
   const { avatar, firstName, lastName, email, number, gender } = studentInfo;
 
   return (
-    <Flex direction="column" position="relative" mt='8%'>
+    <Flex direction="column" mt='8%'>
       <Header
         backgroundHeader={ProfileBgImage}
         backgroundProfile={bgProfile}

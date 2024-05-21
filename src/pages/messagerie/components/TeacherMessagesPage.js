@@ -112,7 +112,9 @@ const TeacherMessagesPage = ({ selectedChatId, selectedChatInfo }) => {
                     </Flex>
                     <Flex bg={message.senderId === teacherId ? 'gray.200' : 'teal.200'} flexDirection={'column'} borderRadius='10px' padding='0.2cm'>  
                       <Text >{message.context}</Text>              
-                      <Text fontSize="smaller" mt="-3" mb="-1" ml="10" align="end">{new Date(message.timeSend).toLocaleTimeString()}</Text>
+                      <Text fontSize="smaller" mt="-3" mb="-1" ml="10" align="end">
+                      {new Date(message.timeSend).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    </Text>                    
                     </Flex>
                   </Box>
                 ))}

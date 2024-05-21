@@ -96,7 +96,8 @@ function CalendarDom() {
               style={{
                 backgroundColor: eventInfo.event.extendedProps.status === 'canceled session' ? 'red' : 
                 eventInfo.event.extendedProps.status === 'rattrrapage scheduling' ? 'green' : 
-                eventInfo.event.extendedProps.status === 'done' ? 'blue' : '',
+                eventInfo.event.extendedProps.status === 'done' ? 'blue' :
+                eventInfo.event.extendedProps.status === 'perdu' ? 'red' :  '',
               }}
             >
               <b>{eventInfo.event.title}</b> (Course: {eventInfo.event.extendedProps.course})

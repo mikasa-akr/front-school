@@ -62,12 +62,22 @@ const TeacherMessagesPage = ({ selectedChatId, selectedChatInfo }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!messageInput.trim()) return;
-
+  
     try {
+      // Post the new message
       const response = await axios.post(`/Messagerie/create/teacher/${teacherId}/${selectedChatId}`, { context: messageInput });
-      setMessages([...messages, response.data]); // Assuming the response data is the new message
+      const newMessage = response.data;
+      
+      // Update messages state with the new message
+      setMessages([...messages, newMessage]);
+  
+      // Fetch the updated list of messages
+      const updatedResponse = await axios.get(`/Messagerie/messages/${selectedChatId}`);
+      const updatedMessages = updatedResponse.data;
+      setMessages(updatedMessages); // Update messages state with the updated list
+  
       setMessageInput('');
-      scrollToBottom(); // Scroll to the bottom after a new message is sent
+      scrollToBottom(); // Scroll to bottom of message list
     } catch (error) {
       console.error('Error sending message:', error);
     }
@@ -112,7 +122,7 @@ const TeacherMessagesPage = ({ selectedChatId, selectedChatInfo }) => {
     >
       <VStack h="100%" spacing="4" justify="space-between">
         <Flex justify="space-between" bg={Color} w='100%' borderRadius='10px' >
-          {selectedChatInfo && ( // Check if selectedChatInfo is not null
+          {selectedChatInfo && (
             <Flex flexDirection={'row'} margin='3'>
               <Image src={selectedChatInfo.avatar ? require(`../../../assets/${selectedChatInfo.avatar}`) : ''} boxSize="50px" borderRadius="50%" mr="2" />
               <Text fontWeight="bold" mt='3'>{selectedChatInfo.name}</Text>
@@ -149,10 +159,12 @@ const TeacherMessagesPage = ({ selectedChatId, selectedChatInfo }) => {
                       )}
                       <Text fontWeight="bold">{message.sender}</Text>
                     </Flex>
-                    <Flex bg={message.senderId == teacherId ? 'teal.200' : text} flexDirection={'column'} borderRadius='10px' padding='0.2cm'>  
+                    <Flex bg={message.senderId == teacherId ? 'teal.200' : text} flexDirection={'column'} borderRadius='10px' padding='0.2cm' >  
                       <Text >{message.context}</Text>              
-                      <Text fontSize="smaller" mt="-3" mb="-1" ml="10" align="end">{new Date(message.timeSend).toLocaleTimeString()}</Text>
-                    </Flex>
+                      <Text fontSize="smaller" mt="-3" mb="-1" ml="10" align="end">
+                    {new Date(message.timeSend).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                  </Text>                    
+                  </Flex>
                   </Box>
                 ))}
               </VStack>

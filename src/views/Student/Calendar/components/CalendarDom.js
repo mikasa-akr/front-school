@@ -107,6 +107,12 @@ const handleEventClick = (eventClickInfo) => {
   }
 
   setSelectedEvent(eventClickInfo.event);
+  const currentTime = new Date();
+  const sessionTime = eventClickInfo.event.start;
+  const diffInMilliseconds = sessionTime - currentTime;
+  const diffInHours = Math.abs(diffInMilliseconds / (1000 * 60 * 60));
+  setTimeDifference(diffInHours);
+
   setIsModalOpen(true);
 };
 
@@ -210,9 +216,9 @@ const handleEventClick = (eventClickInfo) => {
       <Modal isOpen={isModalOpen} onClose={handleCloseModal}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>{selectedEvent ? 'Vote' : 'Annulation / Reclame'}</ModalHeader>
+          <ModalHeader>{selectedEvent ? 'Annulation / Reclame' : 'Vote'}</ModalHeader>
           <ModalBody>
-  {selectedEvent && selectedEvent.extendedProps.status === 'active' && (
+  {selectedEvent && selectedEvent.extendedProps.status === 'active' && timeDifference <= 24 && (
     <>
       <Button colorScheme="blue" onClick={() => setSelectedReclamationType('annulation')} mb={3} ml={3}>
         Annulation
