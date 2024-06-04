@@ -8,6 +8,7 @@ function ProfileUpdateForm({ profileData }) {
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
     const [gender, setGender] = useState('');
     const [number, setNumber] = useState('');
     const [age, setAge] = useState('');
@@ -21,9 +22,10 @@ function ProfileUpdateForm({ profileData }) {
             setFirstName(student.firstName);
             setLastName(student.lastName);
             setEmail(student.email);
-            setGender(student.gender);
+            setGender(student.genders);
             setNumber(student.number);
             setAge(student.age);
+            setPassword(student.password);
         })
         .catch(function (error) {
             Swal.fire({
@@ -62,6 +64,7 @@ function ProfileUpdateForm({ profileData }) {
             gender: gender,
             number: number,
             age: age,
+            password: password
         })
         .then(function (response) {
             Swal.fire({
@@ -86,26 +89,34 @@ function ProfileUpdateForm({ profileData }) {
     return (
         <VStack spacing="5" w="80%" ml='10%' h="100%">
             <h2>Edit Profile</h2>
-            <FormControl>
-                <FormLabel>First Name</FormLabel>
-                <Input
-                    value={firstName}
-                    onChange={(e) => setFirstName(e.target.value)}
-                />
-            </FormControl>
-            <FormControl>
-                <FormLabel>Last Name</FormLabel>
-                <Input
-                    value={lastName}
-                    onChange={(e) => setLastName(e.target.value)}
-                />
-            </FormControl>
+                <FormControl>
+                    <FormLabel>First Name</FormLabel>
+                    <Input
+                        value={firstName}
+                        onChange={(e) => setFirstName(e.target.value)}
+                    />
+                </FormControl>
+                <FormControl>
+                    <FormLabel>Last Name</FormLabel>
+                    <Input
+                        value={lastName}
+                        onChange={(e) => setLastName(e.target.value)}
+                    />
+                </FormControl>
             <FormControl>
                 <FormLabel>Email:</FormLabel>
                 <Input
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     type="email"
+                />
+            </FormControl>
+            <FormControl>
+                <FormLabel>Password:</FormLabel>
+                <Input
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    type="password"
                 />
             </FormControl>
             <FormControl>
@@ -117,24 +128,27 @@ function ProfileUpdateForm({ profileData }) {
                 />
             </FormControl>
             <FormControl>
-                <FormLabel>Gender:</FormLabel>
-                <Select
-                    value={gender}
-                    onChange={(e) => setGender(e.target.value)}
-                >
-                    {genders.map((genderOption, index) => (
-                        <option key={index} value={genderOption.id}>{genderOption.name}</option>
-                    ))}
-                </Select>
-            </FormControl>
-            <FormControl>
-                <FormLabel>Age:</FormLabel>
-                <Input
-                    value={age}
-                    onChange={(e) => setAge(e.target.value)}
-                    type="date"
-                />
-            </FormControl>
+    <FormLabel>Gender:</FormLabel>
+    {genders && (
+        <Select
+            value={gender}
+            onChange={(e) => setGender(e.target.value)}
+        >
+                <option value=''>Select Gender</option>
+            {genders.map((genderOption, index) => (
+                <option key={index} value={genderOption.id}>{genderOption.name}</option>
+            ))}
+        </Select>
+    )}
+</FormControl>
+<FormControl>
+    <FormLabel>Age:</FormLabel>
+    <Input
+        value={age}
+        onChange={(e) => setAge(e.target.value)}
+        type="date"
+    />
+</FormControl>
             <Button
                 onClick={handleSave}
                 colorScheme="teal"

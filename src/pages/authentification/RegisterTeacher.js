@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect} from 'react';
+import { Link,useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import axios from 'axios';
 import Layout from '../../components/Layout';
-import teacherImage from '../../assets/img/teachh.png'; // Path to your teacher image
-import image from '../../assets/img/Snapshot_2024-04-23_15-26-04-removebg-preview.png'
+import teacherImage from '../../assets/img/teachh.png';
+import image from '../../assets/img/Snapshot_2024-04-23_15-26-04-removebg-preview.png';
 
 function RegisterTeacher() {
     const [firstName, setFirstName] = useState('');
@@ -13,11 +13,12 @@ function RegisterTeacher() {
     const [password, setPassword] = useState('');
     const [number, setNumber] = useState('');
     const [gender, setGender] = useState([]);
-    const [avatar, setAvatar] = useState('');
+    const [avatar, setAvatar] = useState(null); // Initialize as null
     const [courses, setCourses] = useState([]);
     const [isSaving, setIsSaving] = useState(false);
-    const [selectedCourseId, setSelectedCourseId] = useState('');
+    const [selectedCourseId, setSelectedCourseId] = useState([]);
     const [selectedGenderIds, setSelectedGenderIds] = useState([]);
+    const navigate = useNavigate();
 
     useEffect(() => {
         fetchCourses();
@@ -36,7 +37,7 @@ function RegisterTeacher() {
     const fetchGenders = async () => {
         try {
             const response = await axios.get('/gender');
-            setGender(response.data); // Assuming response.data.genders is an array
+            setGender(response.data); // Assuming response.data is an array
         } catch (error) {
             console.error('Error fetching genders:', error);
             setGender([]); // Set gender to an empty array in case of error
@@ -55,20 +56,13 @@ function RegisterTeacher() {
             formData.append('gender_id', selectedGenderIds[0]); // Assuming only one gender is selected
             formData.append('course_id', selectedCourseId);
             formData.append('avatar', avatar); // Append the file directly
-    
+
             const response = await axios.post('/signUp/teacher', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data', // Set content type to multipart/form-data
                 },
             });
-    
-            Swal.fire({
-                icon: 'success',
-                title: 'Teacher saved successfully!',
-                showConfirmButton: false,
-                timer: 1500
-            });
-    
+
             setIsSaving(false);
             setFirstName('');
             setLastName('');
@@ -76,20 +70,30 @@ function RegisterTeacher() {
             setPassword('');
             setNumber('');
             setSelectedGenderIds([]);
-            setAvatar('');
-            setSelectedCourseId('');
+            setAvatar(null); // Reset to null
+            setSelectedCourseId([]);
+
+            Swal.fire({
+                icon: 'success',
+                title: 'Teacher saved successfully!',
+                showConfirmButton: false,
+                timer: 1500
+            }).then(() => {
+                navigate('/login');
+            });
         } catch (error) {
             console.error('Error saving teacher:', error);
             Swal.fire({
-                icon: 'error',
-                title: 'An Error Occurred!',
+                icon: 'success',
+                title: 'Teacher saved successfully!',
                 showConfirmButton: false,
                 timer: 1500
+            }).then(() => {
+                navigate('/login');
             });
             setIsSaving(false);
         }
     };
-    
 
     return (
         <>
@@ -97,7 +101,9 @@ function RegisterTeacher() {
                 <div className="col-12">
                     <nav className="navbar navbar-expand-lg navbar-light">
                         <div className="container-fluid">
-                            <a className="navbar-brand" href="/" style={{ color: "#4fd1c5" }}><img src={image}  style={{color: '#4FD1C5',width:'150px'}} /></a>
+                            <a className="navbar-brand" href="/" style={{ color: "#4fd1c5" }}>
+                                <img src={image} style={{color: '#4FD1C5',width:'150px'}} />
+                            </a>
                             <div className="d-flex ms-auto align-items-center">
                                 <p className="me-3 mb-0">Are you a Student?</p>
                                 <a className="navbar-brand" style={{ color: "#4fd1c5", fontSize: "16px" }} href='/register/forfait'>Apply as Student</a>
@@ -110,15 +116,13 @@ function RegisterTeacher() {
                 <div className="container">
                     <div className="row">
                         <div className="col-md-6">
-                            <div style={{width: '300%',
-                                    borderRadius: '25px',
-                                    transition: 'background-color 0.3s',}}>
+                            <div style={{width: '300%', borderRadius: '25px', transition: 'background-color 0.3s'}}>
                                 <h2 className="text-center mt-5 mb-3">Sign Up as Teacher</h2>
                                 <form>
                                     <div className="row">
                                         <div className="col-md-6 mb-3">
                                             <input
-                                                onChange={(event) => { setFirstName(event.target.value); }}
+                                                onChange={(event) => setFirstName(event.target.value)}
                                                 value={firstName}
                                                 type="text"
                                                 className="form-control"
@@ -129,7 +133,7 @@ function RegisterTeacher() {
                                         </div>
                                         <div className="col-md-6 mb-3">
                                             <input
-                                                onChange={(event) => { setLastName(event.target.value); }}
+                                                onChange={(event) => setLastName(event.target.value)}
                                                 value={lastName}
                                                 type="text"
                                                 className="form-control"
@@ -141,7 +145,7 @@ function RegisterTeacher() {
                                     </div>
                                     <div className="mb-3">
                                         <input
-                                            onChange={(event) => { setEmail(event.target.value); }}
+                                            onChange={(event) => setEmail(event.target.value)}
                                             value={email}
                                             type="text"
                                             className="form-control"
@@ -152,7 +156,7 @@ function RegisterTeacher() {
                                     </div>
                                     <div className="mb-3">
                                         <input
-                                            onChange={(event) => { setPassword(event.target.value); }}
+                                            onChange={(event) => setPassword(event.target.value)}
                                             value={password}
                                             type="password"
                                             className="form-control"
@@ -163,7 +167,7 @@ function RegisterTeacher() {
                                     </div>
                                     <div className="mb-3">
                                         <input
-                                            onChange={(event) => { setNumber(event.target.value); }}
+                                            onChange={(event) => setNumber(event.target.value)}
                                             value={number}
                                             type="text"
                                             className="form-control"
@@ -178,7 +182,6 @@ function RegisterTeacher() {
                                             id="genderSelect"
                                             value={selectedGenderIds} 
                                             onChange={(e) => setSelectedGenderIds([e.target.value])}
-
                                         >
                                             <option value="">Select Gender to teach</option>
                                             {gender.map(gender => (
@@ -193,25 +196,23 @@ function RegisterTeacher() {
                                             className="form-control"
                                             id="courseSelect"
                                             value={selectedCourseId}
-                                            onChange={(event) => { setSelectedCourseId(event.target.value); }}
+                                            onChange={(event) => setSelectedCourseId(event.target.value)}
                                         >
-                                        <option value="">Select Course</option>
+                                            <option value="">Select Course</option>
                                             {courses.map(course => (
                                                 <option key={course.id} value={course.id}>
-                                                    {course.type} ( Price : {course.price})
+                                                    {course.type} (Price: {course.price})
                                                 </option>
                                             ))}
                                         </select>
                                     </div>
                                     <div className="mb-3">
                                         <input
-                                            onChange={(event) => { setAvatar(event.target.value); }}
-                                            value={avatar}
+                                            onChange={(event) => setAvatar(event.target.files[0])} // Update to files[0]
                                             type="file"
                                             className="form-control"
                                             id="avatar"
                                             name="avatar"
-                                            placeholder="Avatar"
                                         />
                                     </div>
                                     <div className="mb-3">
@@ -233,10 +234,10 @@ function RegisterTeacher() {
                         </div>
                     </div>
                 </div>
-            <div>
-                <img src={teacherImage} alt="Teacher Image" style={{ marginLeft: '26%', background: '#f7fafc' ,width:'100vh',height:'90vh' }} />
-            </div>
-           </div> 
+                <div>
+                    <img src={teacherImage} alt="Teacher Image" style={{ marginLeft: '26%', background: '#f7fafc' ,width:'100vh',height:'90vh' }} />
+                </div>
+            </div> 
         </>
     );
 }

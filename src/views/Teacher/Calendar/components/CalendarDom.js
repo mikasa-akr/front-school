@@ -53,7 +53,7 @@ function CalendarDom() {
           const diffInHours = Math.abs(diffInMilliseconds / (1000 * 60 * 60));
           const sessionTimePlus24Hours = new Date(startDateTime.getTime() + 24 * 60 * 60 * 1000); // Add 24 hours to session time
 
-          if (eventData.status === 'active' && sessionTimePlus24Hours < currentTime) {
+          if (eventData.status != 'done' && sessionTimePlus24Hours < currentTime) {
             // Call the API to mark the session as "perdu"
             try {
               await axios.post(`/session/perdu/${eventData.id}`);

@@ -3,7 +3,7 @@ import axios from "axios";
 import Card from "../../../../components/Card/Card.js";
 import CardBody from "../../../../components/Card/CardBody.js";
 import CardHeader from "../../../../components/Card/CardHeader.js";
-
+import Swal from "sweetalert2";
 function StudentFacture({ captions, logo }) {
   const [listeFacture, setListeFacture] = useState([]);
   const [isLoaded, setIsLoaded] = useState(false);
@@ -11,6 +11,7 @@ function StudentFacture({ captions, logo }) {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
   const paymentMethods = ["transaction", "stripeCard"]; // Payment method options
+  const [isSaving, setIsSaving] = useState(false);
   const bgStatus = useColorModeValue("red.400", "red.400");
   const colorStatus = useColorModeValue("white", "white");
   useEffect(() => {
@@ -20,14 +21,27 @@ function StudentFacture({ captions, logo }) {
   const handleUpdateStatus = async (id) => {
     try {
       // Make a PUT request to the update_status endpoint with the payment ID
-      await axios.put(`/facture/student/update_status/${id}`, { status: "payed" });
-      // Assuming id is available in the scope
-      // You might need to adjust this part based on your component's structure
-      console.log("Status updated successfully");
-      // You can also perform any additional actions after the status is updated
+      await axios.put(`/facture/student/update_status/${id}`, { status: "payed" })
+      .then(function (response) {
+        Swal.fire({
+            icon: 'success',
+            title: 'Student updated successfully!',
+            showConfirmButton: false,
+            timer: 1500
+        })
+        setIsSaving(false);
+    })
+    .catch(function (error) {
+        Swal.fire({
+             icon: 'error',
+            title: 'An Error Occured!',
+            showConfirmButton: false,
+            timer: 1500
+        })
+        setIsSaving(false)
+    });
     } catch (error) {
       console.error("Error updating status:", error);
-      // Handle errors if necessary
     }
   };
 
@@ -139,7 +153,7 @@ function StudentFacture({ captions, logo }) {
                         >
                     <Button
                       colorScheme="teal"
-                      onClick={() => handleUpdateStatus(fature.id)} // Assuming the payment ID is available in facture.id
+                      onClick={() => handleUpdateStatus(fature.id)}
                     >
                       Valid
                     </Button>

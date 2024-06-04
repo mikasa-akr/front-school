@@ -35,7 +35,7 @@ const Sidebar = ({ onSelectChat }) => {
   return (
     <Box p="4" bg={bgColor} borderRadius="lg" boxShadow="md" position="fixed" left="0" top="10%" bottom="0" maxH="calc(92vh - 8%)" overflowY="auto">
       {loading ? (
-        <Spinner />
+        <Text>No Chat</Text>
       ) : error ? (
         <Text>Error: {error}</Text>
       ) : (

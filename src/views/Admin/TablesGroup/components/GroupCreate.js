@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import axios from 'axios';
@@ -21,9 +21,9 @@ function GroupCreate() {
   const [genders, setGenders] = useState([]);
   const [genderId, setGenderId] = useState('');
   const [students, setStudents] = useState([]);
-  const [studentId, setStudentId] = useState('');
+  const [studentId, setStudentId] = useState([]); // Initialize as an array
   const [isSaving, setIsSaving] = useState(false);
-  const [filteredStudents, setFilteredStudents] = useState([]); // Define filteredStudents state
+  const [filteredStudents, setFilteredStudents] = useState([]);
 
   useEffect(() => {
     async function fetchTeachers() {
@@ -59,57 +59,42 @@ function GroupCreate() {
       }
     }
     fetchStudents();
-  }, [teachers]); // Trigger the fetchStudents function when teachers state changes
-  
-  // Move the filtering logic inside the useEffect hook
+  }, [teachers]);
+
   useEffect(() => {
-    const filteredStudents = students.filter((student) => {
+    const filtered = students.filter((student) => {
       const selectedTeacher = teachers.find((t) => t.id === parseInt(teacherId));
   
-      if (type === 'private' && teacherId && genderId) {
+      if (type && teacherId && genderId) {
         return (
-          student.subscription === 'private' &&
-          selectedTeacher && // Ensure selectedTeacher is defined
-          student.course_types.some(course => course.trim().toLowerCase() === selectedTeacher.course_name.trim().toLowerCase()) &&
-          student.gender_id === Number(genderId)
-        );
-      } else if (type === 'public' && teacherId && genderId) {
-        return (
-          student.subscription === 'public' &&
-          selectedTeacher && // Ensure selectedTeacher is defined
+          student.subscription === type &&
+          selectedTeacher &&
           student.course_types.some(course => course.trim().toLowerCase() === selectedTeacher.course_name.trim().toLowerCase()) &&
           student.gender_id === Number(genderId)
         );
       }
+      return false;
     });
   
-    setFilteredStudents(filteredStudents); // Set filteredStudents state
-  }, [students, type, teacherId, genderId, teachers]); // Trigger the filtering logic when dependencies change
-  
-  const filteredTeachers = teachers.filter(teacher => teacher.gender_id === Number(genderId));  
+    setFilteredStudents(filtered);
+  }, [students, type, teacherId, genderId, teachers]);
 
-  const handleChange = (event) => {
+  const filteredTeachers = teachers.filter(teacher => teacher.gender_id === Number(genderId));
+
+  const handleChange = useCallback((event) => {
     const selectedOptions = Array.from(event.target.selectedOptions, option => option.value);
     setStudentId(selectedOptions);
-  };
-
+  }, []);
 
   const handleSave = () => {
     setIsSaving(true);
-  
-    // Create FormData object
-    const formData = new FormData();
-    formData.append('type', type);
-    formData.append('genderId', genderId);
-    formData.append('teacherId', teacherId);
 
-    studentId.forEach(id => formData.append('studentId[]', id));
-  
     axios
-      .post('/group/signUp/group', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data', // Set content type to multipart/form-data
-        },
+      .post('/group/signUp/group', {
+        teacherId: teacherId,
+        type: type,
+        studentId: studentId,
+        gender_id: genderId
       })
       .then(function (response) {
         Swal.fire({
@@ -121,7 +106,7 @@ function GroupCreate() {
         setIsSaving(false);
         setType('');
         setTeacherId('');
-        setStudentId('');
+        setStudentId([]);
         setGenderId('');
       })
       .catch(function (error) {
@@ -134,7 +119,6 @@ function GroupCreate() {
         setIsSaving(false);
       });
   };
-  
 
   return (
     <Flex>
@@ -151,6 +135,7 @@ function GroupCreate() {
               onChange={(event) => setGenderId(event.target.value)}
               size="md"
             >
+              <option value=''>Select Gender</option>
               {genders.map((gender) => (
                 <option key={gender.id} value={gender.id}>
                   {gender.name}
@@ -167,6 +152,7 @@ function GroupCreate() {
               placeholder="Select type"
               size="md"
             >
+              <option value=''>Select Type</option>
               <option value="private">Private</option>
               <option value="public">Public</option>
             </Select>
@@ -179,6 +165,7 @@ function GroupCreate() {
               onChange={(event) => setTeacherId(event.target.value)}
               size="md"
             >
+              <option value=''>Select Teacher</option>
               {filteredTeachers.map((teacher) => (
                 <option key={teacher.id} value={teacher.id}>
                   {teacher.lastName}
@@ -193,6 +180,7 @@ function GroupCreate() {
               value={studentId}
               onChange={handleChange}
               size="md"
+              height={'100px'}
               multiple
             >
               {filteredStudents.map((student) => (

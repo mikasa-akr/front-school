@@ -134,6 +134,9 @@ function Login() {
                                             Don't have an account? </p>
                                         <Link to="/register" className="btn btn-outline" style={{ borderRadius: '9px', border: "2px solid #4fd1c5", color: "#4fd1c5" }}>Sign Up</Link>
                                     </div>
+                                    <p className="text-center" style={{ marginTop: '10px' }} >
+                                     <Link to="/password" style={{ color: "#4fd1c5" }}>Forget Password? </Link>
+                                    </p>
                                 </form>
                             </div>
                         </div>

@@ -11,6 +11,8 @@ import Teacher from './layouts/Teacher.js';
 import ChatTeacher from './pages/messagerieT/index.js';
 import ChatStudent from './pages/messagerieS/index.js';
 import ChatAdmin from './pages/messagerie/index.js';
+import ForgetPassword from './pages/authentification/ForgetPassword.js';
+import ResetPassword from './pages/authentification/ResetPassword.js';
 
 const ProtectedRoute = ({ roles, children }) => {
   const isAuthenticated = localStorage.getItem('roles') === roles;
@@ -25,6 +27,8 @@ function App() {
       <Routes>
         <Route path="/register/*" element={<Elements stripe={stripePromise}><MainAuthentification /></Elements>} />
         <Route exact path="/login" element={<Login />} />
+        <Route exact path="/password" element={<ForgetPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/" element={<Acceuil />} />
 
         <Route path="/teacher/*" element={<ProtectedRoute roles="ROLE_TEACHER"><Teacher /></ProtectedRoute>} />

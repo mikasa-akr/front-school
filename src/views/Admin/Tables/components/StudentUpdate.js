@@ -91,7 +91,7 @@ function StudentUpdate() {
             firstName: firstName,
             lastName: lastName,
             email: email,
-            gender: selectedGenderId, // Pass selected gender ID instead of genders array
+            gender: selectedGenderId,
             number: number,
             age: age,
             course_id: selectedCourseId,

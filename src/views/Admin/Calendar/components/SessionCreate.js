@@ -31,7 +31,7 @@ function SessionCreate() {
         const genderResponse = await axios.get('/gender');
         setGenders(genderResponse.data);
 
-        const groupResponse = await axios.get(`/group/`);
+        const groupResponse = await axios.get(`/group/session`);
         setGroups(groupResponse.data);
       } catch (error) {
         console.error('Error fetching data:', error);

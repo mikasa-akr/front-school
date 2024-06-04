@@ -62,7 +62,7 @@ function Groups({ captions, logo }) {
           confirmButtonText: 'Yes, delete it!'
       }).then((result) => {
           if (result.isConfirmed) {
-              axios.delete(`/group/${id}`)
+              axios.delete(`/group/delete/${id}`)
                   .then(function (response) {
                       Swal.fire({
                           icon: 'success',
