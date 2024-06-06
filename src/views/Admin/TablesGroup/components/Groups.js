@@ -90,12 +90,16 @@ function Groups({ captions, logo }) {
   return (
     <>
     <Grid>
-    <Flex direction="column" pt={{ base: "120px", md: "75px" }}>
+    <Flex direction="column" pt={{ base: "120px", md: "75px" }} mt={'5%'}>
     <Card bg={bgColor} overflowX={{ sm: "scroll", xl: "hidden" }} borderRadius={'20px'}>
   <CardHeader p="6px 0px 22px 0px">
     <Text fontSize="xl" fontWeight="bold">
       Groups Table
     </Text>
+    <Button as={RouterLink} to={`/admin/table/group/create/`} colorScheme="green" ml={'80%'}>
+      <Icon as={FaPlus} mr={1} />
+        Create
+    </Button>
   </CardHeader>
   <CardBody>
     <Table variant="simple">
@@ -153,10 +157,6 @@ function Groups({ captions, logo }) {
                 <Button as={RouterLink} to={`/admin/table/group/update/${group.id}`} colorScheme="green" mr={2}>
                   <Icon as={FaPlus} mr={1} />
                   student
-                </Button>
-                <Button as={RouterLink} to={`/admin/table/group/create/`} colorScheme="green">
-                  <Icon as={FaPlus} mr={1} />
-                  Create
                 </Button>
               </Flex>
             </Td>

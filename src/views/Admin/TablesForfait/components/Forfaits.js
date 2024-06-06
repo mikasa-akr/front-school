@@ -62,8 +62,8 @@ function Forfaits() {
 
   return (
 
-    <Box mt={20} textAlign="center">
-      <Card bg={bgColor} textAlign="center" borderRadius="20px">
+    <Box mt={'5%'} textAlign="center">
+      <Card bg={bgColor} textAlign="center" borderRadius="20px"  >
       <CardHeader p="6px 0px 22px 0px">
           <Text fontSize="xl" fontWeight="bold">Forfait Table</Text>
           <Button as={RouterLink} to={`/admin/table/forfait/create`} colorScheme="teal" ml={'80%'}>

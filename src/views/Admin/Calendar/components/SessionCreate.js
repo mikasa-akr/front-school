@@ -133,6 +133,7 @@ function SessionCreate() {
               value={selectedGenderId}
               onChange={(event) => setSelectedGenderId(event.target.value)}
             >
+              <option  value=''>Select Gender</option>
               {genders.map((gender) => (
                 <option key={gender.id} value={gender.id}>
                   {gender.name}
@@ -151,7 +152,7 @@ function SessionCreate() {
               <option  value=''>Select Group</option>
               {filteredGroups.map((group) => (
                 <option key={group.id} value={group.id}>
-                  Group {group.id} (Teacher: {group.teacher_first})
+                  Group {group.id} (Teacher: {group.teacher_first} {group.teacher_last  })
                 </option>
               ))}
             </Select>
