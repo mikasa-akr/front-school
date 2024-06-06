@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useParams } from "react-router-dom";
-import Swal from 'sweetalert2';
+import { FormControl, FormLabel, Input, Select, Button, VStack,Text } from "@chakra-ui/react";
 import axios from 'axios';
-import { Button, Container, FormControl, FormLabel, Input,Text, Select, VStack, Grid } from "@chakra-ui/react";
-import Card from '../../../../components/Card/Card';
+import Swal from 'sweetalert2';
+import { Link, useParams } from "react-router-dom";
 
 function TeacherUpdate() {
     const [id, setId] = useState(useParams().id)
@@ -13,169 +12,134 @@ function TeacherUpdate() {
     const [gender, setGender] = useState('');
     const [number, setNumber] = useState('');
     const [isSaving, setIsSaving] = useState(false);
-    const [courses, setCourses] = useState([]);
-    const [selectedCourseId, setSelectedCourseId] = useState('');
-    const [selectedGenderId, setSelectedGenderId] = useState('');
+    const [genders, setGenders] = useState([]);
 
     useEffect(() => {
-        fetchCourses();
-        fetchGender();
-    }, []);
+        axios.get(`/crud/teacher/${id}`)
+            .then(function (response) {
+                let teacher = response.data;
+                setFirstName(teacher.firstName);
+                setLastName(teacher.lastName);
+                setEmail(teacher.email);
+                setNumber(teacher.number);
+                setGender(teacher.genders);
+            })
+            .catch(function (error) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'An Error Occurred!',
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+            });
+            fetchGender();
 
-    const fetchCourses = async () => {
-        try {
-            const response = await axios.get('/course'); // Adjust the URL accordingly
-            setCourses(response.data);
-        } catch (error) {
-            console.error('Error fetching courses:', error);
-        }
-    };
+    }, [id]);
 
     const fetchGender = async () => {
         try {
-            const response = await axios.get('/gender'); // Adjust the URL accordingly
-            setGender(response.data);
+            const response = await axios.get('/gender');
+            if (Array.isArray(response.data)) {
+                setGenders(response.data);
+            } else {
+                console.error('Error: response data is not an array:', response.data);
+                setGenders([]); // Set genders to empty array if data is invalid
+            }
         } catch (error) {
             console.error('Error fetching genders:', error);
+            setGenders([]); // Set genders to empty array if there's an error
         }
     };
 
-    useEffect(() => {
-        axios.put(`/crud/teacher/${id}/edit`)
-        .then(function (response) {
-            let student = response.data
-            setFirstName(student.firstName);
-            setLastName(student.lastName);
-            setEmail(student.email);
-            setGender(student.gender);
-            setNumber(student.number);
-            setSelectedCourseId(student.course.id);
-            setSelectedCourseId(student.gender.id);
-
-        })
-        .catch(function (error) {
-            Swal.fire({
-                 icon: 'error',
-                title: 'An Error Occured!',
-                showConfirmButton: false,
-                timer: 1500
-            })
-        })
-          
-    }, [])
-  
-  
     const handleSave = () => {
         setIsSaving(true);
         axios.put(`/crud/teacher/${id}/edit`, {
             firstName: firstName,
             lastName: lastName,
-            email:email,
-            gender: selectedGenderId,
-            number:number,
-            course_id: selectedCourseId,
-
-        })
-        .then(function (response) {
-            Swal.fire({
-                icon: 'success',
-                title: 'Teacher updated successfully!',
-                showConfirmButton: false,
-                timer: 1500
+            email: email,
+            gender: gender,
+            number: number
+                })
+            .then(function (response) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Teacher updated successfully!',
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+                setIsSaving(false);
             })
-            setIsSaving(false);
-        })
-        .catch(function (error) {
-            Swal.fire({
-                 icon: 'error',
-                title: 'An Error Occured!',
-                showConfirmButton: false,
-                timer: 1500
-            })
-            setIsSaving(false)
-        });
-    }
+            .catch(function (error) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'An Error Occurred!',
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+                setIsSaving(false);
+            });
+    };
 
     return (
-        <Card>
-            <Container mt="8%">
-                <VStack spacing="5" align="center">
-                    <h2 style={{ color: '#ffffff' }}>Edit Teacher</h2>
-                    <Grid templateColumns="repeat(2, 1fr)" gap="4">
-                        <FormControl>
-                            <FormLabel>First Name</FormLabel>
-                            <Input value={firstName} onChange={(e) => setFirstName(e.target.value)} />
-                        </FormControl>
-                        <FormControl>
-                            <FormLabel>Last Name</FormLabel>
-                            <Input value={lastName} onChange={(e) => setLastName(e.target.value)} />
-                        </FormControl>
-                    </Grid>
-                    <FormControl>
-                        <FormLabel>Email:</FormLabel>
-                        <Input
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            type="text"
-                            name="email"
-                        />
-                    </FormControl>
-                    <FormControl>
-                        <FormLabel>Number Phone:</FormLabel>
-                        <Input
-                            value={number}
-                            onChange={(e) => setNumber(e.target.value)}
-                            type="text"
-                            name="number"
-                        />
-                    </FormControl>
-                    <FormControl>
-                    <FormLabel>Gender:</FormLabel>
-  <Select
-                            value={selectedGenderId}
-                            onChange={(e) => setSelectedGenderId(e.target.value)}
-                            name="genders"
-                        >
-                            {gender.length > 0 ? ( // Check if genders array has elements
-                                gender.map((gend) => (
-                                    <option key={gend.id} value={gend.id}>{gend.name}</option>
-                                ))
-                            ) : (
-                                <option disabled>
-                                    { // Handle loading or error states
-                                        isSaving ? 'Fetching genders...' : 'Error fetching genders'
-                                    }
-                                </option>
-                            )}
-                        </Select>
-</FormControl>
-                    <FormControl>
-                        <FormLabel>Select Course:</FormLabel>
-                        <Select
-                            value={selectedCourseId}
-                            onChange={(e) => setSelectedCourseId(e.target.value)}
-                            name="course"
-                        >
-                            {courses.map(course => (
-                                <option key={course.id} value={course.id}>{course.type}</option>
-                            ))}
-                        </Select>
-                    </FormControl>
-                    <Button
-                        disabled={isSaving}
-                        onClick={handleSave}
-                        type="button"
-                        colorScheme="teal"
-                        borderRadius="25px"
+        <VStack spacing="5" w="80%" ml='10%' h="100%" as="form" mt={'10%'}>
+            <FormControl>
+                <FormLabel>First Name</FormLabel>
+                <Input
+                    value={firstName}
+                    onChange={(e) => setFirstName(e.target.value)}
+                />
+            </FormControl>
+            <FormControl>
+                <FormLabel>Last Name</FormLabel>
+                <Input
+                    value={lastName}
+                    onChange={(e) => setLastName(e.target.value)}
+                />
+            </FormControl>
+            <FormControl>
+                <FormLabel>Email</FormLabel>
+                <Input
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    type="email"
+                    name="CredentialUsr"
+                    autoComplete="off"
+                />
+            </FormControl>
+            <FormControl>
+                <FormLabel>Phone Number</FormLabel>
+                <Input
+                    value={number}
+                    onChange={(e) => setNumber(e.target.value)}
+                    type="tel"
+                />
+            </FormControl>
+            <FormControl>
+                <FormLabel>Gender</FormLabel>
+                {genders && (
+                    <Select
+                        value={gender}
+                        onChange={(e) => setGender(e.target.value)}
                     >
-                        {isSaving ? "Saving..." : "Update Teacher"}
-                    </Button>
-                    <Text color="gray.500" textAlign="center">
+                        <option value=''>Select Gender</option>
+                        {genders.map((genderOption, index) => (
+                            <option key={index} value={genderOption.id}>{genderOption.name}</option>
+                        ))}
+                    </Select>
+                )}
+            </FormControl>
+            <Button
+                onClick={handleSave}
+                colorScheme="teal"
+                borderRadius="25px"
+                isLoading={isSaving}
+            >
+                Update Profile
+            </Button>
+            <Text color="gray.500" textAlign="center">
                         <Link to="/admin/table/teacher/*">View All Teachers</Link>
-                    </Text>                
-                </VStack>
-            </Container>
-        </Card>
+                    </Text>  
+        </VStack>
     );
 }
 

@@ -35,7 +35,8 @@ export default function HeaderLinks(props) {
   const [notifications, setNotifications] = useState([]);
 
   const handleLogout = () => {
-    axios.put(`/update_status/${id}`, { status: 'offline' })
+    if (roles === 'ROLE_STUDENT') {
+    axios.put(`/student/update_status/${id}`, { status: 'offline' })
     .then(response => {
         // Check if the response is successful
         if (response.status === 200) {
@@ -56,6 +57,29 @@ export default function HeaderLinks(props) {
         console.error("Error updating status:", error);
         // Handle error (e.g., display an error message to the user)
     });
+  }else if (roles === 'ROLE_TEACHER') {
+    axios.put(`/teacher/update_status/${id}`, { status: 'offline' })
+    .then(response => {
+        // Check if the response is successful
+        if (response.status === 200) {
+          localStorage.removeItem("token");
+          localStorage.removeItem("id");
+          localStorage.removeItem("first_name");
+          localStorage.removeItem("last_name");
+          localStorage.removeItem("avatar");
+          localStorage.removeItem("roles");
+
+          // Navigate to login page
+          navigate("/login");
+        } else {
+            throw new Error('Failed to update status');
+        }
+    })
+    .catch(error => {
+        console.error("Error updating status:", error);
+        // Handle error (e.g., display an error message to the user)
+    });
+  }
   };
 
   const navigateToProfile = () => {

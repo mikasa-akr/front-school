@@ -133,7 +133,7 @@ function ForfaitCreate() {
             </Select>
           </FormControl>
           <FormControl>
-            <FormLabel htmlFor="NbrHourSession">Select Number of Hour per Session:</FormLabel>
+            <FormLabel htmlFor="NbrHourSession">Select Number of Hour Total:</FormLabel>
             <Select
               id="NbrHourSession"
               value={NbrHourSession}
@@ -148,7 +148,7 @@ function ForfaitCreate() {
             </Select>
           </FormControl>
           <FormControl>
-            <FormLabel htmlFor="NbrHourSeance">Select Number of Hour per Lesson:</FormLabel>
+            <FormLabel htmlFor="NbrHourSeance">Select Number of Hour per Session:</FormLabel>
             <Select
               id="NbrHourSeance"
               value={NbrHourSeance} // Reflect selected value

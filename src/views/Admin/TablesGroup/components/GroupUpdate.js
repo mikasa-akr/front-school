@@ -48,7 +48,7 @@ function GroupUpdate() {
   useEffect(() => {
     const fetchGroupDetails = async () => {
       try {
-        const response = await axios.get(`/group/${id}`);
+        const response = await axios.get(`/group/group/${id}`);
         const group = response.data[0];
   
         const selectedTeacher = teachers.find((t) => t.id === parseInt(group.teacherId));

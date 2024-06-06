@@ -91,8 +91,8 @@ function Forfaits() {
             <Text fontSize="4xl" fontWeight="bold" color="teal.300" mt={2}>
               ${forfait.price}
             </Text>
-            <Text mt={2} fontSize="2xl" >- Number of Hour per Session: {forfait.NbrHourSession}h</Text>
-            <Text mt={2} fontSize="2xl" >- Number of Hour per lesson: {forfait.NbrHourSeance}h</Text>
+            <Text mt={2} fontSize="2xl" >- Number of Hour Total: {forfait.NbrHourSession}h</Text>
+            <Text mt={2} fontSize="2xl" >- Number of Hour per session: {forfait.NbrHourSeance}h</Text>
             <Text mt={2} fontSize="2xl" >- Type: {forfait.subscription}</Text>
             <Flex flexDirection={'column'}>
   <Button 

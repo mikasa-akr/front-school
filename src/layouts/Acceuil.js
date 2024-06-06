@@ -10,7 +10,7 @@ import {
   useColorModeValue,
   Flex,
 } from '@chakra-ui/react';
-import schoolImage from '../assets/QURAN-MAJEED.png';
+import schoolImage from '../assets/img/o-QURAN-facebook-1024x681.jpg';
 import image from '../assets/img/Snapshot_2024-04-23_15-26-04-removebg-preview.png'
 import coran from '../assets/img/the-holy-quran-5-removebg-preview.png'
 import arabe from '../assets/img/images.jpeg'
@@ -25,7 +25,6 @@ import chat from '../assets/img/live-chat.png'
 import profile from '../assets/img/website.png'
 
 function Dashboard() {
-  const bgColor = useColorModeValue('#4FD1C5', 'gray.700');
   const [totalCounts, setTotalCounts] = useState({ student: 0, teacher: 0 });
   const bgImage = 'url("https://qutor.com/assets/new/bg-laptop.jpg")'; 
   const bgFooter = 'url("https://qutor.com/assets/footer.png")';
@@ -65,7 +64,7 @@ function Dashboard() {
 
   const [courses, setCourses] = useState([
     { id: 1, type: 'Arabe', image: arabe },
-    { id: 2, type: 'Coran', image: coran },
+    { id: 2, type: 'Qoran', image: coran },
     { id: 3, type: 'Calligraphie', image: calligraphy },
     { id: 4, type: 'T. Islamique', image: Islamic }
   ]);
@@ -90,8 +89,14 @@ function Dashboard() {
         </div>
       </nav>
       <Box position="relative" h="100vh">
-        <Image src={schoolImage} alt="School Image" objectFit="cover" w="100%" h="100%" />
-        <VStack bg="#f3f3f3" padding={10}>
+      <Box position="relative" w="100%" h="100vh" display="flex" justifyContent="center" alignItems="center" textAlign="center">
+      <Image src={schoolImage} alt="School Image" objectFit="cover" w="100%" h="100vh" style={{ filter: 'brightness(40%)' }} />
+      <Box position="absolute" top="50%" left="50%" transform="translate(-50%, -50%)" color="white" p={5}>
+        <Text fontSize="3.2rem" fontWeight="bold">Learn Quran Online with Edu School</Text>
+        <Text fontSize="1.5rem">Experience comprehensive and accessible Quranic education from the comfort of your home. Join Edu School today for interactive and engaging online courses tailored to all age groups and levels.</Text>
+      </Box>
+      </Box>
+      <VStack bg="#f3f3f3" padding={10}>
           <Flex flexDirection="row" justifyContent="space-around">
             <Flex flexDirection="column" alignItems="center" marginLeft={10}>
               <Text fontSize="3rem" align="center" color="yellow" style={{ textShadow: '2px 2px 4px rgba(0, 0, 0, 0.5)' }}>{totalCounts.student}</Text>
@@ -103,11 +108,8 @@ function Dashboard() {
             </Flex>
           </Flex>
         </VStack>
-        <VStack spacing={4} align="center" justify="center">
-          <Text fontSize="1.5rem" maxWidth="800px" margin={'30px'}>This platform provides comprehensive management solutions for our school, offering features for course management, student enrollment, teacher assignments, and more.</Text>
-        </VStack>
+        <VStack padding={'1cm'}>
         <Heading fontSize="4rem" textAlign={'center'} fontFamily="sans-serif" >Courses Offered</Heading>
-        <VStack>
           <Flex flexWrap="wrap" justifyContent="center">
             {courses.map(course => (
               <Box key={course.id} p={10} borderWidth="1px" boxShadow="md" style={{ background: `${bgImage} no-repeat center center fixed`, backgroundSize: 'cover'}} m={50} width="300px" borderRadius="20px">
@@ -117,8 +119,8 @@ function Dashboard() {
             ))}
           </Flex>
         </VStack>
-        <VStack align="center" justify="center" style={{ background: `${bgImage} no-repeat center center fixed`, backgroundSize: 'cover', minHeight: '100vh' }} p={8} borderRadius="lg">
-        <Heading fontSize="3rem" textAlign={'center'} fontFamily="sans-serif" fontWeight={'bold'}>Join Our Learning Community</Heading>          
+        <VStack align="center" justify="center" bg={'#f3f3f3'} p={8} borderRadius="lg">
+        <Heading fontSize="3rem" textAlign={'center'} fontFamily="sans-serif" fontWeight={'bold'} mt={'2%'}>Join Our Learning Community</Heading>          
         <Flex flexDirection="row" alignItems="center" margin={'-2%'}>
             <Image src={chosse} w="550px" objectFit="cover" borderRadius="lg" boxShadow="md"/>
             <Text fontSize="2rem">Select role student <br></br> to sign up as a student</Text>

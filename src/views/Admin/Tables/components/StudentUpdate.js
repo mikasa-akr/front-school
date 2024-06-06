@@ -1,224 +1,154 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useParams } from "react-router-dom";
-import Swal from 'sweetalert2';
+import { FormControl, FormLabel, Input, Select, Button, VStack,Text } from "@chakra-ui/react";
 import axios from 'axios';
-import { Button, Container, FormControl, FormLabel,Text, Input, Select, VStack, Grid } from "@chakra-ui/react";
-import Card from '../../../../components/Card/Card';
+import Swal from 'sweetalert2';
+import { Link, useParams } from "react-router-dom";
 
-function StudentUpdate() {
+function StudentUpdate({ }) {
     const [id, setId] = useState(useParams().id)
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [email, setEmail] = useState('');
-    const [genders, setGender] = useState([]);    
-    const [selectedGenderId, setSelectedGenderId] = useState('');
+    const [gender, setGender] = useState('');
     const [number, setNumber] = useState('');
     const [age, setAge] = useState('');
+    const [genders, setGenders] = useState([]);
     const [isSaving, setIsSaving] = useState(false);
-    const [courses, setCourses] = useState([]);
-    const [selectedCourseId, setSelectedCourseId] = useState('');
-    const [forfaits, setForfait] = useState([]);
-    const [forfaitId, setSelectedForfaitId] = useState('');
 
     useEffect(() => {
-        fetchCourses();
-        fetchForfait();
-        fetchGender();
-    }, []);
+        axios.get(`/crud/student/${id}`)
+        .then(function (response) {
+            let student = response.data;
+            setFirstName(student.firstName);
+            setLastName(student.lastName);
+            setEmail(student.email);
+            setGender(student.genders);
+            setNumber(student.number);
+            setAge(student.age);
+        })
+        .catch(function (error) {
+            Swal.fire({
+                icon: 'error',
+                title: 'An Error Occurred!',
+                showConfirmButton: false,
+                timer: 1500
+            });
+        });
 
-    const fetchCourses = async () => {
-        try {
-            const response = await axios.get('/course'); // Adjust the URL accordingly
-            setCourses(response.data);
-        } catch (error) {
-            console.error('Error fetching courses:', error);
-        }
-    };
-    const fetchForfait = async () => {
-        try {
-            const response = await axios.get('/crud/forfait'); // Adjust the URL accordingly
-            setForfait(response.data);
-        } catch (error) {
-            console.error('Error fetching courses:', error);
-        }
-    };
+        // Fetch genders when component mounts
+        fetchGender();
+    }, [id]);
 
     const fetchGender = async () => {
         try {
             const response = await axios.get('/gender');
             if (Array.isArray(response.data)) {
-                setGender(response.data);
+                setGenders(response.data);
             } else {
                 console.error('Error: response data is not an array:', response.data);
-                setGender([]); // Set genders to empty array if data is invalid
+                setGenders([]); // Set genders to empty array if data is invalid
             }
         } catch (error) {
             console.error('Error fetching genders:', error);
-            setGender([]); // Set genders to empty array if there's an error
+            setGenders([]); // Set genders to empty array if there's an error
         }
     };
 
-    useEffect(() => {
-        axios.put(`/crud/student/${id}/edit`)
-        .then(function (response) {
-            let student = response.data
-            setFirstName(student.firstName);
-            setLastName(student.lastName);
-            setEmail(student.email);
-            setGender(student.gender);
-            setNumber(student.number);
-            setAge(student.age);
-            setSelectedCourseId(student.course.id);
-            setSelectedForfaitId(student.forfait.id);
-            setSelectedGenderId(student.gender.id);
-
-        })
-        .catch(function (error) {
-            Swal.fire({
-                 icon: 'error',
-                title: 'An Error Occured!',
-                showConfirmButton: false,
-                timer: 1500
-            })
-        })
-          
-    }, [])
-  
-  
     const handleSave = () => {
         setIsSaving(true);
         axios.put(`/crud/student/${id}/edit`, {
             firstName: firstName,
             lastName: lastName,
             email: email,
-            gender: selectedGenderId,
+            gender: gender,
             number: number,
-            age: age,
-            course_id: selectedCourseId,
-            forfait_id: forfaitId,
-        })
-        
+            age: age
+                })
         .then(function (response) {
             Swal.fire({
                 icon: 'success',
                 title: 'Student updated successfully!',
                 showConfirmButton: false,
                 timer: 1500
-            })
+            });
             setIsSaving(false);
         })
         .catch(function (error) {
             Swal.fire({
-                 icon: 'error',
-                title: 'An Error Occured!',
+                icon: 'error',
+                title: 'An Error Occurred!',
                 showConfirmButton: false,
                 timer: 1500
-            })
-            setIsSaving(false)
+            });
+            setIsSaving(false);
         });
     }
 
     return (
-        <Card>
-            <Container mt="8%">
-                <VStack spacing="5" align="center">
-                    <h2 style={{ color: '#ffffff' }}>Edit Student</h2>
-                    <Grid templateColumns="repeat(2, 1fr)" gap="4">
-                        <FormControl>
-                            <FormLabel>First Name</FormLabel>
-                            <Input value={firstName} onChange={(e) => setFirstName(e.target.value)} />
-                        </FormControl>
-                        <FormControl>
-                            <FormLabel>Last Name</FormLabel>
-                            <Input value={lastName} onChange={(e) => setLastName(e.target.value)} />
-                        </FormControl>
-                    </Grid>
-                    <FormControl>
-                        <FormLabel>Email:</FormLabel>
-                        <Input
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            type="text"
-                            name="email"
-                        />
-                    </FormControl>
-                    <FormControl>
-                        <FormLabel>Number Phone:</FormLabel>
-                        <Input
-                            value={number}
-                            onChange={(e) => setNumber(e.target.value)}
-                            type="text"
-                            name="number"
-                        />
-                    </FormControl>
-                    <FormControl>
-  <FormLabel>Gender:</FormLabel>
-  <Select
-                            value={selectedGenderId}
-                            onChange={(e) => setSelectedGenderId(e.target.value)}
-                            name="genders"
-                        >
-                            {genders.length > 0 ? ( // Check if genders array has elements
-                                genders.map((gend) => (
-                                    <option key={gend.id} value={gend.id}>{gend.name}</option>
-                                ))
-                            ) : (
-                                <option disabled>
-                                    { // Handle loading or error states
-                                        isSaving ? 'Fetching genders...' : 'Error fetching genders'
-                                    }
-                                </option>
-                            )}
-                        </Select>
+        <VStack spacing="5" w="80%" ml='10%' h="100%" mt={'10%'}>
+                <FormControl>
+                    <FormLabel>First Name:</FormLabel>
+                    <Input
+                        value={firstName}
+                        onChange={(e) => setFirstName(e.target.value)}
+                    />
+                </FormControl>
+                <FormControl>
+                    <FormLabel>Last Name:</FormLabel>
+                    <Input
+                        value={lastName}
+                        onChange={(e) => setLastName(e.target.value)}
+                    />
+                </FormControl>
+            <FormControl>
+                <FormLabel>Email:</FormLabel>
+                <Input
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    type="email"
+                />
+            </FormControl>
+            <FormControl>
+                <FormLabel>Phone Number:</FormLabel>
+                <Input
+                    value={number}
+                    onChange={(e) => setNumber(e.target.value)}
+                    type="tel"
+                />
+            </FormControl>
+            <FormControl>
+    <FormLabel>Gender:</FormLabel>
+    {genders && (
+        <Select
+            value={gender}
+            onChange={(e) => setGender(e.target.value)}
+        >
+                <option value=''>Select Gender</option>
+            {genders.map((genderOption, index) => (
+                <option key={index} value={genderOption.id}>{genderOption.name}</option>
+            ))}
+        </Select>
+    )}
 </FormControl>
-                    <FormControl>
-                        <FormLabel>Age:</FormLabel>
-                        <Input
-                            value={age}
-                            onChange={(e) => setAge(e.target.value)}
-                            type="date"
-                            name="age"
-                        />
-                    </FormControl>
-                    <FormControl>
-                        <FormLabel>Select Course:</FormLabel>
-                        <Select
-                            value={selectedCourseId}
-                            onChange={(e) => setSelectedCourseId(e.target.value)}
-                            name="course"
-                        >
-                            {courses.map(course => (
-                                <option key={course.id} value={course.id}>{course.type}</option>
-                            ))}
-                        </Select>
-                    </FormControl>
-                    <FormControl>
-                        <FormLabel>Select Forfait:</FormLabel>
-                        <Select
-                            value={forfaitId}
-                            onChange={(e) => setSelectedForfaitId(e.target.value)}
-                            name="forfait"
-                        >
-                            {forfaits.map(forfait => (
-                                <option key={forfait.id} value={forfait.id}>{forfait.title}</option>
-                            ))}
-                        </Select>
-                    </FormControl>
-                    <Button
-                        disabled={isSaving}
-                        onClick={handleSave}
-                        type="button"
-                        colorScheme="teal"
-                        borderRadius="25px"
-                    >
-                        {isSaving ? "Saving..." : "Update student"}
-                    </Button>
-                    <Text color="gray.500" textAlign="center">
+<FormControl>
+    <FormLabel>Age:</FormLabel>
+    <Input
+        value={age}
+        onChange={(e) => setAge(e.target.value)}
+        type="date"
+    />
+</FormControl>
+            <Button
+                onClick={handleSave}
+                colorScheme="teal"
+                borderRadius="25px"
+            >
+                Update Profile
+            </Button>
+            <Text color="gray.500" textAlign="center">
                         <Link to="/admin/tables/*">View All Students</Link>
-                    </Text>            
-                      </VStack>
-            </Container>
-        </Card>
+                    </Text>  
+        </VStack>
     );
 }
 
