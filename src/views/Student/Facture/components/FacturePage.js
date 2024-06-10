@@ -77,7 +77,7 @@ function FacturePage() {
                       </Td>
                       <Td>
                     <Badge
-                      bg={facture.status === "payed" ? "red.400" : bgStatus}
+                      bg={facture.status === "payed" ? "green.400" : bgStatus}
                       color={facture.status === "payed" ? "white" : colorStatus}
                       fontSize="16px"
                       p="3px 10px"

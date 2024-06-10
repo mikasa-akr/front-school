@@ -23,7 +23,7 @@ function ProfileUpdateForm() {
                 setEmail(teacher.email);
                 setNumber(teacher.number);
                 setPassword('');  // Don't set the actual password
-                setGender(teacher.gender);
+                setGender(teacher.genders);
                 fetchGender();
             })
             .catch(function (error) {

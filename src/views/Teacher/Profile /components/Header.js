@@ -79,7 +79,7 @@ const Header = ({ backgroundHeader, backgroundProfile, tabs }) => {
           align="center"
           backdropFilter="saturate(200%) blur(50px)"
           position="absolute"
-          mt={showForm ? "-47%" : "-20%"}        
+          mt={showForm ? "-57%" : "-20%"}        
           boxShadow="0px 2px 5.5px rgba(0, 0, 0, 0.02)"
           border="2px solid"
           borderColor={border}

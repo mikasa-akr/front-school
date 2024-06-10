@@ -35,8 +35,8 @@ export default function HeaderLinks(props) {
   const [notifications, setNotifications] = useState([]);
 
   const handleLogout = () => {
-    if (roles === 'ROLE_STUDENT') {
-    axios.put(`/student/update_status/${id}`, { status: 'offline' })
+    if (roles === 'ROLE_TEACHER') {
+    axios.put(`/teacher/update_status/${id}`, { status: 'offline' })
     .then(response => {
         // Check if the response is successful
         if (response.status === 200) {
@@ -57,8 +57,8 @@ export default function HeaderLinks(props) {
         console.error("Error updating status:", error);
         // Handle error (e.g., display an error message to the user)
     });
-  }else if (roles === 'ROLE_TEACHER') {
-    axios.put(`/teacher/update_status/${id}`, { status: 'offline' })
+  }else{
+    axios.put(`/student/update_status/${id}`, { status: 'offline' })
     .then(response => {
         // Check if the response is successful
         if (response.status === 200) {
